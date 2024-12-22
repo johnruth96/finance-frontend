@@ -1,4 +1,3 @@
-import { Account, Category, Contract, RecordType } from '../finance/app/types'
 import React, { Dispatch, SetStateAction } from 'react'
 import { AmountDisplay } from '../AmountDisplay'
 
@@ -7,7 +6,7 @@ import {
     useGetCategorysQuery,
     useGetContractsQuery,
     useGetRecordsQuery,
-} from '../finance/app/api'
+} from '../app/api'
 import { CategoryDisplay } from '../CategoryDisplay'
 import { Box, Button } from '@mui/material'
 import {
@@ -22,6 +21,7 @@ import {
 import dayjs from 'dayjs'
 import { Link } from 'react-router-dom'
 import InsertLinkIcon from '@mui/icons-material/InsertLink'
+import {Account, Category, Contract, RecordType} from "../app/types";
 
 interface RecordGridToolbar {
     onFilterModelChange: Dispatch<SetStateAction<GridFilterModel>>

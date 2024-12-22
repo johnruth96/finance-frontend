@@ -4,14 +4,14 @@ import {
     connectDetailViewWithRouter,
     DetailViewComponent,
 } from '../common/framework/DetailView'
-import { Contract } from '../finance/app/types'
 import { getPaymentCycleDisplay } from '../input/PaymentCycleInput'
 import { AmountDisplay } from '../AmountDisplay'
 import { CategoryDisplayContainer } from '../CategoryDisplay'
 import { ValueDisplay } from '../ValueDisplay'
 import { Box, Typography } from '@mui/material'
 import { GridFilterModel } from '@mui/x-data-grid'
-import { RecordGridView } from '../views/RecordGrid'
+import { RecordGridView } from './RecordGrid'
+import {Contract} from "../app/types";
 
 const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
     const initialFilterModel: GridFilterModel = {

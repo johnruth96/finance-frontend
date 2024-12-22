@@ -4,10 +4,10 @@ import {
     connectDetailViewWithRouter,
     DetailViewComponent,
 } from '../common/framework/DetailView'
-import { Contract } from '../finance/app/types'
 import { ContractForm } from '../forms/ContractForm'
-import { useUpdateContractMutation } from '../finance/app/api'
+import { useUpdateContractMutation } from '../app/api'
 import { useNavigate } from 'react-router-dom'
+import {Contract} from "../app/types";
 
 const ContractUpdateView = ({ object }: DetailViewComponent<Contract>) => {
     const [updateContract, queryState] = useUpdateContractMutation()

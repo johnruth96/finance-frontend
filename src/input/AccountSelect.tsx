@@ -3,8 +3,8 @@ import {
     ModelSelect,
     ModelSelectProps,
 } from '../common/forms/createModelSelect'
-import { Account } from '../finance/app/types'
 import React, { useEffect } from 'react'
+import {Account} from "../app/types";
 
 export const AccountSelectComponent = ({
     ...props

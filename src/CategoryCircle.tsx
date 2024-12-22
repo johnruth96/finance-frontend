@@ -1,7 +1,7 @@
-import { useGetCategorysQuery } from './finance/app/api'
+import { useGetCategorysQuery } from './app/api'
 import React from 'react'
-import { Category } from './finance/app/types'
 import CircleIcon from '@mui/icons-material/Circle'
+import {Category} from "./app/types";
 
 type CategoryCircleProps =
     | { color: string }

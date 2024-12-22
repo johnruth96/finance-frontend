@@ -1,8 +1,8 @@
-import {Category, RecordType} from "../../finance/app/types";
 import React from "react";
 import {AmountDisplay} from "../../AmountDisplay";
-import {useGetCategorysQuery} from "../../finance/app/api";
+import {useGetCategorysQuery} from "../../app/api";
 import {adaRound, computeIncome} from "../../aggregate";
+import {Category, RecordType} from "../../app/types";
 
 export const CapitalGainsView = ({objects}: {
     objects: RecordType[]

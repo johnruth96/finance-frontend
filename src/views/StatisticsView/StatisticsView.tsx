@@ -3,7 +3,6 @@ import {
     connectListView,
     ListViewComponent,
 } from '../../common/framework/ListView'
-import { RecordType } from '../../finance/app/types'
 import _, { filter } from 'lodash'
 import {
     Box,
@@ -14,7 +13,7 @@ import {
     Typography,
 } from '@mui/material'
 import { LineChart } from '@mui/x-charts'
-import { useGetCategorysQuery } from '../../finance/app/api'
+import { useGetCategorysQuery } from '../../app/api'
 import { BalanceView } from './BalanceView'
 import dayjs from 'dayjs'
 import { blue, red } from '@mui/material/colors'
@@ -29,6 +28,7 @@ import { IncomeCategoryPieChart } from './IncomeCategoryPieChart'
 import { ExpenseCategoryPieChart } from './ExpenseCategoryPieChart'
 import { MaxExpenseView } from './MaxExpenseView'
 import { CapitalGainsView } from './CapitalGainsView'
+import {RecordType} from "../../app/types";
 
 export const StatBox = ({
     label,

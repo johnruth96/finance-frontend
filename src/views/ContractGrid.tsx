@@ -1,4 +1,3 @@
-import { Account, Category, Contract } from '../finance/app/types'
 import React from 'react'
 import { AmountDisplay } from '../AmountDisplay'
 
@@ -6,7 +5,7 @@ import {
     useGetAccountsQuery,
     useGetCategorysQuery,
     useGetContractsQuery,
-} from '../finance/app/api'
+} from '../app/api'
 import { CategoryDisplay } from '../CategoryDisplay'
 import { Box } from '@mui/material'
 import {
@@ -22,6 +21,7 @@ import dayjs from 'dayjs'
 import { Link } from 'react-router-dom'
 import { PAYMENT_CYCLES } from '../input/PaymentCycleInput'
 import { round } from 'lodash'
+import {Account, Category, Contract} from "../app/types";
 
 const ContractGridToolbar = ({}) => {
     return (

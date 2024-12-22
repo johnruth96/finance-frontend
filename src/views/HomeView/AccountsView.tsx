@@ -1,8 +1,8 @@
 import React from "react";
-import {Account, RecordType} from "../../finance/app/types";
 import {Box, Grid, Paper, Stack, Typography, TypographyTypeMap} from "@mui/material";
-import {BalanceView} from "../../views/StatisticsView/BalanceView";
-import {useGetAccountsQuery} from "../../finance/app/api";
+import {BalanceView} from "../StatisticsView/BalanceView";
+import {useGetAccountsQuery} from "../../app/api";
+import {Account, RecordType} from "../../app/types";
 
 interface AccountViewProps {
     name: string,

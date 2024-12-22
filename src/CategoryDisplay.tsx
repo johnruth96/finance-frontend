@@ -1,4 +1,4 @@
-import { useGetCategorysQuery } from './finance/app/api'
+import { useGetCategorysQuery } from './app/api'
 import React from 'react'
 import { CategoryCircle } from './CategoryCircle'
 import { Skeleton, Typography } from '@mui/material'

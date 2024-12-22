@@ -1,7 +1,7 @@
 import React from 'react'
 import {Page} from '../common/shared/Page'
 import dayjs from 'dayjs'
-import {RecordGridView} from '../views/RecordGrid'
+import {RecordGridView} from './RecordGrid'
 import {GridFilterModel} from '@mui/x-data-grid'
 
 export default ({}) => {

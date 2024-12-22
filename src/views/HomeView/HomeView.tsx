@@ -4,15 +4,15 @@ import {
     connectListView,
     ListViewComponent,
 } from '../../common/framework/ListView'
-import { RecordType } from '../../finance/app/types'
-import ContractPaymentView from '../../views/ContractNextPaymentView'
+import ContractPaymentView from '../ContractNextPaymentView'
 import dayjs from 'dayjs'
 import { Box, Grid, Typography } from '@mui/material'
-import { IncomeCategoryPieChart } from '../../views/StatisticsView/IncomeCategoryPieChart'
-import { ExpenseCategoryPieChart } from '../../views/StatisticsView/ExpenseCategoryPieChart'
+import { IncomeCategoryPieChart } from '../StatisticsView/IncomeCategoryPieChart'
+import { ExpenseCategoryPieChart } from '../StatisticsView/ExpenseCategoryPieChart'
 import { AccountsView } from './AccountsView'
 
 import {LogoutButton} from "../../auth/LogoutButton";
+import {RecordType} from "../../app/types";
 
 const HomeView = ({ objects }: ListViewComponent<RecordType>) => {
     return (

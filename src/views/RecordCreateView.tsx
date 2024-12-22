@@ -1,6 +1,6 @@
 import React from "react";
 import {Page} from "../common/shared/Page";
-import {useCreateRecordMutation} from "../finance/app/api";
+import {useCreateRecordMutation} from "../app/api";
 import {RecordForm} from "../forms/RecordForm";
 
 

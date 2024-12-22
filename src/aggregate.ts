@@ -1,5 +1,6 @@
 import {filter, map, reverse, round, sortBy, sum} from "lodash";
-import {Category, RecordType} from "./finance/app/types";
+
+import {Category, RecordType} from "./app/types";
 
 export interface CategoryAggregation {
     label: string

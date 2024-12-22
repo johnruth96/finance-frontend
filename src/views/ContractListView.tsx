@@ -4,7 +4,6 @@ import {
     connectListView,
     ListViewComponent,
 } from '../common/framework/ListView'
-import { Contract } from '../finance/app/types'
 import { filter, round, sortBy, sumBy } from 'lodash'
 import { CategoryCircle } from '../CategoryCircle'
 import { useNavigate } from 'react-router-dom'
@@ -20,8 +19,9 @@ import {
 import red from '@mui/material/colors/red'
 import WarningIcon from '@mui/icons-material/Warning'
 import dayjs from 'dayjs'
-import { ContractGrid } from '../views/ContractGrid'
+import { ContractGrid } from './ContractGrid'
 import { GridFilterModel } from '@mui/x-data-grid'
+import {Contract} from "../app/types";
 
 const ContractAutoRenewalListItem = ({ object }: { object: Contract }) => {
     const navigate = useNavigate()

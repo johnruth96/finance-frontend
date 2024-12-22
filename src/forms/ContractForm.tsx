@@ -1,4 +1,3 @@
-import { Contract } from '../finance/app/types'
 import { CategorySelect } from '../input/CategorySelect'
 import AmountInput from '../input/AmountInput'
 import { PaymentCycleInput } from '../input/PaymentCycleInput'
@@ -15,6 +14,7 @@ import { AccountSelect } from '../input/AccountSelect'
 import { DatePicker } from '@mui/x-date-pickers'
 import { ProgressButton } from '../common/shared/ProgressButton'
 import { ApiError } from '../common/ApiError'
+import {Contract} from "../app/types";
 
 export interface ContractFormProps {
     onSubmit: (value: Partial<Contract>) => void

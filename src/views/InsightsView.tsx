@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react'
-import { Page } from '../common/shared/Page'
+import React, {useMemo, useState} from 'react'
+import {Page} from '../common/shared/Page'
 import dayjs from 'dayjs'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
-import { Grid } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
-import AnalysisView from '../views/StatisticsView/StatisticsView'
+import {Grid} from '@mui/material'
+import {DatePicker} from '@mui/x-date-pickers'
+import StatisticsView from './StatisticsView/StatisticsView'
 
 export const InsightsView = ({}) => {
     const [account, setAccount] = useState('all')
@@ -54,7 +54,7 @@ export const InsightsView = ({}) => {
     return (
         <Page title={'Insights'} back menu={menu}>
             {/* Input */}
-            <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid container spacing={2} sx={{mb: 3}}>
                 <Grid item xs={12} sm>
                     <TextField
                         label={'Konto'}
@@ -83,7 +83,7 @@ export const InsightsView = ({}) => {
                 </Grid>
             </Grid>
 
-            <AnalysisView searchParams={searchParams} />
+            <StatisticsView searchParams={searchParams}/>
         </Page>
     )
 }

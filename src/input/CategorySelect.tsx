@@ -2,10 +2,10 @@ import {
     createModelSelect,
     ModelSelectProps,
 } from '../common/forms/createModelSelect'
-import { Category } from '../finance/app/types'
 import React, { useMemo } from 'react'
 import { MenuItem, TextField } from '@mui/material'
 import { getCategorySubTree } from '../category'
+import {Category} from "../app/types";
 
 export type CategorySelectProps = ModelSelectProps<Category> & {
     disableMain?: boolean

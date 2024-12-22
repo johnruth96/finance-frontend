@@ -1,4 +1,4 @@
-import {Category} from "./finance/app/types";
+import {Category} from "./app/types";
 
 export const getCategorySubTree = (category: Category, categories: Category[]) => {
     const children = categories.filter(c => c.parent === category.id)

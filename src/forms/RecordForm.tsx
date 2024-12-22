@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Contract, RecordType } from '../finance/app/types'
-import { useGetContractsQuery } from '../finance/app/api'
+import { useGetContractsQuery } from '../app/api'
 import { ContractSelect } from '../input/ContractSelect'
 import { CategorySelect } from '../input/CategorySelect'
 import AmountInput from '../input/AmountInput'
@@ -12,6 +11,7 @@ import { TextField, ThemeProvider } from '@mui/material'
 import { AccountSelect } from '../input/AccountSelect'
 import { theme } from '../index'
 import { ApiError } from '../common/ApiError'
+import {Contract, RecordType} from "../app/types";
 
 export interface RecordFormProps {
     onSubmit: (value: Partial<RecordType>) => void

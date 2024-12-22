@@ -2,9 +2,8 @@ import {
     connectListView,
     ListViewComponent,
 } from '../common/framework/ListView'
-import { Contract, RecordType } from '../finance/app/types'
 import { filter } from 'lodash'
-import { useCreateRecordMutation } from '../finance/app/api'
+import { useCreateRecordMutation } from '../app/api'
 import { formatDate } from '../common/datetime'
 import { CategoryCircle } from '../CategoryCircle'
 import React from 'react'
@@ -20,6 +19,7 @@ import { enqueueSnackbar } from 'notistack'
 import dayjs from 'dayjs'
 import { ProgressButton } from '../common/shared/ProgressButton'
 import { AmountDisplay } from '../AmountDisplay'
+import {Contract, RecordType} from "../app/types";
 
 const ContractCard = ({ object }: { object: Contract }) => {
     const [createRecord, { isLoading, isError, isSuccess }] =

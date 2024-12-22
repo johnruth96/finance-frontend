@@ -1,4 +1,4 @@
-import { useGetSubjectCategoryPairsQuery } from '../finance/app/api'
+import { useGetSubjectCategoryPairsQuery } from '../app/api'
 import React, { useMemo } from 'react'
 import { withValidation } from '../common/forms/withValidation'
 import { Autocomplete, IconButton } from '@mui/material'
