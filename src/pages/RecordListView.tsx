@@ -1,15 +1,10 @@
 import React from 'react'
-import { Page } from '../common/shared/Page'
-import UploadIcon from '@mui/icons-material/Upload'
+import {Page} from '../common/shared/Page'
 import dayjs from 'dayjs'
-import { RecordGridView } from '../views/RecordGrid'
-import { GridFilterModel } from '@mui/x-data-grid'
+import {RecordGridView} from '../views/RecordGrid'
+import {GridFilterModel} from '@mui/x-data-grid'
 
 export default ({}) => {
-    const menu = [
-        { icon: <UploadIcon />, label: 'Importieren', to: '/records/bulk/' },
-    ]
-
     const initialFilterModel: GridFilterModel = {
         items: [
             {
@@ -26,8 +21,8 @@ export default ({}) => {
     }
 
     return (
-        <Page title={'Buchungen'} menu={menu}>
-            <RecordGridView filterModel={initialFilterModel} />
+        <Page title={'Buchungen'}>
+            <RecordGridView filterModel={initialFilterModel}/>
         </Page>
     )
 }

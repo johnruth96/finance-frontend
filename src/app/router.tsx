@@ -3,7 +3,6 @@ import App from '../App'
 import React from 'react'
 import HomeView from '../pages/HomeView/HomeView'
 import RecordListView from '../pages/RecordListView'
-import {RecordBulkCreateView} from '../pages/RecordBulkCreateView/RecordBulkCreateView'
 import {RecordCreateView} from '../pages/RecordCreateView'
 import RecordUpdateView from '../pages/RecordUpdateView'
 import ContractListView from '../pages/ContractListView'
@@ -27,10 +26,6 @@ export const routes = [
             {
                 path: 'records/',
                 element: <RecordListView/>,
-            },
-            {
-                path: 'records/bulk/',
-                element: <RecordBulkCreateView/>,
             },
             {
                 path: 'records/add/',
