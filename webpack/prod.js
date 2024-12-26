@@ -11,6 +11,6 @@ module.exports = merge(common, {
         publicPath: '/',
     },
     optimization: {
-        minimize: true,
+        minimize: false,
     },
 })

@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 COPY --from=config config.ts src/app/config.ts
-RUN npm run build
+RUN NODE_OPTIONS=--max_old_space_size=1000 npm run build
 
 # Production stage
 FROM nginx:stable-alpine AS production

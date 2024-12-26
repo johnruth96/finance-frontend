@@ -1,26 +1,21 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
-import {API_BASE, OIDC_CONFIG} from "./config";
+import {API_BASE} from "./config";
 import {createModelEndpoint, defaultActions, readOnlyActions} from "../common/framework/api";
 import {Account, Category, Contract, RecordType} from "./types";
+import {getAccessToken} from '../auth/token';
 
-const getSessionKey = () => {
-    return `oidc.user:${OIDC_CONFIG.authority}:${OIDC_CONFIG.client_id}`
-}
 
 export const baseApi = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
         baseUrl: API_BASE,
         prepareHeaders: (headers, {}) => {
-            const sessionKey = sessionStorage.getItem(getSessionKey())
+            const accessToken = getAccessToken()
 
-            if (sessionKey !== null) {
-                const data = JSON.parse(sessionKey)
-                const accessToken = data.access_token
-                if (accessToken) {
-                    headers.set('Authorization', `Bearer ${accessToken}`)
-                }
+            if (accessToken !== null) {
+                headers.set('Authorization', `Bearer ${accessToken}`)
             }
+
         },
     }),
     tagTypes: ["Record"],
