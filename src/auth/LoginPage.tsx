@@ -1,6 +1,5 @@
 import {useAuth} from "react-oidc-context";
-import {Page} from "./Page";
-import {Button} from "@mui/material";
+import {Box, Button, Container} from "@mui/material";
 import React from "react";
 
 export const LoginPage = () => {
@@ -10,7 +9,7 @@ export const LoginPage = () => {
         signinRedirect()
     }
 
-    return <Page>
-        <Button onClick={handleClick} variant={"contained"}>Anmelden</Button>
-    </Page>
+    return <Box sx={{p: 2}}>
+        <Button onClick={handleClick} variant={"contained"}>Anmelden mit SSO</Button>
+    </Box>
 }
