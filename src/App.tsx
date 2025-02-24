@@ -8,7 +8,7 @@ import {NavigationList} from "./core/nav/NavigationList";
 export const App = () => {
     return (
         <AuthProvider>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{display: "flex", height: "100%"}}>
                 <Drawer
                     sx={{
                         width: 250,

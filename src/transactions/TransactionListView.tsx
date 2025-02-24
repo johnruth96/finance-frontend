@@ -1,19 +1,17 @@
 import {GridRowId, GridToolbar} from '@mui/x-data-grid-premium'
 import React, {useState} from 'react'
 import {GridRowSelectionModel} from '@mui/x-data-grid/models/gridRowSelectionModel'
-import {Button} from '@mui/material'
+import {Alert, Button} from '@mui/material'
 import {SyncAlt} from '@mui/icons-material'
 import {TransactionGrid} from './TransactionGrid'
 import {getDetailPanelContent} from './TransactionGridDetailPanel'
 import {TransactionState} from './types'
 import {Page} from "../core/Page";
+import {useCounterBookingTransactionMutation, useGetTransactionsQuery} from "../app/api";
 
 export const TransactionListView = ({}) => {
-    // TODO: Implement
-    // const [counterBooking, {}] = useCounterBookingTransactionMutation()
-    const counterBooking = (rowSelectionModel: number[]) => {
-
-    }
+    const {data, isError, error, isLoading} = useGetTransactionsQuery()
+    const [counterBooking, {}] = useCounterBookingTransactionMutation()
 
     const [rowSelectionModel, setRowSelectionModel] = useState<
         readonly GridRowId[]
@@ -39,7 +37,12 @@ export const TransactionListView = ({}) => {
                 <SyncAlt/> Gegenbuchung
             </Button>
 
+            {isError && <Alert severity={"error"} sx={{mb: 3}}>{JSON.stringify(error)}</Alert>}
+
+            {isLoading && <Alert severity={"info"} sx={{mb: 3}}>Laden ...</Alert>}
+
             <TransactionGrid
+                transactions={data ?? []}
                 checkboxSelection
                 rowSelection
                 pagination
@@ -73,6 +76,7 @@ export const TransactionListView = ({}) => {
                         },
                     },
                 }}
+                // @ts-ignore
                 rowSelectionModel={rowSelectionModel}
                 onRowSelectionModelChange={onRowSelectionModelChange}
                 slots={{

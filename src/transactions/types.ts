@@ -1,5 +1,3 @@
-import {RecordType} from "../app/types";
-
 export interface Transaction {
     id: number
     account: string
@@ -28,11 +26,7 @@ export enum TransactionState {
     IGNORED,
 }
 
-// FIXME: Update data model
-export const getTransactionState = (
-    transaction: Transaction,
-    recordById: Record<number, RecordType>
-) => {
+export const getTransactionState = (transaction: Transaction) => {
     if (transaction.is_ignored) {
         return TransactionState.IGNORED
     }
@@ -41,9 +35,9 @@ export const getTransactionState = (
         return TransactionState.NEW
     }
 
-    if (transaction.records.some((id) => recordById[id]?.id === null)) {
+    /*if (transaction.records.some((id) => recordById[id]?.remote_id === null)) {
         return TransactionState.STAGING
-    }
+    }*/
 
     return TransactionState.IMPORTED
 }

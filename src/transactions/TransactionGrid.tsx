@@ -1,16 +1,13 @@
 import {DataGridPremium, DataGridPremiumProps, GridColDef, GridRowClassNameParams,} from '@mui/x-data-grid-premium'
-import React, {useMemo} from 'react'
+import React from 'react'
 import dayjs from 'dayjs'
 import {AmountCell} from './AmountCell'
 import {getTransactionState, Transaction, TransactionState} from "./types";
-import {RecordType} from "../app/types";
+import {HighlightAction} from './TransactionGridAction/HighlightAction';
+import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
 
 
-export interface RowModel extends Transaction {
-    state: TransactionState
-}
-
-const columns: GridColDef<RowModel>[] = [
+const columns: GridColDef<Transaction>[] = [
     {
         field: 'account',
         headerName: 'Konto',
@@ -58,14 +55,11 @@ const columns: GridColDef<RowModel>[] = [
         field: 'state',
         headerName: 'Zustand',
         type: 'singleSelect',
+        valueGetter: (_, row) => getTransactionState(row),
         valueOptions: [
             {
                 value: TransactionState.NEW,
                 label: 'neu',
-            },
-            {
-                value: TransactionState.STAGING,
-                label: 'in Bearbeitung',
             },
             {
                 value: TransactionState.IGNORED,
@@ -83,16 +77,16 @@ const columns: GridColDef<RowModel>[] = [
         flex: 1,
         type: 'actions',
         getActions: ({row}) => [
-            // TODO: Implement
-            /*<IgnoreAction row={row}/>,
+            <IgnoreAction row={row}/>,
             <HighlightAction row={row}/>,
-            <ConnectAction row={row}/>,
+            // TODO: Implement
+            /*<ConnectAction row={row}/>,
             <CreateRecordAction row={row}/>,*/
         ],
     },
 ]
 
-const getRowClassName = ({row}: GridRowClassNameParams<RowModel>) => {
+const getRowClassName = ({row}: GridRowClassNameParams<Transaction>) => {
     let className = ''
 
     if (row.is_highlighted) {
@@ -100,12 +94,12 @@ const getRowClassName = ({row}: GridRowClassNameParams<RowModel>) => {
     } else if (row.is_counter_to !== null) {
         className = 'bg-secondary-subtle'
     } else {
-        if (row.state === TransactionState.NEW) {
+        const state = getTransactionState(row)
+
+        if (state === TransactionState.NEW) {
             className = ''
-        } else if (row.state === TransactionState.IGNORED) {
+        } else if (state === TransactionState.IGNORED) {
             className = 'bg-secondary-subtle'
-        } else if (row.state === TransactionState.STAGING) {
-            className = 'bg-warning-subtle'
         } else {
             className = 'bg-success-subtle'
         }
@@ -116,36 +110,17 @@ const getRowClassName = ({row}: GridRowClassNameParams<RowModel>) => {
 
 interface TransactionGridProps
     extends Omit<DataGridPremiumProps, 'rows' | 'columns'> {
-    transactionIds?: number[]
+    transactions: Transaction[]
 }
 
 export const TransactionGrid = ({
-                                    transactionIds,
+                                    transactions,
                                     ...props
                                 }: TransactionGridProps) => {
-    // TODO: Implement
-    // const transactions = useAppSelector(transactionSelectors.selectAll)
-    // const transactionById = useAppSelector(transactionSelectors.selectEntities)
-    // const recordById = useAppSelector(recordSelectors.selectEntities)
-    const transactions: Transaction[] = []
-    const transactionById: Record<number, Transaction> = {}
-    const recordById: Record<number, RecordType> = {}
-
-    const rows: RowModel[] = useMemo(() => {
-        const transactionList = transactionIds
-            ? transactionIds.map((id) => transactionById[id])
-            : transactions
-
-        return transactionList.map((t) => ({
-            ...t,
-            state: getTransactionState(t, recordById),
-        }))
-    }, [transactions, transactionById, transactionIds, recordById])
-
     return (
         <DataGridPremium
             columns={columns}
-            rows={rows}
+            rows={transactions}
             getRowClassName={getRowClassName}
             {...props}
         />

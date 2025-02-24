@@ -17,16 +17,17 @@ export const NavigationList = () => {
                 to={""}
             />
 
-            <Divider/>
+            <Divider sx={{my: 2}}/>
 
             <NavigationListItem
                 label={'Verträge'}
                 icon={<HistoryEdu/>}
                 to={"contracts/"}
             />
-            <Divider/>
 
-            <NavigationListContainer icon={<LibraryBooksIcon/>} label={"Buchungen"}>
+            <Divider sx={{my: 2}}/>
+
+            <NavigationListContainer icon={<LibraryBooksIcon/>} label={"Haushaltsbuch"}>
                 <NavigationListItem
                     label={'Ausgaben'}
                     to={"records/"}
@@ -37,7 +38,7 @@ export const NavigationList = () => {
                 />
             </NavigationListContainer>
 
-            <Divider/>
+            <Divider sx={{my: 2}}/>
 
             <NavigationListContainer icon={<AccountBalance/>} label={"Bank"}>
                 <NavigationListItem
@@ -45,16 +46,17 @@ export const NavigationList = () => {
                     to={"transactions/"}
                 />
                 <NavigationListItem
-                    label={'Staging Area'}
-                    to={"transactions/staging/"}
-                />
-                <NavigationListItem
                     label={'Import'}
                     to={"transactions/import/"}
                 />
+                <NavigationListItem
+                    label={'Regeln'}
+                    to={"transactions/rules/"}
+                    disabled
+                />
             </NavigationListContainer>
 
-            <Divider/>
+            <Divider sx={{my: 2}}/>
 
             <LogoutListItem/>
         </List>
