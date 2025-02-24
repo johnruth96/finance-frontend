@@ -1,44 +1,29 @@
-import React, { useMemo, useState } from 'react'
-import {
-    connectListView,
-    ListViewComponent,
-} from '../../core/framework/ListView'
-import _, { filter } from 'lodash'
-import {
-    Box,
-    Grid,
-    Paper,
-    ToggleButton,
-    ToggleButtonGroup,
-    Typography,
-} from '@mui/material'
-import { LineChart } from '@mui/x-charts'
-import { useGetCategorysQuery } from '../../app/api'
-import { BalanceView } from './BalanceView'
+import React, {useMemo, useState} from 'react'
+import {connectListView, ListViewComponent,} from '../../core/framework/ListView'
+import _, {filter} from 'lodash'
+import {Box, Grid, Paper, ToggleButton, ToggleButtonGroup, Typography,} from '@mui/material'
+import {LineChart} from '@mui/x-charts'
+import {useGetCategorysQuery} from '../../app/api'
+import {BalanceView} from './BalanceView'
 import dayjs from 'dayjs'
-import { blue, red } from '@mui/material/colors'
-import { CategoryPieChart } from './CategoryPieChart'
-import {
-    CategoryAggregation,
-    computeExpense,
-    computeIncome,
-    getCategoryAggregation,
-} from '../aggregate'
-import { IncomeCategoryPieChart } from './IncomeCategoryPieChart'
-import { ExpenseCategoryPieChart } from './ExpenseCategoryPieChart'
-import { MaxExpenseView } from './MaxExpenseView'
-import { CapitalGainsView } from './CapitalGainsView'
+import {blue, red} from '@mui/material/colors'
+import {CategoryPieChart} from './CategoryPieChart'
+import {CategoryAggregation, computeExpense, computeIncome, getCategoryAggregation,} from '../aggregate'
+import {IncomeCategoryPieChart} from './IncomeCategoryPieChart'
+import {ExpenseCategoryPieChart} from './ExpenseCategoryPieChart'
+import {MaxExpenseView} from './MaxExpenseView'
+import {CapitalGainsView} from './CapitalGainsView'
 import {RecordType} from "../../app/types";
 
 export const StatBox = ({
-    label,
-    value,
-}: {
+                            label,
+                            value,
+                        }: {
     label: string
     value: React.ReactNode
 }) => {
     return (
-        <Paper sx={{ p: 3 }}>
+        <Paper sx={{p: 3}}>
             <Typography variant={'caption'}>{label}</Typography>
             <Typography variant={'h3'}>{value}</Typography>
         </Paper>
@@ -46,8 +31,8 @@ export const StatBox = ({
 }
 
 const CategoryChildrenPieChartView = ({
-    categoryAgg,
-}: {
+                                          categoryAgg,
+                                      }: {
     categoryAgg: CategoryAggregation
 }) => {
     return (
@@ -55,7 +40,7 @@ const CategoryChildrenPieChartView = ({
             <Typography variant={'h6'} align={'center'}>
                 {categoryAgg.label}
             </Typography>
-            <CategoryPieChart dataset={categoryAgg.children} />
+            <CategoryPieChart dataset={categoryAgg.children}/>
         </Box>
     )
 }
@@ -67,10 +52,10 @@ interface BalanceLineChartProps {
 }
 
 export const BalanceLineChart = ({
-    records,
-    groupBy,
-    valueFormatter,
-}: BalanceLineChartProps) => {
+                                     records,
+                                     groupBy,
+                                     valueFormatter,
+                                 }: BalanceLineChartProps) => {
     const dataset = useMemo(() => {
         const dataset: Record<string, number>[] = []
         const recordsByGroup = _.groupBy(records, groupBy)
@@ -123,10 +108,10 @@ export const BalanceLineChart = ({
 }
 
 export const IncomeExpenseLineChart = ({
-    records,
-    groupBy,
-    valueFormatter,
-}: BalanceLineChartProps) => {
+                                           records,
+                                           groupBy,
+                                           valueFormatter,
+                                       }: BalanceLineChartProps) => {
     const dataset = useMemo(() => {
         const recordsByGroup = _.groupBy(records, groupBy)
         const groupedRecords = Object.entries(recordsByGroup)
@@ -151,8 +136,8 @@ export const IncomeExpenseLineChart = ({
                 },
             ]}
             series={[
-                { dataKey: 'expense', label: 'Ausgaben', color: red[500] },
-                { dataKey: 'income', label: 'Einnahmen', color: 'green' },
+                {dataKey: 'expense', label: 'Ausgaben', color: red[500]},
+                {dataKey: 'income', label: 'Einnahmen', color: 'green'},
             ]}
             height={400}
         />
@@ -161,8 +146,8 @@ export const IncomeExpenseLineChart = ({
 
 type GroupingType = 'month' | 'week' | 'year'
 
-const StatisticsView = ({ objects }: ListViewComponent<RecordType>) => {
-    const { data: categories } = useGetCategorysQuery()
+const StatisticsView = ({objects}: ListViewComponent<RecordType>) => {
+    const {data: categories} = useGetCategorysQuery()
     const [grouping, setGrouping] = useState<GroupingType>('month')
 
     const datasetExpense = useMemo(() => {
@@ -197,55 +182,55 @@ const StatisticsView = ({ objects }: ListViewComponent<RecordType>) => {
 
     return (
         <Box>
-            <Box sx={{ mb: 8 }}>
+            <Box sx={{mb: 8}}>
                 <Grid container spacing={2}>
                     <Grid item xs>
                         <StatBox
                             label={'Bilanz'}
-                            value={<BalanceView objects={objects} />}
+                            value={<BalanceView objects={objects}/>}
                         />
                     </Grid>
 
                     <Grid item xs>
                         <StatBox
                             label={'Kapitalerträge'}
-                            value={<CapitalGainsView objects={objects} />}
+                            value={<CapitalGainsView objects={objects}/>}
                         />
                     </Grid>
 
                     <Grid item xs>
                         <StatBox
                             label={'Teuerste Ausgabe'}
-                            value={<MaxExpenseView objects={objects} />}
+                            value={<MaxExpenseView objects={objects}/>}
                         />
                     </Grid>
                 </Grid>
             </Box>
 
-            <Box sx={{ mb: 8 }}>
+            <Box sx={{mb: 8}}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Typography variant={'h6'} align={'center'}>
                             Ausgaben
                         </Typography>
-                        <ExpenseCategoryPieChart records={objects} />
+                        <ExpenseCategoryPieChart records={objects}/>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant={'h6'} align={'center'}>
                             Einnahmen
                         </Typography>
-                        <IncomeCategoryPieChart records={objects} />
+                        <IncomeCategoryPieChart records={objects}/>
                     </Grid>
                 </Grid>
             </Box>
 
-            <Box sx={{ mb: 8 }}>
+            <Box sx={{mb: 8}}>
                 <Typography variant={'h4'}>Ausgaben</Typography>
 
                 <Grid container spacing={2}>
                     {datasetExpense.map((item) => (
                         <Grid item xs={12} sm={6} key={item.label}>
-                            <CategoryChildrenPieChartView categoryAgg={item} />
+                            <CategoryChildrenPieChartView categoryAgg={item}/>
                         </Grid>
                     ))}
                 </Grid>
