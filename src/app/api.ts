@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import {API_BASE} from "./config";
-import {createModelEndpoint, defaultActions, readOnlyActions} from "../common/framework/api";
+import {createModelEndpoint, defaultActions, readOnlyActions} from "../core/framework/api";
 import {Account, Category, Contract, RecordType} from "./types";
 import {getAccessToken} from '../auth/token';
 
