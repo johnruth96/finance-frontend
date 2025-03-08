@@ -37,6 +37,8 @@ export interface RecordType {
     contract: Contract['id'] | null
     date: string
     amount: number
+
+    transactions: number[]
 }
 
 export interface Contract {

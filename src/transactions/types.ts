@@ -21,7 +21,6 @@ export interface Transaction {
 
 export enum TransactionState {
     NEW,
-    STAGING,
     IMPORTED,
     IGNORED,
 }
@@ -34,10 +33,6 @@ export const getTransactionState = (transaction: Transaction) => {
     if (transaction.records.length === 0) {
         return TransactionState.NEW
     }
-
-    /*if (transaction.records.some((id) => recordById[id]?.remote_id === null)) {
-        return TransactionState.STAGING
-    }*/
 
     return TransactionState.IMPORTED
 }

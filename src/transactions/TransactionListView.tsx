@@ -70,7 +70,7 @@ export const TransactionListView = ({}) => {
                                 {
                                     field: 'is_duplicate',
                                     operator: 'is',
-                                    value: false,
+                                    value: "false",
                                 },
                             ],
                         },

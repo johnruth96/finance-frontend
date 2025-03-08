@@ -199,6 +199,21 @@ export const RecordGridView = ({
             aggregable: false,
         },
         {
+            field: 'date_created',
+            headerName: 'Erstellt am',
+            flex: 1,
+            minWidth: 100,
+            type: 'dateTime',
+            valueFormatter: (value) => {
+                if (value) {
+                    return dayjs(value).format('DD.MM.YYYY HH:mm')
+                } else {
+                    return ''
+                }
+            },
+            aggregable: false,
+        },
+        {
             field: 'category',
             headerName: 'Kategorie',
             flex: 1,
@@ -258,6 +273,15 @@ export const RecordGridView = ({
             })),
             aggregable: false,
         },
+        {
+            field: 'transaction_count',
+            headerName: 'Transaktionen',
+            flex: 1,
+            minWidth: 100,
+            type: 'number',
+            valueGetter: (_, row) => row.transactions.length,
+            aggregable: true,
+        },
     ]
 
     const isLoading =
@@ -294,6 +318,8 @@ export const RecordGridView = ({
                             id: false,
                             contract: false,
                             account: false,
+                            date_created: false,
+                            transaction_count: false,
                         },
                     },
                     aggregation: {

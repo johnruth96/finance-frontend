@@ -12,6 +12,7 @@ import ContractUpdateView from '../contracts/views/ContractUpdateView'
 import {InsightsView} from '../statistics/InsightsView'
 import {TransactionListView} from "../transactions/TransactionListView";
 import {ImportView} from "../transactions/ImportView";
+import {LatestRecordListView} from "../transactions/LatestRecordListView";
 
 export const routes = [
     {
@@ -69,6 +70,10 @@ export const routes = [
             {
                 path: 'transactions/',
                 element: <TransactionListView/>,
+            },
+            {
+                path: 'transactions/latest/',
+                element: <LatestRecordListView/>,
             },
             {
                 path: 'transactions/import/',

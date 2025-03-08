@@ -46,6 +46,10 @@ export const NavigationList = () => {
                     to={"transactions/"}
                 />
                 <NavigationListItem
+                    label={'Zuletzt Erstellt'}
+                    to={"transactions/latest/"}
+                />
+                <NavigationListItem
                     label={'Import'}
                     to={"transactions/import/"}
                 />

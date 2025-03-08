@@ -37,7 +37,7 @@
     "@mui/x-date-pickers": "^6.18.2",
     "@reduxjs/toolkit": "^1.8.1",
     "@rschpdr/react-money-input": "^1.0.0",
-    "bootstrap": "^5.2.0",
+    "bootstrap": "^5.3.3",
     "currency.js": "^2.0.4",
     "d3": "^7.8.2",
     "dayjs": "^1.11.10",

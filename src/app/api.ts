@@ -53,12 +53,12 @@ export const baseApi = createApi({
          Transaction
          */
         getTransactions: builder.query<Transaction[], void>({
-            query: () => `transactions/`,
+            query: () => `transactions/transactions/`,
             providesTags: ['Transaction'],
         }),
         hideTransaction: builder.mutation<Transaction, number>({
             query: (id) => ({
-                url: `transactions/${id}/hide/`,
+                url: `transactions/transactions/${id}/hide/`,
                 method: 'POST',
             }),
             async onQueryStarted(_, {dispatch, queryFulfilled}) {
@@ -67,7 +67,7 @@ export const baseApi = createApi({
         }),
         showTransaction: builder.mutation<Transaction, number>({
             query: (id) => ({
-                url: `transactions/${id}/show/`,
+                url: `transactions/transactions/${id}/show/`,
                 method: 'POST',
             }),
             async onQueryStarted(_, {dispatch, queryFulfilled}) {
@@ -76,7 +76,7 @@ export const baseApi = createApi({
         }),
         bookmarkTransaction: builder.mutation<Transaction, number>({
             query: (id) => ({
-                url: `transactions/${id}/bookmark/`,
+                url: `transactions/transactions/${id}/bookmark/`,
                 method: 'POST',
             }),
             async onQueryStarted(_, {dispatch, queryFulfilled}) {
@@ -85,7 +85,7 @@ export const baseApi = createApi({
         }),
         removeBookmarkTransaction: builder.mutation<Transaction, number>({
             query: (id) => ({
-                url: `transactions/${id}/unbookmark/`,
+                url: `transactions/transactions/${id}/unbookmark/`,
                 method: 'POST',
             }),
             async onQueryStarted(_, {dispatch, queryFulfilled}) {
@@ -94,7 +94,7 @@ export const baseApi = createApi({
         }),
         counterBookingTransaction: builder.mutation<void, number[]>({
             query: (payload) => ({
-                url: `transactions/counter_booking/`,
+                url: `transactions/transactions/counter_booking/`,
                 method: 'POST',
                 body: payload,
             }),
@@ -102,7 +102,7 @@ export const baseApi = createApi({
         }),
         importCsv: builder.mutation<void, string[]>({
             query: (contents) => ({
-                url: `transactions/import/`,
+                url: `transactions/transactions/import/`,
                 method: 'POST',
                 body: contents,
             }),
@@ -111,6 +111,8 @@ export const baseApi = createApi({
     }),
 })
 
+// TODO: Remove factory and move them to the API object
+// FIXME: Invalidate Transaction cache after creating a record
 createModelEndpoint<RecordType>('Record', 'records/', defaultActions)
 createModelEndpoint<Contract>('Contract', 'contracts/', defaultActions)
 createModelEndpoint<Category>('Category', 'categories/', defaultActions)

@@ -5,6 +5,7 @@ import {AmountCell} from './AmountCell'
 import {getTransactionState, Transaction, TransactionState} from "./types";
 import {HighlightAction} from './TransactionGridAction/HighlightAction';
 import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
+import {CreateRecordAction} from "./TransactionGridAction/CreateRecordAction";
 
 
 const columns: GridColDef<Transaction>[] = [
@@ -80,8 +81,8 @@ const columns: GridColDef<Transaction>[] = [
             <IgnoreAction row={row}/>,
             <HighlightAction row={row}/>,
             // TODO: Implement
-            /*<ConnectAction row={row}/>,
-            <CreateRecordAction row={row}/>,*/
+            //<ConnectAction row={row}/>,
+            <CreateRecordAction row={row}/>,
         ],
     },
 ]
