@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react'
-import { Page } from '../../core/Page'
-import {
-    connectDetailViewWithRouter,
-    DetailViewComponent,
-} from '../../core/framework/DetailView'
-import { RecordForm } from '../RecordForm'
-import { useUpdateRecordMutation } from '../../app/api'
-import { useNavigate } from 'react-router-dom'
+import React, {useEffect} from 'react'
+import {Page} from '../../core/Page'
+import {DetailViewComponent,} from '../../core/framework/DetailView'
+import {RecordForm} from '../RecordForm'
+import {useGetRecordQuery, useUpdateRecordMutation} from '../../app/api'
+import {useNavigate, useParams} from 'react-router-dom'
 import {RecordType} from "../../app/types";
+import {QueryProvider} from "../../core/framework/QueryProvider";
 
-const RecordUpdateView = ({ object }: DetailViewComponent<RecordType>) => {
+const RecordUpdateView = ({object}: DetailViewComponent<RecordType>) => {
     const [updateRecord, queryState] = useUpdateRecordMutation()
     const navigate = useNavigate()
 
@@ -31,6 +29,13 @@ const RecordUpdateView = ({ object }: DetailViewComponent<RecordType>) => {
     )
 }
 
-export default connectDetailViewWithRouter(RecordUpdateView, {
-    model: 'Record',
-})
+export default () => {
+    const params = useParams()
+    const {data, ...hookResult} = useGetRecordQuery(params.id ? parseInt(params.id) : -1)
+
+    return (
+        <QueryProvider {...hookResult}>
+            <RecordUpdateView object={data}/>
+        </QueryProvider>
+    )
+}

@@ -127,7 +127,7 @@ const connectListViewPagination = <T extends { id: number }>(
     }
 }
 
-// TODO: Add possibility for queries?
+// TODO: Deprecate
 /**
  * The connectListView method binds a View component (taking a list of objects) to the API.
  * The method requires a model name `model` and derives the API endpoint name from it.

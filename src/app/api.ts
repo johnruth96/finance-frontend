@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import {API_BASE} from "./config";
-import {createModelEndpoint, defaultActions, readOnlyActions} from "../core/framework/api";
+import {createModelEndpoint, defaultActions} from "../core/framework/api";
 import {Account, Category, Contract, RecordType} from "./types";
 import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
@@ -40,8 +40,45 @@ export const baseApi = createApi({
 
         },
     }),
-    tagTypes: ["Record", "Transaction"],
+    tagTypes: ["Record", "Transaction", "Account"],
     endpoints: (builder) => ({
+        /*
+         Account
+         */
+        getAccounts: builder.query<Account[], void>({
+            query: () => `accounts/`,
+            providesTags: ['Account'],
+        }),
+        /*
+         Record
+         */
+        getRecord: builder.query<RecordType, number>({
+            query: (id) => `records/${id}/`,
+            providesTags: ['Record'],
+        }),
+        getRecords: builder.query<RecordType[], void>({
+            query: () => `records/`,
+            providesTags: ['Record'],
+        }),
+        updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({
+            query: ({id, ...payload}) => ({
+                url: `records/${id}/`,
+                method: 'PATCH',
+                body: payload,
+            }),
+            invalidatesTags: ["Record"],
+        }),
+        createRecord: builder.mutation<
+            RecordType,
+            Omit<RecordType, 'id'> & Partial<RecordType>
+        >({
+            query: (payload) => ({
+                url: "records/",
+                method: 'POST',
+                body: payload,
+            }),
+            invalidatesTags: ["Record", "Transaction"],
+        }),
         getSubjectCategoryPairs: builder.query<
             Array<[string, number, number | null]>,
             void
@@ -112,11 +149,8 @@ export const baseApi = createApi({
 })
 
 // TODO: Remove factory and move them to the API object
-// FIXME: Invalidate Transaction cache after creating a record
-createModelEndpoint<RecordType>('Record', 'records/', defaultActions)
 createModelEndpoint<Contract>('Contract', 'contracts/', defaultActions)
 createModelEndpoint<Category>('Category', 'categories/', defaultActions)
-createModelEndpoint<Account>('Account', 'accounts/', readOnlyActions)
 
 export const {
     // Account
@@ -129,6 +163,7 @@ export const {
     useUpdateContractMutation,
     useDeleteContractMutation,
     // Record
+    useGetRecordQuery,
     useGetRecordsQuery,
     useUpdateRecordMutation,
     useCreateRecordMutation,
