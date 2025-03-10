@@ -1,28 +1,14 @@
 import React from 'react'
 import {Page} from '../../core/Page'
-import dayjs from 'dayjs'
-import {RecordGridView} from './RecordGrid'
-import {GridFilterModel} from '@mui/x-data-grid'
+import {useGetRecordsQuery} from "../../app/api";
+import {RecordGrid} from "../RecordGrid/RecordGrid";
 
 export default ({}) => {
-    const initialFilterModel: GridFilterModel = {
-        items: [
-            {
-                field: 'date',
-                operator: 'onOrAfter',
-                value: dayjs.utc().startOf('month').toDate(),
-            },
-            {
-                field: 'date',
-                operator: 'onOrBefore',
-                value: dayjs.utc().endOf('month').toDate(),
-            },
-        ],
-    }
+    const {data, isLoading} = useGetRecordsQuery()
 
     return (
         <Page title={'Buchungen'}>
-            <RecordGridView filterModel={initialFilterModel}/>
+            <RecordGrid records={data} loading={isLoading}/>
         </Page>
     )
 }

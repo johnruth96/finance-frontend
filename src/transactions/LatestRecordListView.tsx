@@ -2,10 +2,10 @@ import React from 'react'
 import {Page} from "../core/Page";
 import {GridFilterModel} from "@mui/x-data-grid";
 import dayjs from "dayjs";
-import {RecordGridView} from "../records/views/RecordGrid";
+import {AllRecordGrid} from "../records/RecordGrid/AllRecordGrid";
 
 export const LatestRecordListView = ({}) => {
-    const initialFilterModel: GridFilterModel = {
+    const filterModel: GridFilterModel = {
         items: [
             {
                 field: 'date_created',
@@ -22,7 +22,7 @@ export const LatestRecordListView = ({}) => {
 
     return (
         <Page title={'Zuletzt Erstellt'}>
-            <RecordGridView filterModel={initialFilterModel}/>
+            <AllRecordGrid filterModel={filterModel}/>
         </Page>
     )
 }

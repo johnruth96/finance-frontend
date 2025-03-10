@@ -1,20 +1,17 @@
 import React from 'react'
-import { Page } from '../../core/Page'
-import {
-    connectDetailViewWithRouter,
-    DetailViewComponent,
-} from '../../core/framework/DetailView'
-import { getPaymentCycleDisplay } from '../PaymentCycleInput'
-import { AmountDisplay } from '../../core/AmountDisplay'
-import { CategoryDisplayContainer } from '../../categories/CategoryDisplay'
-import { ValueDisplay } from '../ValueDisplay'
-import { Box, Typography } from '@mui/material'
-import { GridFilterModel } from '@mui/x-data-grid'
-import { RecordGridView } from '../../records/views/RecordGrid'
+import {Page} from '../../core/Page'
+import {connectDetailViewWithRouter, DetailViewComponent,} from '../../core/framework/DetailView'
+import {getPaymentCycleDisplay} from '../PaymentCycleInput'
+import {AmountDisplay} from '../../core/AmountDisplay'
+import {CategoryDisplayContainer} from '../../categories/CategoryDisplay'
+import {ValueDisplay} from '../ValueDisplay'
+import {Box, Typography} from '@mui/material'
+import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
+import {AllRecordGrid} from "../../records/RecordGrid/AllRecordGrid";
 
-const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
-    const initialFilterModel: GridFilterModel = {
+const ContractDetailView = ({object}: DetailViewComponent<Contract>) => {
+    const filterModel: GridFilterModel = {
         items: [
             {
                 field: 'contract',
@@ -29,10 +26,10 @@ const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
             title={object.name}
             back
             updateUrl={`update/`}
-            deleteModel={{ model: 'Contract', id: object.id }}
+            deleteModel={{model: 'Contract', id: object.id}}
         >
-            <Box sx={{ mb: 3 }}>
-                <ValueDisplay label={'Name'} value={object.name} />
+            <Box sx={{mb: 3}}>
+                <ValueDisplay label={'Name'} value={object.name}/>
 
                 <ValueDisplay
                     label={'Status'}
@@ -43,7 +40,7 @@ const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
                 />
 
                 <ValueDisplay label={'Kategorie'}>
-                    <CategoryDisplayContainer id={object.category} />
+                    <CategoryDisplayContainer id={object.category}/>
                 </ValueDisplay>
 
                 <ValueDisplay
@@ -85,12 +82,12 @@ const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
                 )}
             </Box>
 
-            <Box sx={{ mb: 3 }}>
+            <Box sx={{mb: 3}}>
                 <Typography variant={'h6'}>Zahlung</Typography>
 
                 <ValueDisplay
                     label={'Betrag'}
-                    value={<AmountDisplay value={object.amount} />}
+                    value={<AmountDisplay value={object.amount}/>}
                 />
 
                 <ValueDisplay
@@ -107,7 +104,7 @@ const ContractDetailView = ({ object }: DetailViewComponent<Contract>) => {
 
             <Box>
                 <Typography variant={'h6'}>Buchungen</Typography>
-                <RecordGridView filterModel={initialFilterModel} />
+                <AllRecordGrid filterModel={filterModel}/>
             </Box>
         </Page>
     )
