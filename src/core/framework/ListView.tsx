@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { baseApi } from '../../app/api'
 import { ApiError } from '../ApiError'
 import { map } from 'lodash'
-import { ListResponse } from '../../app/types'
+import { Pagination } from '../../app/types'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { CircularProgress, Skeleton, Typography } from '@mui/material'
 
@@ -68,7 +68,7 @@ const connectListViewPagination = <T extends { id: number }>(
 
             trigger(queryParams)
                 .unwrap()
-                .then((response: ListResponse<T>) => {
+                .then((response: Pagination<T>) => {
                     if (page === 1) {
                         setObjects(response.results)
                     } else {

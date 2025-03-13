@@ -1,9 +1,11 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import {API_BASE} from "./config";
 import {createModelEndpoint, defaultActions} from "../core/framework/api";
-import {Account, Category, Contract, RecordType} from "./types";
+import {Account, Category, Contract, Pagination, RecordType} from "./types";
 import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
+import {GridPaginationModel, GridSortModel} from "@mui/x-data-grid-premium";
+import {GridFilterModel} from "@mui/x-data-grid";
 
 // @ts-ignore
 const updateTransaction = async (dispatch, queryFulfilled) => {
@@ -56,8 +58,48 @@ export const baseApi = createApi({
             query: (id) => `records/${id}/`,
             providesTags: ['Record'],
         }),
-        getRecords: builder.query<RecordType[], void>({
-            query: () => `records/`,
+        getRecords: builder.query<Pagination<RecordType>, GridPaginationModel & {
+            filterModel: GridFilterModel,
+            sortModel: GridSortModel,
+        }>({
+            query: (params) => {
+                const searchParams = new URLSearchParams()
+
+                // Pagination
+                searchParams.set("page", (params.page + 1).toString())
+                searchParams.set("pageSize", params.pageSize.toString())
+
+                // Sorting
+                params.sortModel.forEach(item => {
+                    const key = item.sort === "desc" ? "-" : ""
+                    searchParams.append("sortBy", `${key}${item.field}`)
+                })
+
+                // Filtering
+                params.filterModel.items.forEach(item => {
+                    if (item.operator === "equals" || item.operator === "is") {
+                        searchParams.append(item.field, item.value)
+                    }
+
+                    if (item.operator === "after") {
+                        searchParams.append(`${item.field}__gt`, item.value)
+                    }
+
+                    if (item.operator === "before") {
+                        searchParams.append(`${item.field}__lt`, item.value)
+                    }
+
+                    if (item.operator === "onOrBefore") {
+                        searchParams.append(`${item.field}__lte`, item.value)
+                    }
+
+                    if (item.operator === "onOrAfter") {
+                        searchParams.append(`${item.field}__gte`, item.value)
+                    }
+                })
+
+                return `records?${searchParams}`
+            },
             providesTags: ['Record'],
         }),
         updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({

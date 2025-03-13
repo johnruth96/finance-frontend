@@ -1,6 +1,6 @@
 import { EntityId } from '@reduxjs/toolkit'
 import { baseApi } from '../../app/api'
-import { ListResponse } from '../../app/types'
+import { Pagination } from '../../app/types'
 
 type Action =
     | 'retrieve'
@@ -39,7 +39,7 @@ export const createModelEndpoint = <T extends { id: EntityId }>(
         baseApi.injectEndpoints({
             endpoints: (builder) => ({
                 [listQueryName]: builder.query<
-                    T[] | ListResponse<T>,
+                    T[] | Pagination<T>,
                     | ({
                           page?: number
                       } & Record<string, string>)

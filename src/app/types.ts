@@ -1,7 +1,7 @@
 import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import {SerializedError} from "@reduxjs/toolkit";
 
-export interface ListResponse<T> {
+export interface Pagination<T> {
     count: number
     next: string | null
     previous: string | null
