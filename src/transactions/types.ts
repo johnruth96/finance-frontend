@@ -1,3 +1,5 @@
+import {RecordType} from "../app/types";
+
 export interface Transaction {
     id: number
     account: string
@@ -16,7 +18,7 @@ export interface Transaction {
     // State flags
     is_ignored: boolean
 
-    records: number[]
+    records: RecordType[]
 }
 
 export enum TransactionState {
