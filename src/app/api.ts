@@ -77,23 +77,23 @@ export const baseApi = createApi({
 
                 // Filtering
                 params.filterModel.items.forEach(item => {
-                    if (item.operator === "equals" || item.operator === "is") {
+                    if (item.operator === "equals" || item.operator === "is" || item.operator === "=") {
                         searchParams.append(item.field, item.value)
                     }
 
-                    if (item.operator === "after") {
+                    if (item.operator === "after" || item.operator === ">") {
                         searchParams.append(`${item.field}__gt`, item.value)
                     }
 
-                    if (item.operator === "before") {
+                    if (item.operator === "before" || item.operator === "<") {
                         searchParams.append(`${item.field}__lt`, item.value)
                     }
 
-                    if (item.operator === "onOrBefore") {
+                    if (item.operator === "onOrBefore" || item.operator === "<=") {
                         searchParams.append(`${item.field}__lte`, item.value)
                     }
 
-                    if (item.operator === "onOrAfter") {
+                    if (item.operator === "onOrAfter" || item.operator === ">=") {
                         searchParams.append(`${item.field}__gte`, item.value)
                     }
                 })
@@ -110,10 +110,8 @@ export const baseApi = createApi({
             }),
             invalidatesTags: ["Record"],
         }),
-        createRecord: builder.mutation<
-            RecordType,
-            Omit<RecordType, 'id'> & Partial<RecordType>
-        >({
+        createRecord: builder.mutation<RecordType,
+            Omit<RecordType, 'id'> & Partial<RecordType>>({
             query: (payload) => ({
                 url: "records/",
                 method: 'POST',
@@ -121,10 +119,8 @@ export const baseApi = createApi({
             }),
             invalidatesTags: ["Record", "Transaction"],
         }),
-        getSubjectCategoryPairs: builder.query<
-            Array<[string, number, number | null]>,
-            void
-        >({
+        getSubjectCategoryPairs: builder.query<Array<[string, number, number | null]>,
+            void>({
             query: () => '/records/subjects/',
             providesTags: [{type: 'Record', id: 'LIST'}],
         }),

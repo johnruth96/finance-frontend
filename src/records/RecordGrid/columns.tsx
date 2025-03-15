@@ -16,7 +16,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             headerName: 'ID',
             type: 'string',
             aggregable: false,
-            filterable: true,
         },
         {
             field: 'amount',
@@ -24,7 +23,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
             minWidth: 100,
-            filterable: true,
         },
         {
             field: 'subject',
@@ -44,7 +42,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                     )}
                 </span>
             ),
-            filterable: true,
         },
         {
             field: 'date',
@@ -60,7 +57,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 }
             },
             aggregable: false,
-            filterable: true,
         },
         {
             field: 'date_created',
@@ -76,7 +72,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 }
             },
             aggregable: false,
-            filterable: false,
         },
         {
             field: 'category',
@@ -146,7 +141,6 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'number',
             valueGetter: (_, row) => row.transactions.length,
             aggregable: true,
-            filterable: false,
         },
     ]
 }
