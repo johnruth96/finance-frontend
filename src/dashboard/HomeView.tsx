@@ -1,20 +1,26 @@
 import React from 'react'
 import {Page} from '../core/Page'
-import {connectListView, ListViewComponent,} from '../core/framework/ListView'
 import ContractPaymentView from '../contracts/views/ContractNextPaymentView'
 import dayjs from 'dayjs'
 import {Box, Grid, Typography} from '@mui/material'
 import {IncomeCategoryPieChart} from '../statistics/StatisticsView/IncomeCategoryPieChart'
 import {ExpenseCategoryPieChart} from '../statistics/StatisticsView/ExpenseCategoryPieChart'
-import {AccountsView} from './AccountsView'
 import {RecordType} from "../app/types";
+import {GridFilterModel} from "@mui/x-data-grid";
+import {useGetRecordsQuery} from "../app/api";
+import {QueryProvider} from "../core/framework/QueryProvider";
+import {AccountsView} from "./AccountsView";
 
-const HomeView = ({objects}: ListViewComponent<RecordType>) => {
+interface HomeViewProps {
+    records: RecordType[]
+}
+
+const HomeView = ({records}: HomeViewProps) => {
     return (
         <Page title={dayjs().format('MMMM YYYY')} addUrl={'/records/add/'}>
-            <AccountsView records={objects}/>
+            <AccountsView records={records}/>
 
-            <ContractPaymentView records={objects}/>
+            <ContractPaymentView records={records}/>
 
             <Box>
                 <Grid container spacing={2}>
@@ -22,13 +28,13 @@ const HomeView = ({objects}: ListViewComponent<RecordType>) => {
                         <Typography variant={'h6'} align={'center'}>
                             Ausgaben
                         </Typography>
-                        <ExpenseCategoryPieChart records={objects}/>
+                        <ExpenseCategoryPieChart records={records}/>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant={'h6'} align={'center'}>
                             Einnahmen
                         </Typography>
-                        <IncomeCategoryPieChart records={objects}/>
+                        <IncomeCategoryPieChart records={records}/>
                     </Grid>
                 </Grid>
             </Box>
@@ -36,15 +42,33 @@ const HomeView = ({objects}: ListViewComponent<RecordType>) => {
     )
 }
 
-const HomePage = connectListView(HomeView, {
-    model: 'Record',
-})
-
-export default ({}) => {
-    const params = {
-        date_start: dayjs.utc().startOf('month').format('YYYY-MM-DD'),
-        date_end: dayjs.utc().endOf('month').format('YYYY-MM-DD'),
+export const HomeViewContainer = () => {
+    const filterModel: GridFilterModel = {
+        items: [
+            {
+                field: "date",
+                operator: "onOrBefore",
+                value: dayjs.utc().endOf('month').toDate(),
+            },
+            {
+                field: "date",
+                operator: "onOrAfter",
+                value: dayjs.utc().startOf('month').toDate(),
+            },
+        ]
     }
 
-    return <HomePage searchParams={params}/>
+    const {data, isLoading, isSuccess, error} = useGetRecordsQuery({
+        filterModel: JSON.stringify(filterModel),
+        paginationModel: {
+            page: 0,
+            pageSize: 1000,
+        },
+    })
+
+    return (
+        <QueryProvider isLoading={isLoading} isSuccess={isSuccess} error={error}>
+            <HomeView records={data?.results ?? []}/>
+        </QueryProvider>
+    )
 }

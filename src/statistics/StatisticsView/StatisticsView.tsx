@@ -1,152 +1,27 @@
 import React, {useMemo, useState} from 'react'
-import {connectListView, ListViewComponent,} from '../../core/framework/ListView'
-import _, {filter} from 'lodash'
-import {Box, Grid, Paper, ToggleButton, ToggleButtonGroup, Typography,} from '@mui/material'
-import {LineChart} from '@mui/x-charts'
+import {filter} from 'lodash'
+import {Box, Grid, ToggleButton, ToggleButtonGroup, Typography,} from '@mui/material'
 import {useGetCategorysQuery} from '../../app/api'
 import {BalanceView} from './BalanceView'
 import dayjs from 'dayjs'
-import {blue, red} from '@mui/material/colors'
-import {CategoryPieChart} from './CategoryPieChart'
-import {CategoryAggregation, computeExpense, computeIncome, getCategoryAggregation,} from '../aggregate'
+import {getCategoryAggregation,} from '../aggregate'
 import {IncomeCategoryPieChart} from './IncomeCategoryPieChart'
 import {ExpenseCategoryPieChart} from './ExpenseCategoryPieChart'
 import {MaxExpenseView} from './MaxExpenseView'
 import {CapitalGainsView} from './CapitalGainsView'
 import {RecordType} from "../../app/types";
-
-export const StatBox = ({
-                            label,
-                            value,
-                        }: {
-    label: string
-    value: React.ReactNode
-}) => {
-    return (
-        <Paper sx={{p: 3}}>
-            <Typography variant={'caption'}>{label}</Typography>
-            <Typography variant={'h3'}>{value}</Typography>
-        </Paper>
-    )
-}
-
-const CategoryChildrenPieChartView = ({
-                                          categoryAgg,
-                                      }: {
-    categoryAgg: CategoryAggregation
-}) => {
-    return (
-        <Box>
-            <Typography variant={'h6'} align={'center'}>
-                {categoryAgg.label}
-            </Typography>
-            <CategoryPieChart dataset={categoryAgg.children}/>
-        </Box>
-    )
-}
-
-interface BalanceLineChartProps {
-    records: RecordType[]
-    groupBy: (record: RecordType) => number
-    valueFormatter: (timestamp: number) => string
-}
-
-export const BalanceLineChart = ({
-                                     records,
-                                     groupBy,
-                                     valueFormatter,
-                                 }: BalanceLineChartProps) => {
-    const dataset = useMemo(() => {
-        const dataset: Record<string, number>[] = []
-        const recordsByGroup = _.groupBy(records, groupBy)
-
-        const groupedRecords = Object.entries(recordsByGroup)
-
-        groupedRecords.sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-
-        let balance_cumulated = 0
-        for (const [timestamp, records] of groupedRecords) {
-            balance_cumulated +=
-                computeExpense(records) + computeIncome(records)
-
-            dataset.push({
-                timestamp: parseInt(timestamp),
-                value: balance_cumulated,
-            })
-        }
-
-        return dataset
-    }, [records, groupBy])
-
-    return (
-        <LineChart
-            dataset={dataset}
-            xAxis={[
-                {
-                    dataKey: 'timestamp',
-                    valueFormatter: valueFormatter,
-                    scaleType: 'point',
-                },
-            ]}
-            series={[
-                {
-                    id: 'balance',
-                    dataKey: 'value',
-                    label: 'Bilanz (kumuliert)',
-                    color: blue[600],
-                    area: true,
-                },
-            ]}
-            height={400}
-            sx={{
-                '& .MuiAreaElement-series-balance': {
-                    fill: blue[50],
-                },
-            }}
-        />
-    )
-}
-
-export const IncomeExpenseLineChart = ({
-                                           records,
-                                           groupBy,
-                                           valueFormatter,
-                                       }: BalanceLineChartProps) => {
-    const dataset = useMemo(() => {
-        const recordsByGroup = _.groupBy(records, groupBy)
-        const groupedRecords = Object.entries(recordsByGroup)
-
-        groupedRecords.sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-
-        return groupedRecords.map(([timestamp, records]) => ({
-            timestamp: parseInt(timestamp),
-            expense: Math.abs(computeExpense(records)),
-            income: computeIncome(records),
-        }))
-    }, [records, groupBy])
-
-    return (
-        <LineChart
-            dataset={dataset}
-            xAxis={[
-                {
-                    dataKey: 'timestamp',
-                    valueFormatter: valueFormatter,
-                    scaleType: 'point',
-                },
-            ]}
-            series={[
-                {dataKey: 'expense', label: 'Ausgaben', color: red[500]},
-                {dataKey: 'income', label: 'Einnahmen', color: 'green'},
-            ]}
-            height={400}
-        />
-    )
-}
+import {IncomeExpenseLineChart} from "./IncomeExpenseLineChart";
+import {BalanceLineChart} from "./BalanceLineChart";
+import {CategoryChildrenPieChartView} from "./CategoryChildrenPieChartView";
+import {StatBox} from "./StatBox";
 
 type GroupingType = 'month' | 'week' | 'year'
 
-const StatisticsView = ({objects}: ListViewComponent<RecordType>) => {
+interface StatisticsViewProps {
+    objects: RecordType[]
+}
+
+export const StatisticsView = ({objects}: StatisticsViewProps) => {
     const {data: categories} = useGetCategorysQuery()
     const [grouping, setGrouping] = useState<GroupingType>('month')
 
@@ -266,7 +141,3 @@ const StatisticsView = ({objects}: ListViewComponent<RecordType>) => {
         </Box>
     )
 }
-
-export default connectListView(StatisticsView, {
-    model: 'Record',
-})

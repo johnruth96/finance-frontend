@@ -5,17 +5,29 @@ import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import {Grid} from '@mui/material'
 import {DatePicker} from '@mui/x-date-pickers'
-import StatisticsView from './StatisticsView/StatisticsView'
+import {StatisticsView} from './StatisticsView/StatisticsView'
+import {useGetRecordsQuery} from "../app/api";
+import {QueryProvider} from "../core/framework/QueryProvider";
 
 export const InsightsView = ({}) => {
     const [account, setAccount] = useState('all')
-    const [dateStart, setDateStart] = useState(dayjs.utc().subtract(1, 'year'))
-    const [dateEnd, setDateEnd] = useState(dayjs.utc())
+    const [dateStart, setDateStart] = useState(dayjs.utc().startOf('month'))
+    const [dateEnd, setDateEnd] = useState(dayjs.utc().endOf('month'))
 
-    const searchParams = useMemo(
+    const filterModel = useMemo(
         () => ({
-            date_start: dateStart.format('YYYY-MM-DD'),
-            date_end: dateEnd.format('YYYY-MM-DD'),
+            items: [
+                {
+                    field: "date",
+                    operator: "onOrAfter",
+                    value: dateStart.toDate(),
+                },
+                {
+                    field: "date",
+                    operator: "onOrBefore",
+                    value: dateEnd.toDate(),
+                },
+            ]
         }),
         [dateStart, dateEnd],
     )
@@ -51,6 +63,14 @@ export const InsightsView = ({}) => {
         },
     ]
 
+    const {data, isLoading, isSuccess, error} = useGetRecordsQuery({
+        filterModel: JSON.stringify(filterModel),
+        paginationModel: {
+            page: 0,
+            pageSize: 1000,
+        }
+    })
+
     return (
         <Page title={'Insights'} back menu={menu}>
             {/* Input */}
@@ -83,7 +103,9 @@ export const InsightsView = ({}) => {
                 </Grid>
             </Grid>
 
-            <StatisticsView searchParams={searchParams}/>
+            <QueryProvider isLoading={isLoading} isSuccess={isSuccess} error={error}>
+                <StatisticsView objects={data?.results ?? []}/>
+            </QueryProvider>
         </Page>
     )
 }

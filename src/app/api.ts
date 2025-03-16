@@ -59,12 +59,14 @@ export const baseApi = createApi({
         }),
         getRecords: builder.query<Pagination<RecordType>, {
             paginationModel: GridPaginationModel,
-            filterModel: string,
-            sortModel: GridSortModel,
+            filterModel?: string,
+            sortModel?: GridSortModel,
         }>({
             query: (params) => {
-                console.log("query params:", params)
-                const filterModel = JSON.parse(params.filterModel) as GridFilterModel
+                const filterModel: GridFilterModel = params.filterModel ? JSON.parse(params.filterModel) : {
+                    items: []
+                }
+                const sortModel: GridSortModel = params.sortModel ?? []
                 const searchParams = new URLSearchParams()
 
                 // Pagination
@@ -72,7 +74,7 @@ export const baseApi = createApi({
                 searchParams.set("pageSize", params.paginationModel.pageSize.toString())
 
                 // Sorting
-                params.sortModel.forEach(item => {
+                sortModel.forEach(item => {
                     const key = item.sort === "desc" ? "-" : ""
                     searchParams.append("sortBy", `${key}${item.field}`)
                 })
