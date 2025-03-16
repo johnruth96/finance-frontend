@@ -14,7 +14,7 @@ export interface RecordGridProps extends Omit<DataGridPremiumProps<RowModel>, "r
     records?: RecordType[]
 }
 
-export const RecordGrid = ({records = [], loading, slots = {}, ...props}: RecordGridProps) => {
+export const RecordGrid = ({records = [], loading, slots = {}, initialState = {}, ...props}: RecordGridProps) => {
     const {data: contracts, ...contractQueryState} = useGetContractsQuery()
     const {data: categories, ...categoryQueryState} = useGetCategoriesQuery()
     const {data: accounts, ...accountQueryState} = useGetAccountsQuery()
@@ -65,7 +65,8 @@ export const RecordGrid = ({records = [], loading, slots = {}, ...props}: Record
                             pageSize: 50,
                         }
                     },
-                    density: "compact"
+                    density: "compact",
+                    ...initialState,
                 }}
                 {...props}
             />

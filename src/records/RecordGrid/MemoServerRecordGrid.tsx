@@ -22,15 +22,6 @@ const getPaginationModel = (): GridPaginationModel | undefined => {
     }
 }
 
-const getSortModel = (): GridSortModel | undefined => {
-    const model = sessionStorage.getItem("sortModel")
-    if (model === null) {
-        return undefined
-    } else {
-        return JSON.parse(model)
-    }
-}
-
 const getColumnVisibilityModel = (): GridColumnVisibilityModel | undefined => {
     const model = sessionStorage.getItem("columnVisibilityModel")
     if (model === null) {
@@ -49,12 +40,35 @@ const getDensity = (): GridDensity | undefined => {
     }
 }
 
-type MemoServerRecordGridProps = Omit<ServerRecordGridProps, 'paginationModel' | 'filterModel' | 'sortModel'>
+type MemoServerRecordGridProps = Omit<ServerRecordGridProps,
+    'paginationModel'
+    | 'filterModel'
+    | 'columnVisibilityModel'
+    | 'density'
+    | 'onFilterModelChange'
+    | 'onPaginationModelChange'
+    | 'onSortModelChange'
+    | 'onColumnVisibilityModelChange'
+    | 'onDensityChange'>
 
-export const MemoServerRecordGrid = (props: MemoServerRecordGridProps) => {
+// TODO: Add other models
+export const MemoServerRecordGrid = ({sortModel, ...props}: MemoServerRecordGridProps) => {
+    const getInitialSortModel = () => {
+        if (sortModel) {
+            return sortModel
+        } else {
+            const model = sessionStorage.getItem("sortModel")
+            if (model === null) {
+                return undefined
+            } else {
+                return JSON.parse(model)
+            }
+        }
+    }
+
     const [filterModel, setFilterModel] = React.useState<GridFilterModel | undefined>(getFilterModel)
     const [paginationModel, setPaginationModel] = React.useState<GridPaginationModel | undefined>(getPaginationModel)
-    const [sortModel, setSortModel] = React.useState<GridSortModel | undefined>(getSortModel)
+    const [finalSortModel, setSortModel] = React.useState<GridSortModel | undefined>(getInitialSortModel)
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState<GridColumnVisibilityModel | undefined>(getColumnVisibilityModel)
     const [density, setDensity] = React.useState<GridDensity | undefined>(getDensity)
 
@@ -90,7 +104,7 @@ export const MemoServerRecordGrid = (props: MemoServerRecordGridProps) => {
         <ServerRecordGrid
             filterModel={filterModel}
             paginationModel={paginationModel}
-            sortModel={sortModel}
+            sortModel={finalSortModel}
             columnVisibilityModel={columnVisibilityModel}
             density={density}
             onFilterModelChange={onFilterModelChange}
