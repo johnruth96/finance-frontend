@@ -1,27 +1,25 @@
-import React, { useEffect, useState } from 'react'
-import { withValidation } from './withValidation'
-import {
-    IconButton,
-    InputAdornment,
-    TextField,
-    TextFieldProps,
-} from '@mui/material'
+import React, {useEffect, useState} from 'react'
+import {IconButton, InputAdornment, TextField, TextFieldProps,} from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import green from '@mui/material/colors/green'
 import red from '@mui/material/colors/red'
 
-interface AmountInputProps extends Omit<TextFieldProps, 'onChange' | 'value'> {
+interface AmountInputProps extends Omit<TextFieldProps, 'onChange' | 'value' | 'error'> {
     value: number | ''
     onChange: (value: number) => void
+    error?: string[]
 }
 
-const AmountInput = ({
-    value,
-    onChange,
-    label,
-    ...props
-}: AmountInputProps) => {
+export const AmountInput = ({
+                                value,
+                                onChange,
+                                label,
+                                error,
+                                ...props
+                            }: AmountInputProps) => {
+    const helperText = error ? error.join(", ") : ""
+
     const [amountText, setAmountText] = useState('')
     const [type, setType] = useState<'IN' | 'OUT'>('OUT')
 
@@ -69,16 +67,18 @@ const AmountInput = ({
             {...props}
             label={label}
             value={amountText}
-            inputProps={{ inputMode: 'decimal', pattern: '[0-9,]*' }}
+            helperText={helperText}
+            error={!!error}
+            inputProps={{inputMode: 'decimal', pattern: '[0-9,]*'}}
             onChange={(evt) => handleAmountChange(evt.target.value)}
             InputProps={{
                 startAdornment: (
                     <InputAdornment position="end">
                         <IconButton onClick={handleTypeToggle} edge="start">
                             {type === 'IN' ? (
-                                <AddCircleIcon sx={{ color: green[500] }} />
+                                <AddCircleIcon sx={{color: green[500]}}/>
                             ) : (
-                                <RemoveCircleIcon sx={{ color: red[500] }} />
+                                <RemoveCircleIcon sx={{color: red[500]}}/>
                             )}
                         </IconButton>
                     </InputAdornment>
@@ -87,5 +87,3 @@ const AmountInput = ({
         />
     )
 }
-
-export default withValidation(AmountInput)

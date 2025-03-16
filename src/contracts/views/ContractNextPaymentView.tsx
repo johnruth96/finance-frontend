@@ -1,28 +1,18 @@
-import {
-    connectListView,
-    ListViewComponent,
-} from '../../core/framework/ListView'
-import { filter } from 'lodash'
-import { useCreateRecordMutation } from '../../app/api'
-import { formatDate } from '../../core/datetime'
-import { CategoryCircle } from '../../categories/CategoryCircle'
+import {filter} from 'lodash'
+import {useCreateRecordMutation, useGetContractsQuery} from '../../app/api'
+import {formatDate} from '../../core/datetime'
+import {CategoryCircle} from '../../categories/CategoryCircle'
 import React from 'react'
-import {
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    Grid,
-    Typography,
-} from '@mui/material'
-import { enqueueSnackbar } from 'notistack'
+import {Box, Card, CardActions, CardContent, Grid, Typography,} from '@mui/material'
+import {enqueueSnackbar} from 'notistack'
 import dayjs from 'dayjs'
-import { ProgressButton } from '../../core/ProgressButton'
-import { AmountDisplay } from '../../core/AmountDisplay'
+import {ProgressButton} from '../../core/ProgressButton'
+import {AmountDisplay} from '../../core/AmountDisplay'
 import {Contract, RecordType} from "../../app/types";
+import {QueryProvider} from "../../core/framework/QueryProvider";
 
-const ContractCard = ({ object }: { object: Contract }) => {
-    const [createRecord, { isLoading, isError, isSuccess }] =
+const ContractCard = ({object}: { object: Contract }) => {
+    const [createRecord, {isLoading, isError, isSuccess}] =
         useCreateRecordMutation()
 
     const onCreateClick = () => {
@@ -36,25 +26,25 @@ const ContractCard = ({ object }: { object: Contract }) => {
         })
             .unwrap()
             .catch((error) => {
-                enqueueSnackbar(error, { variant: 'error' })
+                enqueueSnackbar(error, {variant: 'error'})
             })
     }
 
     return (
         <Card variant={'outlined'}>
-            <CardContent sx={{ pb: 0 }}>
+            <CardContent sx={{pb: 0}}>
                 <Typography
-                    sx={{ fontSize: 14 }}
+                    sx={{fontSize: 14}}
                     color="text.secondary"
                     gutterBottom
                 >
                     {dayjs(object.next_payment_date).format('DD.MM.')}
                 </Typography>
                 <Typography variant="h5" component="div">
-                    <AmountDisplay value={object.amount} />
+                    <AmountDisplay value={object.amount}/>
                 </Typography>
                 <Typography color="text.secondary">
-                    <CategoryCircle id={object.category} /> {object.name}
+                    <CategoryCircle id={object.category}/> {object.name}
                 </Typography>
             </CardContent>
             <CardActions>
@@ -72,14 +62,15 @@ const ContractCard = ({ object }: { object: Contract }) => {
     )
 }
 
-interface ContractPaymentViewProps extends ListViewComponent<Contract> {
+interface ContractPaymentViewProps {
+    objects: Contract[]
     records: RecordType[]
 }
 
 const ContractPaymentView = ({
-    objects,
-    records,
-}: ContractPaymentViewProps) => {
+                                 objects,
+                                 records,
+                             }: ContractPaymentViewProps) => {
     const activeContracts = filter(objects, 'is_active')
     const contractsNextPayment = filter(
         activeContracts,
@@ -92,13 +83,13 @@ const ContractPaymentView = ({
     if (contractsNotPayed.length === 0) return null
     else {
         return (
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{mb: 4}}>
                 <Typography variant={'h6'}>Nächste Zahlungen</Typography>
 
                 <Grid container spacing={2}>
                     {contractsNotPayed.map((object) => (
                         <Grid item key={object.id} xs={12} sm={4}>
-                            <ContractCard object={object} />
+                            <ContractCard object={object}/>
                         </Grid>
                     ))}
                 </Grid>
@@ -107,4 +98,10 @@ const ContractPaymentView = ({
     }
 }
 
-export default connectListView(ContractPaymentView, { model: 'Contract' })
+export default ({records}: { records: RecordType[] }) => {
+    const {data, isSuccess, isLoading, error} = useGetContractsQuery()
+
+    return <QueryProvider isLoading={isLoading} isSuccess={isSuccess} error={error}>
+        <ContractPaymentView objects={data ?? []} records={records}/>
+    </QueryProvider>
+}

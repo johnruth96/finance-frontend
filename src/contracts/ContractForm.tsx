@@ -1,19 +1,14 @@
-import { CategorySelect } from '../categories/CategorySelect'
-import AmountInput from '../core/forms/AmountInput'
-import { PaymentCycleInput } from './PaymentCycleInput'
-import React, { useEffect, useState } from 'react'
+import {CategorySelect} from '../categories/CategorySelect'
+import {AmountInput} from '../core/forms/AmountInput'
+import {PaymentCycleInput} from './PaymentCycleInput'
+import React, {useEffect, useState} from 'react'
 import dayjs from 'dayjs'
-import {
-    Checkbox,
-    FormControlLabel,
-    TextField,
-    ThemeProvider,
-} from '@mui/material'
-import { theme } from '../index'
-import { AccountSelect } from '../core/forms/AccountSelect'
-import { DatePicker } from '@mui/x-date-pickers'
-import { ProgressButton } from '../core/ProgressButton'
-import { ApiError } from '../core/ApiError'
+import {Checkbox, FormControlLabel, TextField, ThemeProvider,} from '@mui/material'
+import {theme} from '../index'
+import {AccountSelect} from '../core/forms/AccountSelect'
+import {DatePicker} from '@mui/x-date-pickers'
+import {ProgressButton} from '../core/ProgressButton'
+import {ApiError} from '../core/ApiError'
 import {Contract} from "../app/types";
 
 export interface ContractFormProps {
@@ -27,13 +22,13 @@ export interface ContractFormProps {
 }
 
 export const ContractForm = ({
-    onSubmit,
-    initial,
-    isError,
-    error,
-    buttonCaption,
-    ...queryState
-}: ContractFormProps) => {
+                                 onSubmit,
+                                 initial,
+                                 isError,
+                                 error,
+                                 buttonCaption,
+                                 ...queryState
+                             }: ContractFormProps) => {
     const [account, setAccount] = useState('')
     const [name, setName] = useState('')
     const [category, setCategory] = useState('')
@@ -88,9 +83,14 @@ export const ContractForm = ({
 
     return (
         <ThemeProvider theme={theme}>
-            {isError && <ApiError error={error} />}
+            {isError && <ApiError error={error}/>}
 
-            <AccountSelect value={account} onChange={setAccount} />
+            <AccountSelect
+                value={account}
+                onChange={setAccount}
+                required={true}
+                label={"Konto"}
+            />
 
             <TextField
                 label={'Name'}
@@ -107,12 +107,12 @@ export const ContractForm = ({
             />
 
             <FormControlLabel
-                control={<Checkbox checked={isActive} />}
+                control={<Checkbox checked={isActive}/>}
                 onChange={(_, checked) => setIsActive(checked)}
                 label={'Aktiv'}
             />
 
-            <DatePicker label="Start" onChange={setDate} value={date} />
+            <DatePicker label="Start" onChange={setDate} value={date}/>
 
             <TextField
                 label={'Kündigungsfrist (Monate)'}

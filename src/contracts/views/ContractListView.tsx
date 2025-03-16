@@ -1,29 +1,19 @@
 import React from 'react'
-import { Page } from '../../core/Page'
-import {
-    connectListView,
-    ListViewComponent,
-} from '../../core/framework/ListView'
-import { filter, round, sortBy, sumBy } from 'lodash'
-import { CategoryCircle } from '../../categories/CategoryCircle'
-import { useNavigate } from 'react-router-dom'
-import {
-    Box,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography,
-} from '@mui/material'
+import {Page} from '../../core/Page'
+import {filter, round, sortBy, sumBy} from 'lodash'
+import {CategoryCircle} from '../../categories/CategoryCircle'
+import {useNavigate} from 'react-router-dom'
+import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography,} from '@mui/material'
 import red from '@mui/material/colors/red'
 import WarningIcon from '@mui/icons-material/Warning'
 import dayjs from 'dayjs'
-import { ContractGrid } from './ContractGrid'
-import { GridFilterModel } from '@mui/x-data-grid'
+import {ContractGrid} from './ContractGrid'
+import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
+import {useGetContractsQuery} from "../../app/api";
+import {QueryProvider} from "../../core/framework/QueryProvider";
 
-const ContractAutoRenewalListItem = ({ object }: { object: Contract }) => {
+const ContractAutoRenewalListItem = ({object}: { object: Contract }) => {
     const navigate = useNavigate()
 
     const onClick = () => navigate(`/contracts/${object.id}/`)
@@ -36,7 +26,7 @@ const ContractAutoRenewalListItem = ({ object }: { object: Contract }) => {
         <ListItem disablePadding>
             <ListItemButton onClick={onClick}>
                 <ListItemIcon>
-                    <CategoryCircle id={object.category} />
+                    <CategoryCircle id={object.category}/>
                 </ListItemIcon>
                 <ListItemText
                     primary={object.name}
@@ -47,7 +37,11 @@ const ContractAutoRenewalListItem = ({ object }: { object: Contract }) => {
     )
 }
 
-const ContractListView = ({ objects }: ListViewComponent<Contract>) => {
+interface ContractListViewProps {
+    objects: Contract[]
+}
+
+const ContractListView = ({objects}: ContractListViewProps) => {
     const activeContracts = filter(objects, 'is_active')
 
     const contractsExpense = sortBy(
@@ -75,15 +69,15 @@ const ContractListView = ({ objects }: ListViewComponent<Contract>) => {
 
     return (
         <Page title={'Verträge'} addUrl={`add/`}>
-            <Box sx={{ mb: 5 }}>
+            <Box sx={{mb: 5}}>
                 <p className={'display-3 mb-0'}>{expensePerMonth} €</p>
                 <p className={'text-small'}>&empty; monatliche Ausgaben</p>
             </Box>
 
             {contractsExpendingShortly.length > 0 && (
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{mb: 2}}>
                     <Typography variant={'h6'}>
-                        <WarningIcon sx={{ color: red[500] }} /> Verlängerungen
+                        <WarningIcon sx={{color: red[500]}}/> Verlängerungen
                     </Typography>
                     <List>
                         {contractsExpendingShortly.map((contract) => (
@@ -96,11 +90,15 @@ const ContractListView = ({ objects }: ListViewComponent<Contract>) => {
                 </Box>
             )}
 
-            <ContractGrid filterModel={initialFilterModel} />
+            <ContractGrid filterModel={initialFilterModel}/>
         </Page>
     )
 }
 
-export default connectListView(ContractListView, {
-    model: 'Contract',
-})
+export default () => {
+    const {data, isSuccess, isLoading, error} = useGetContractsQuery()
+
+    return <QueryProvider isLoading={isLoading} isSuccess={isSuccess} error={error}>
+        <ContractListView objects={data ?? []}/>
+    </QueryProvider>
+}

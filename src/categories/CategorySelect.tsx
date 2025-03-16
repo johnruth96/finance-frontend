@@ -1,70 +1,34 @@
-import {
-    createModelSelect,
-    ModelSelectProps,
-} from '../core/forms/createModelSelect'
-import React, { useMemo } from 'react'
-import { MenuItem, TextField } from '@mui/material'
-import { getCategorySubTree } from './category'
+import {ModelSelect, ModelSelectProps,} from '../core/forms/ModelSelect'
+import React, {useMemo} from 'react'
+import {getCategorySubTree} from './category'
 import {Category} from "../app/types";
+import {useGetCategorysQuery} from "../app/api";
 
-export type CategorySelectProps = ModelSelectProps<Category> & {
-    disableMain?: boolean
-}
 
-export const CategorySelectComponent = ({
-    objects,
-    value,
-    onChange,
-    allowEmpty,
-    disableMain,
-    label,
-    ...props
-}: CategorySelectProps) => {
+export const CategorySelect = ({...props}: Omit<ModelSelectProps<Category>, 'objects'>) => {
+    const {data} = useGetCategorysQuery()
+
     const categories = useMemo(() => {
         const categories: Category[] = []
-        const mainCategories = objects.filter((obj) => obj.parent === null)
-        mainCategories.forEach((root) => {
-            const subTree = getCategorySubTree(root, objects)
-            categories.push(...subTree)
-        })
+
+        if (data) {
+            const mainCategories = data.filter((obj) => obj.parent === null)
+            mainCategories.forEach((root) => {
+                const subTree = getCategorySubTree(root, data)
+                categories.push(...subTree.map(category => ({
+                    ...category,
+                    name: category.parent !== null ? `--- ${category.name}` : category.name
+                })))
+            })
+        }
+
         return categories
-    }, [objects])
+    }, [data])
 
     return (
-        <TextField
-            label={label}
-            select
-            value={value}
-            onChange={(evt) => onChange(evt.target.value)}
+        <ModelSelect
+            objects={categories}
             {...props}
-        >
-            {(value === '' || allowEmpty) && (
-                <MenuItem value={''}>---</MenuItem>
-            )}
-
-            {categories.map((category) => {
-                const isRoot = category.parent === null
-                const hasChildren = categories.some(
-                    (child) => child.parent === category.id,
-                )
-                const isChild = !isRoot
-
-                return (
-                    <MenuItem
-                        disabled={disableMain && isRoot && hasChildren}
-                        value={category.id}
-                        key={category.id}
-                        style={isChild ? { paddingLeft: '3rem' } : {}}
-                    >
-                        {category.name}
-                    </MenuItem>
-                )
-            })}
-        </TextField>
+        />
     )
 }
-
-export const CategorySelect = createModelSelect<Category>(
-    'Category',
-    CategorySelectComponent,
-)

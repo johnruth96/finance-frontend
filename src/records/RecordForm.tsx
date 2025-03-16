@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react'
 import {useGetContractsQuery} from '../app/api'
 import {ContractSelect} from '../contracts/ContractSelect'
 import {CategorySelect} from '../categories/CategorySelect'
-import AmountInput from '../core/forms/AmountInput'
-import SubjectInput from '../core/forms/SubjectInput'
+import {AmountInput} from '../core/forms/AmountInput'
+import {SubjectInput} from '../core/forms/SubjectInput'
 import {DatePicker} from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import {ProgressButton} from '../core/ProgressButton'
@@ -118,32 +118,43 @@ export const RecordForm = ({
 
     return (
         <ThemeProvider theme={theme}>
-            {isError && <ApiError error={error}/>}
+            {isError && error.status !== 400 && <ApiError error={error}/>}
 
             {isSuccess && <Alert severity={"success"}>Buchung erfolgreich gespeichert.</Alert>}
 
-            <AccountSelect value={account} onChange={setAccount}/>
+            <AccountSelect
+                value={account}
+                onChange={setAccount}
+                required={true}
+                label={"Konto"}
+                error={error?.data?.account}
+            />
 
             <AmountInput
                 value={amount}
                 onChange={setAmount}
                 autoFocus
-                isError={isError}
                 error={error?.data?.amount}
                 label={'Betrag'}
                 required
             />
 
-            <SubjectInput value={subject} onChange={onSubjectChange}/>
+            <SubjectInput
+                value={subject}
+                onChange={onSubjectChange}
+                error={error?.data?.subject}
+            />
 
-            <DatePicker label="Datum" onChange={setDate} value={date}/>
+            <DatePicker
+                label="Datum"
+                onChange={setDate}
+                value={date}
+            />
 
             <CategorySelect
                 value={category}
                 onChange={setCategory}
-                isError={isError}
                 error={error?.data?.category}
-                disableMain={true}
                 label={'Kategorie'}
                 required
             />
@@ -151,7 +162,6 @@ export const RecordForm = ({
             <ContractSelect
                 value={contract}
                 onChange={setContract}
-                isError={isError}
                 error={error?.data?.contract}
                 allowEmpty={true}
                 label={'Vertrag (optional)'}

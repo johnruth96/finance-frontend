@@ -1,8 +1,8 @@
 import React from 'react'
-import { baseApi } from '../../app/api'
-import { Alert } from 'reactstrap'
-import { useParams } from 'react-router-dom'
-import { QueryProvider } from './QueryProvider'
+import {baseApi} from '../../app/api'
+import {Alert} from 'reactstrap'
+import {useParams} from 'react-router-dom'
+import {QueryProvider} from './QueryProvider'
 
 export interface DetailViewComponent<T> {
     object: T
@@ -17,13 +17,13 @@ export const connectDetailView = <T extends { id: number }>(
     DetailViewComponent:
         | React.ComponentType<DetailViewComponent<T>>
         | undefined,
-    { model }: ConnectOptions,
+    {model}: ConnectOptions,
 ): React.ComponentType<{ id: number }> => {
     const retrieveHookName = `useGet${model}Query`
 
-    return ({ id, ...props }: { id: number }) => {
+    return ({id, ...props}: { id: number }) => {
         const retrieveHook = baseApi[retrieveHookName]
-        const { data, ...hookResult } = retrieveHook(id)
+        const {data, ...hookResult} = retrieveHook(id)
 
         return (
             <QueryProvider {...hookResult}>
@@ -37,7 +37,7 @@ export const connectDetailViewWithRouter = <T extends { id: number }>(
     DetailViewComponent:
         | React.ComponentType<DetailViewComponent<T>>
         | undefined,
-    { pkUrlKwarg = 'id', ...options }: ConnectOptions,
+    {pkUrlKwarg = 'id', ...options}: ConnectOptions,
 ): React.ComponentType => {
     const DetailView = connectDetailView<T>(DetailViewComponent, options)
 
@@ -51,6 +51,6 @@ export const connectDetailViewWithRouter = <T extends { id: number }>(
                 </Alert>
             )
 
-        return <DetailView id={parseInt(id)} />
+        return <DetailView id={parseInt(id)}/>
     }
 }

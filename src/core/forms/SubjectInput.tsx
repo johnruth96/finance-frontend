@@ -1,10 +1,9 @@
-import { useGetSubjectCategoryPairsQuery } from '../../app/api'
-import React, { useMemo } from 'react'
-import { withValidation } from './withValidation'
-import { Autocomplete, IconButton } from '@mui/material'
+import {useGetSubjectCategoryPairsQuery} from '../../app/api'
+import React, {useMemo} from 'react'
+import {Autocomplete, IconButton} from '@mui/material'
 import TextField from '@mui/material/TextField'
-import { AutocompleteProps } from '@mui/material/Autocomplete/Autocomplete'
-import { uniqBy } from 'lodash'
+import {AutocompleteProps} from '@mui/material/Autocomplete/Autocomplete'
+import {uniqBy} from 'lodash'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 
 type SubjectDataType = [string, number, number | null]
@@ -15,15 +14,14 @@ type SubjectType = {
 }
 
 interface SubjectInputProps
-    extends Omit<
-        AutocompleteProps<SubjectType, false, false, true>,
-        'onChange' | 'options' | 'renderInput' | 'isOptionEqualToValue'
-    > {
+    extends Omit<AutocompleteProps<SubjectType, false, false, true>,
+        'onChange' | 'options' | 'renderInput' | 'isOptionEqualToValue'> {
     onChange: (value: string | SubjectType) => void
+    error?: string[]
 }
 
-const SubjectInput = ({ value, onChange, ...props }: SubjectInputProps) => {
-    const { data, isFetching } = useGetSubjectCategoryPairsQuery()
+export const SubjectInput = ({value, onChange, error, ...props}: SubjectInputProps) => {
+    const {data, isFetching} = useGetSubjectCategoryPairsQuery()
 
     const options = useMemo(() => {
         if (data) {
@@ -64,7 +62,13 @@ const SubjectInput = ({ value, onChange, ...props }: SubjectInputProps) => {
             options={options}
             inputValue={value}
             renderInput={(params) => (
-                <TextField {...params} label="Betreff" required />
+                <TextField
+                    label="Betreff"
+                    required
+                    error={!!error}
+                    helperText={error ? error.join(", ") : ""}
+                    {...params}
+                />
             )}
             getOptionLabel={(option: SubjectType | string) =>
                 typeof option === 'string' ? option : option.subject
@@ -79,7 +83,7 @@ const SubjectInput = ({ value, onChange, ...props }: SubjectInputProps) => {
             InputProps={{
                 endAdornment: (
                     <IconButton onClick={() => onChange('')}>
-                        <CancelRoundedIcon />
+                        <CancelRoundedIcon/>
                     </IconButton>
                 ),
             }}
@@ -87,5 +91,3 @@ const SubjectInput = ({ value, onChange, ...props }: SubjectInputProps) => {
         />
     )
 }
-
-export default withValidation(SubjectInput)

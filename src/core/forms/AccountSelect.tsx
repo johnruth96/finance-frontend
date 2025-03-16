@@ -1,27 +1,16 @@
-import {
-    createModelSelect,
-    ModelSelect,
-    ModelSelectProps,
-} from './createModelSelect'
-import React, { useEffect } from 'react'
+import {ModelSelect, ModelSelectProps,} from './ModelSelect'
+import React from 'react'
 import {Account} from "../../app/types";
+import {useGetAccountsQuery} from '../../app/api';
 
-export const AccountSelectComponent = ({
-    ...props
-}: ModelSelectProps<Account>) => {
-    useEffect(() => {
-        if (
-            !props.allowEmpty &&
-            props.value === '' &&
-            props.objects.length > 0
-        ) {
-            props.onChange(props.objects[0].id.toString())
-        }
-    }, [props.value, props.objects, props.allowEmpty])
 
-    return <ModelSelect {...props} />
+export const AccountSelect = ({...props}: Omit<ModelSelectProps<Account>, 'objects'>) => {
+    const {data} = useGetAccountsQuery()
+
+    return (
+        <ModelSelect
+            objects={data ?? []}
+            {...props}
+        />
+    )
 }
-export const AccountSelect = createModelSelect<Account>(
-    'Account',
-    AccountSelectComponent,
-)
