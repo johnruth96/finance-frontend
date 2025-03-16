@@ -8,7 +8,7 @@ import {ExpenseCategoryPieChart} from '../statistics/StatisticsView/ExpenseCateg
 import {RecordType} from "../app/types";
 import {GridFilterModel} from "@mui/x-data-grid";
 import {useGetRecordsQuery} from "../app/api";
-import {QueryProvider} from "../core/framework/QueryProvider";
+import {QueryProvider} from "../core/QueryProvider";
 import {AccountsView} from "./AccountsView";
 
 interface HomeViewProps {

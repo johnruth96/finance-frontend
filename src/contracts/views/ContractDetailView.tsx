@@ -1,6 +1,5 @@
 import React from 'react'
 import {Page} from '../../core/Page'
-import {connectDetailViewWithRouter, DetailViewComponent,} from '../../core/framework/DetailView'
 import {getPaymentCycleDisplay} from '../PaymentCycleInput'
 import {AmountDisplay} from '../../core/AmountDisplay'
 import {CategoryDisplayContainer} from '../../categories/CategoryDisplay'
@@ -9,8 +8,15 @@ import {Box, Typography} from '@mui/material'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {ServerRecordGrid} from "../../records/RecordGrid/ServerRecordGrid";
+import {QueryProvider} from "../../core/QueryProvider";
+import {useParams} from "react-router-dom";
+import {useGetContractQuery} from "../../app/api";
 
-const ContractDetailView = ({object}: DetailViewComponent<Contract>) => {
+interface ContractDetailViewProps {
+    object: Contract
+}
+
+const ContractDetailView = ({object}: ContractDetailViewProps) => {
     const filterModel: GridFilterModel = {
         items: [
             {
@@ -110,6 +116,11 @@ const ContractDetailView = ({object}: DetailViewComponent<Contract>) => {
     )
 }
 
-export default connectDetailViewWithRouter(ContractDetailView, {
-    model: 'Contract',
-})
+export default () => {
+    const params = useParams()
+    const {data, ...hookResult} = useGetContractQuery(params.id ? parseInt(params.id) : -1)
+
+    return <QueryProvider {...hookResult}>
+        <ContractDetailView object={data as Contract}/>
+    </QueryProvider>
+}

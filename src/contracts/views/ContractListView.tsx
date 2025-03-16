@@ -11,7 +11,7 @@ import {ContractGrid} from './ContractGrid'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {useGetContractsQuery} from "../../app/api";
-import {QueryProvider} from "../../core/framework/QueryProvider";
+import {QueryProvider} from "../../core/QueryProvider";
 
 const ContractAutoRenewalListItem = ({object}: { object: Contract }) => {
     const navigate = useNavigate()

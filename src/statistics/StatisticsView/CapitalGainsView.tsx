@@ -1,13 +1,13 @@
 import React from "react";
 import {AmountDisplay} from "../../core/AmountDisplay";
-import {useGetCategorysQuery} from "../../app/api";
+import {useGetCategoriesQuery} from "../../app/api";
 import {adaRound, computeIncome} from "../aggregate";
 import {Category, RecordType} from "../../app/types";
 
 export const CapitalGainsView = ({objects}: {
     objects: RecordType[]
 }) => {
-    const {capitalGains} = useGetCategorysQuery(undefined, {
+    const {capitalGains} = useGetCategoriesQuery(undefined, {
         selectFromResult: ({data}: { data?: Category[] }) => ({
             capitalGains: (data ?? []).find((category: Category) => category.name === "Kapitalerträge")
         })

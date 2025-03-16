@@ -7,7 +7,7 @@ import {Grid} from '@mui/material'
 import {DatePicker} from '@mui/x-date-pickers'
 import {StatisticsView} from './StatisticsView/StatisticsView'
 import {useGetRecordsQuery} from "../app/api";
-import {QueryProvider} from "../core/framework/QueryProvider";
+import {QueryProvider} from "../core/QueryProvider";
 
 export const InsightsView = ({}) => {
     const [account, setAccount] = useState('all')

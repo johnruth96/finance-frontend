@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react'
 import {filter} from 'lodash'
 import {Box, Grid, ToggleButton, ToggleButtonGroup, Typography,} from '@mui/material'
-import {useGetCategorysQuery} from '../../app/api'
+import {useGetCategoriesQuery} from '../../app/api'
 import {BalanceView} from './BalanceView'
 import dayjs from 'dayjs'
 import {getCategoryAggregation,} from '../aggregate'
@@ -22,7 +22,7 @@ interface StatisticsViewProps {
 }
 
 export const StatisticsView = ({objects}: StatisticsViewProps) => {
-    const {data: categories} = useGetCategorysQuery()
+    const {data: categories} = useGetCategoriesQuery()
     const [grouping, setGrouping] = useState<GroupingType>('month')
 
     const datasetExpense = useMemo(() => {

@@ -1,6 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import {API_BASE} from "./config";
-import {createModelEndpoint, defaultActions} from "../core/framework/api";
 import {Account, Category, Contract, Pagination, RecordType} from "./types";
 import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
@@ -41,7 +40,7 @@ export const baseApi = createApi({
 
         },
     }),
-    tagTypes: ["Record", "Transaction", "Account"],
+    tagTypes: ["Record", "Transaction", "Account", "Contract", "Category"],
     endpoints: (builder) => ({
         /*
          Account
@@ -49,6 +48,48 @@ export const baseApi = createApi({
         getAccounts: builder.query<Account[], void>({
             query: () => `accounts/`,
             providesTags: ['Account'],
+        }),
+        /*
+         Category
+         */
+        getCategories: builder.query<Category[], void>({
+            query: () => `categories/`,
+            providesTags: ['Category'],
+        }),
+        /*
+         * Contract
+         */
+        getContract: builder.query<Contract, number>({
+            query: (id) => `contracts/${id}/`,
+            providesTags: ['Contract'],
+        }),
+        getContracts: builder.query<Contract[], void>({
+            query: () => `contracts/`,
+            providesTags: ['Contract'],
+        }),
+        createContract: builder.mutation<Contract,
+            Omit<Contract, 'id'> & Partial<Contract>>({
+            query: (payload) => ({
+                url: "contracts/",
+                method: 'POST',
+                body: payload,
+            }),
+            invalidatesTags: ["Contract"],
+        }),
+        updateContract: builder.mutation<Contract, Pick<Contract, "id"> & Partial<Contract>>({
+            query: ({id, ...payload}) => ({
+                url: `contracts/${id}/`,
+                method: 'PATCH',
+                body: payload,
+            }),
+            invalidatesTags: ["Contract"],
+        }),
+        deleteContract: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `contracts/${id}/`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ["Contract"],
         }),
         /*
          Record
@@ -216,28 +257,34 @@ export const baseApi = createApi({
     }),
 })
 
-// TODO: Remove factory and move them to the API object
-createModelEndpoint<Contract>('Contract', 'contracts/', defaultActions)
-createModelEndpoint<Category>('Category', 'categories/', defaultActions)
-
 export const {
-    // Account
+    /*
+     * Account
+     */
     useGetAccountsQuery,
-    // Category
-    useGetCategorysQuery,
-    // Contract
+    /*
+     * Category
+     */
+    useGetCategoriesQuery,
+    /*
+     * Contract
+     */
     useGetContractsQuery,
+    useGetContractQuery,
     useCreateContractMutation,
     useUpdateContractMutation,
     useDeleteContractMutation,
-    // Record
+    /*
+     * Record
+     */
     useGetRecordQuery,
     useGetRecordsQuery,
     useUpdateRecordMutation,
     useCreateRecordMutation,
-    // Other
     useGetSubjectCategoryPairsQuery,
-    // Transaction
+    /*
+     * Transaction
+     */
     useGetTransactionsQuery,
     useShowTransactionMutation,
     useHideTransactionMutation,

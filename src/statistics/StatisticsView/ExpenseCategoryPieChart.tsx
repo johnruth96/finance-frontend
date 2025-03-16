@@ -1,5 +1,5 @@
 import React, {useMemo} from "react";
-import {useGetCategorysQuery} from "../../app/api";
+import {useGetCategoriesQuery} from "../../app/api";
 import {getCategoryAggregation} from "../aggregate";
 import {CategoryPieChart} from "./CategoryPieChart";
 import {RecordType} from "../../app/types";
@@ -7,7 +7,7 @@ import {RecordType} from "../../app/types";
 export const ExpenseCategoryPieChart = ({records}: {
     records: RecordType[]
 }) => {
-    const {data: categories} = useGetCategorysQuery()
+    const {data: categories} = useGetCategoriesQuery()
 
     const dataset = useMemo(() => {
         const expenseRecords = records.filter(r => r.amount < 0)

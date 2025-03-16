@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react'
-import { Page } from '../../core/Page'
-import {
-    connectDetailViewWithRouter,
-    DetailViewComponent,
-} from '../../core/framework/DetailView'
-import { ContractForm } from '../ContractForm'
-import { useUpdateContractMutation } from '../../app/api'
-import { useNavigate } from 'react-router-dom'
+import React, {useEffect} from 'react'
+import {Page} from '../../core/Page'
+import {ContractForm} from '../ContractForm'
+import {useGetContractQuery, useUpdateContractMutation} from '../../app/api'
+import {useNavigate, useParams} from 'react-router-dom'
 import {Contract} from "../../app/types";
+import {QueryProvider} from "../../core/QueryProvider";
 
-const ContractUpdateView = ({ object }: DetailViewComponent<Contract>) => {
-    const [updateContract, queryState] = useUpdateContractMutation()
+interface ContractUpdateViewProps {
+    object: Contract
+}
+
+const ContractUpdateView = ({object}: ContractUpdateViewProps) => {
+    const [updateContract, {isError, isLoading, isSuccess, error}] = useUpdateContractMutation()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (queryState.isSuccess) navigate(-1)
-    }, [queryState.isSuccess])
+        if (isSuccess) navigate(-1)
+    }, [isSuccess])
 
     const onSubmit = (payload: Partial<Contract>) => {
         updateContract({
@@ -29,12 +30,20 @@ const ContractUpdateView = ({ object }: DetailViewComponent<Contract>) => {
             <ContractForm
                 initial={object}
                 onSubmit={onSubmit}
-                {...queryState}
+                isError={isError}
+                isLoading={isLoading}
+                isSuccess={isSuccess}
+                error={error}
             />
         </Page>
     )
 }
 
-export default connectDetailViewWithRouter(ContractUpdateView, {
-    model: 'Contract',
-})
+export default () => {
+    const params = useParams()
+    const {data, ...hookResult} = useGetContractQuery(params.id ? parseInt(params.id) : -1)
+
+    return <QueryProvider {...hookResult}>
+        <ContractUpdateView object={data as Contract}/>
+    </QueryProvider>
+}

@@ -1,53 +1,32 @@
 import React from 'react'
-import { AmountDisplay } from '../../core/AmountDisplay'
+import {AmountDisplay} from '../../core/AmountDisplay'
 
-import {
-    useGetAccountsQuery,
-    useGetCategorysQuery,
-    useGetContractsQuery,
-} from '../../app/api'
-import { CategoryDisplay } from '../../categories/CategoryDisplay'
-import { Box } from '@mui/material'
-import {
-    DataGridPremium,
-    GridCellParams,
-    GridColDef,
-    GridFilterModel,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarFilterButton,
-} from '@mui/x-data-grid-premium'
+import {useGetAccountsQuery, useGetCategoriesQuery, useGetContractsQuery,} from '../../app/api'
+import {CategoryDisplay} from '../../categories/CategoryDisplay'
+import {Box} from '@mui/material'
+import {DataGridPremium, GridCellParams, GridColDef, GridFilterModel,} from '@mui/x-data-grid-premium'
 import dayjs from 'dayjs'
-import { Link } from 'react-router-dom'
-import { PAYMENT_CYCLES } from '../PaymentCycleInput'
-import { round } from 'lodash'
+import {Link} from 'react-router-dom'
+import {PAYMENT_CYCLES} from '../PaymentCycleInput'
+import {round} from 'lodash'
 import {Account, Category, Contract} from "../../app/types";
-
-const ContractGridToolbar = ({}) => {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarFilterButton />
-            <GridToolbarColumnsButton />
-        </GridToolbarContainer>
-    )
-}
 
 interface ContractGridProps {
     filterModel?: GridFilterModel
 }
 
 export const ContractGrid = ({
-    filterModel: initialFilterModel,
-}: ContractGridProps) => {
-    const { data: contracts, ...contractQueryState } = useGetContractsQuery()
-    const { data: categories, ...categoryQueryState } = useGetCategorysQuery()
-    const { data: accounts, ...accountQueryState } = useGetAccountsQuery()
+                                 filterModel: initialFilterModel,
+                             }: ContractGridProps) => {
+    const {data: contracts, ...contractQueryState} = useGetContractsQuery()
+    const {data: categories, ...categoryQueryState} = useGetCategoriesQuery()
+    const {data: accounts, ...accountQueryState} = useGetAccountsQuery()
 
     const getInitialFilterModel = () => {
         if (initialFilterModel) {
             return initialFilterModel
         } else {
-            return { items: [] } as GridFilterModel
+            return {items: []} as GridFilterModel
         }
     }
 
@@ -67,7 +46,7 @@ export const ContractGrid = ({
             flex: 1,
             minWidth: 100,
             type: 'string',
-            renderCell: ({ value, id, row }) => (
+            renderCell: ({value, id, row}) => (
                 <Link to={`/contracts/${id}/`}>{value}</Link>
             ),
         },
@@ -79,17 +58,17 @@ export const ContractGrid = ({
             type: 'singleSelect',
             display: 'flex',
             valueOptions: (categories ?? []).map(
-                ({ id, name, ...rest }: Category) => ({
+                ({id, name, ...rest}: Category) => ({
                     value: id,
                     label: name,
                     ...rest,
                 }),
             ),
             renderCell: ({
-                value,
-                colDef,
-                formattedValue,
-            }: GridCellParams<Contract>) => {
+                             value,
+                             colDef,
+                             formattedValue,
+                         }: GridCellParams<Contract>) => {
                 const valueOption = colDef.valueOptions.find(
                     (option) => option.value === value,
                 )
@@ -110,7 +89,7 @@ export const ContractGrid = ({
         {
             field: 'amount_per_year',
             headerName: 'Betrag pro Jahr',
-            renderCell: ({ value }) => <AmountDisplay value={value} />,
+            renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
             minWidth: 100,
             flex: 1,
@@ -119,7 +98,7 @@ export const ContractGrid = ({
             field: 'amount_per_month',
             headerName: 'Betrag pro Monat',
             valueGetter: (_, row) => round(row.amount_per_year / 12.0, 2),
-            renderCell: ({ value }) => <AmountDisplay value={value} />,
+            renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
             minWidth: 100,
             flex: 1,
@@ -127,8 +106,8 @@ export const ContractGrid = ({
         {
             field: 'amount',
             headerName: 'Betrag',
-            renderCell: ({ value }) =>
-                value ? <AmountDisplay value={value} /> : null,
+            renderCell: ({value}) =>
+                value ? <AmountDisplay value={value}/> : null,
             type: 'number',
             minWidth: 100,
             aggregable: false,
@@ -147,7 +126,7 @@ export const ContractGrid = ({
             flex: 1,
             minWidth: 100,
             type: 'singleSelect',
-            valueOptions: (accounts ?? []).map(({ id, name }: Account) => ({
+            valueOptions: (accounts ?? []).map(({id, name}: Account) => ({
                 value: id,
                 label: name,
             })),
@@ -203,7 +182,7 @@ export const ContractGrid = ({
         categoryQueryState.isLoading
 
     const rows = (contracts ?? []).map(
-        ({ date_start, payment_date, ...rest }: Contract) => ({
+        ({date_start, payment_date, ...rest}: Contract) => ({
             date_start: dayjs(date_start, 'YYYY-MM-DD').toDate(),
             payment_date: dayjs(payment_date, 'YYYY-MM-DD').toDate(),
             ...rest,
@@ -211,7 +190,7 @@ export const ContractGrid = ({
     )
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{width: '100%'}}>
             <DataGridPremium
                 rows={rows}
                 columns={columns}
@@ -219,9 +198,6 @@ export const ContractGrid = ({
                 density={'compact'}
                 loading={isLoading}
                 pagination={true}
-                slots={{
-                    toolbar: ContractGridToolbar,
-                }}
                 initialState={{
                     columns: {
                         columnVisibilityModel: {

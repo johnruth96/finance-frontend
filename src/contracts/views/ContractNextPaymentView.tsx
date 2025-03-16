@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import {ProgressButton} from '../../core/ProgressButton'
 import {AmountDisplay} from '../../core/AmountDisplay'
 import {Contract, RecordType} from "../../app/types";
-import {QueryProvider} from "../../core/framework/QueryProvider";
+import {QueryProvider} from "../../core/QueryProvider";
 
 const ContractCard = ({object}: { object: Contract }) => {
     const [createRecord, {isLoading, isError, isSuccess}] =

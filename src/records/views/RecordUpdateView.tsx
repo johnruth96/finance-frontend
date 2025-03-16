@@ -1,13 +1,16 @@
 import React, {useEffect} from 'react'
 import {Page} from '../../core/Page'
-import {DetailViewComponent,} from '../../core/framework/DetailView'
 import {RecordForm} from '../RecordForm'
 import {useGetRecordQuery, useUpdateRecordMutation} from '../../app/api'
 import {useNavigate, useParams} from 'react-router-dom'
 import {RecordType} from "../../app/types";
-import {QueryProvider} from "../../core/framework/QueryProvider";
+import {QueryProvider} from "../../core/QueryProvider";
 
-const RecordUpdateView = ({object}: DetailViewComponent<RecordType>) => {
+interface RecordUpdateViewProps {
+    object: RecordType
+}
+
+const RecordUpdateView = ({object}: RecordUpdateViewProps) => {
     const [updateRecord, queryState] = useUpdateRecordMutation()
     const navigate = useNavigate()
 

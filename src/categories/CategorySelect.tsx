@@ -2,11 +2,11 @@ import {ModelSelect, ModelSelectProps,} from '../core/forms/ModelSelect'
 import React, {useMemo} from 'react'
 import {getCategorySubTree} from './category'
 import {Category} from "../app/types";
-import {useGetCategorysQuery} from "../app/api";
+import {useGetCategoriesQuery} from "../app/api";
 
 
 export const CategorySelect = ({...props}: Omit<ModelSelectProps<Category>, 'objects'>) => {
-    const {data} = useGetCategorysQuery()
+    const {data} = useGetCategoriesQuery()
 
     const categories = useMemo(() => {
         const categories: Category[] = []

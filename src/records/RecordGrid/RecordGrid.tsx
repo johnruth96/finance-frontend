@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react'
 
-import {useGetAccountsQuery, useGetCategorysQuery, useGetContractsQuery,} from '../../app/api'
+import {useGetAccountsQuery, useGetCategoriesQuery, useGetContractsQuery,} from '../../app/api'
 import {Box} from '@mui/material'
 import {DataGridPremium, GridToolbar,} from '@mui/x-data-grid-premium'
 import dayjs from 'dayjs'
@@ -16,7 +16,7 @@ export interface RecordGridProps extends Omit<DataGridPremiumProps<RowModel>, "r
 
 export const RecordGrid = ({records = [], loading, slots = {}, ...props}: RecordGridProps) => {
     const {data: contracts, ...contractQueryState} = useGetContractsQuery()
-    const {data: categories, ...categoryQueryState} = useGetCategorysQuery()
+    const {data: categories, ...categoryQueryState} = useGetCategoriesQuery()
     const {data: accounts, ...accountQueryState} = useGetAccountsQuery()
 
     const columns = createGridColDef(categories, contracts, accounts)
