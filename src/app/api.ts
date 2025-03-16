@@ -28,7 +28,6 @@ const updateTransaction = async (dispatch, queryFulfilled) => {
     }
 }
 
-
 export const baseApi = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
@@ -58,16 +57,19 @@ export const baseApi = createApi({
             query: (id) => `records/${id}/`,
             providesTags: ['Record'],
         }),
-        getRecords: builder.query<Pagination<RecordType>, GridPaginationModel & {
-            filterModel: GridFilterModel,
+        getRecords: builder.query<Pagination<RecordType>, {
+            paginationModel: GridPaginationModel,
+            filterModel: string,
             sortModel: GridSortModel,
         }>({
             query: (params) => {
+                console.log("query params:", params)
+                const filterModel = JSON.parse(params.filterModel) as GridFilterModel
                 const searchParams = new URLSearchParams()
 
                 // Pagination
-                searchParams.set("page", (params.page + 1).toString())
-                searchParams.set("pageSize", params.pageSize.toString())
+                searchParams.set("page", (params.paginationModel.page + 1).toString())
+                searchParams.set("pageSize", params.paginationModel.pageSize.toString())
 
                 // Sorting
                 params.sortModel.forEach(item => {
@@ -76,27 +78,53 @@ export const baseApi = createApi({
                 })
 
                 // Filtering
-                params.filterModel.items.forEach(item => {
-                    if (item.operator === "equals" || item.operator === "is" || item.operator === "=") {
-                        searchParams.append(item.field, item.value)
-                    }
+                filterModel.items
+                    .filter(item => item.value !== undefined)
+                    .forEach(item => {
+                        let value = item.value
+                        const dateMatch = item.value.toString().match(/\d{4}-\d{2}-\d{2}/)
+                        if (dateMatch !== null) {
+                            value = dateMatch[0]
+                        }
 
-                    if (item.operator === "after" || item.operator === ">") {
-                        searchParams.append(`${item.field}__gt`, item.value)
-                    }
+                        switch (item.operator) {
+                            case "equals":
+                            case "is":
+                            case "=":
+                                searchParams.append(item.field, value)
+                                break
+                            case "contains":
+                                searchParams.append(`${item.field}__icontains`, value)
+                                break
+                            case "startsWith":
+                                searchParams.append(`${item.field}__istartswith`, value)
+                                break
+                            case "endsWith":
+                                searchParams.append(`${item.field}__iendswith`, value)
+                                break
+                            case "after":
+                            case ">":
+                                searchParams.append(`${item.field}__gt`, value)
+                                break
+                            case "before":
+                            case "<":
+                                searchParams.append(`${item.field}__lt`, value)
+                                break
+                            case "onOrAfter":
+                            case ">=":
+                                searchParams.append(`${item.field}__gte`, value)
+                                break
+                            case "onOrBefore":
+                            case "<=":
+                                searchParams.append(`${item.field}__lte`, value)
+                                break
+                        }
+                    })
 
-                    if (item.operator === "before" || item.operator === "<") {
-                        searchParams.append(`${item.field}__lt`, item.value)
-                    }
-
-                    if (item.operator === "onOrBefore" || item.operator === "<=") {
-                        searchParams.append(`${item.field}__lte`, item.value)
-                    }
-
-                    if (item.operator === "onOrAfter" || item.operator === ">=") {
-                        searchParams.append(`${item.field}__gte`, item.value)
-                    }
-                })
+                // Quick filter
+                if (Array.isArray(filterModel.quickFilterValues)) {
+                    searchParams.append("q", filterModel.quickFilterValues.join(" "))
+                }
 
                 return `records?${searchParams}`
             },

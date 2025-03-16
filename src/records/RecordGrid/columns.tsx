@@ -139,7 +139,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             flex: 1,
             minWidth: 100,
             type: 'number',
-            valueGetter: (_, row) => row.transactions.length,
+            valueGetter: (_, row) => row.transactions?.length ?? 0,
             aggregable: true,
         },
     ]

@@ -8,7 +8,7 @@ import {ValueDisplay} from '../ValueDisplay'
 import {Box, Typography} from '@mui/material'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
-import {AllRecordGrid} from "../../records/RecordGrid/AllRecordGrid";
+import {ServerRecordGrid} from "../../records/RecordGrid/ServerRecordGrid";
 
 const ContractDetailView = ({object}: DetailViewComponent<Contract>) => {
     const filterModel: GridFilterModel = {
@@ -104,7 +104,7 @@ const ContractDetailView = ({object}: DetailViewComponent<Contract>) => {
 
             <Box>
                 <Typography variant={'h6'}>Buchungen</Typography>
-                <AllRecordGrid filterModel={filterModel}/>
+                <ServerRecordGrid filterModel={filterModel}/>
             </Box>
         </Page>
     )

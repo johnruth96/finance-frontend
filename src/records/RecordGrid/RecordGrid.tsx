@@ -14,7 +14,7 @@ export interface RecordGridProps extends Omit<DataGridPremiumProps<RowModel>, "r
     records?: RecordType[]
 }
 
-export const RecordGrid = ({records = [], loading, ...props}: RecordGridProps) => {
+export const RecordGrid = ({records = [], loading, slots = {}, ...props}: RecordGridProps) => {
     const {data: contracts, ...contractQueryState} = useGetContractsQuery()
     const {data: categories, ...categoryQueryState} = useGetCategorysQuery()
     const {data: accounts, ...accountQueryState} = useGetAccountsQuery()
@@ -39,11 +39,11 @@ export const RecordGrid = ({records = [], loading, ...props}: RecordGridProps) =
                 rows={rows}
                 columns={columns}
                 autoHeight={true}
-                density={'compact'}
                 loading={isLoading}
                 pagination={true}
                 slots={{
-                    toolbar: GridToolbar
+                    toolbar: GridToolbar,
+                    ...slots,
                 }}
                 initialState={{
                     columns: {
@@ -64,7 +64,8 @@ export const RecordGrid = ({records = [], loading, ...props}: RecordGridProps) =
                         paginationModel: {
                             pageSize: 50,
                         }
-                    }
+                    },
+                    density: "compact"
                 }}
                 {...props}
             />
