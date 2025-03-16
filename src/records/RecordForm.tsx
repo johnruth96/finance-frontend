@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useGetContractsQuery } from '../app/api'
-import { ContractSelect } from '../contracts/ContractSelect'
-import { CategorySelect } from '../categories/CategorySelect'
+import React, {useEffect, useState} from 'react'
+import {useGetContractsQuery} from '../app/api'
+import {ContractSelect} from '../contracts/ContractSelect'
+import {CategorySelect} from '../categories/CategorySelect'
 import AmountInput from '../core/forms/AmountInput'
 import SubjectInput from '../core/forms/SubjectInput'
-import { DatePicker } from '@mui/x-date-pickers'
+import {DatePicker} from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { ProgressButton } from '../core/ProgressButton'
-import { TextField, ThemeProvider } from '@mui/material'
-import { AccountSelect } from '../core/forms/AccountSelect'
-import { theme } from '../index'
-import { ApiError } from '../core/ApiError'
+import {ProgressButton} from '../core/ProgressButton'
+import {Alert, TextField, ThemeProvider} from '@mui/material'
+import {AccountSelect} from '../core/forms/AccountSelect'
+import {theme} from '../index'
+import {ApiError} from '../core/ApiError'
 import {Contract, RecordType} from "../app/types";
 
 export interface RecordFormProps {
@@ -24,13 +24,14 @@ export interface RecordFormProps {
 }
 
 export const RecordForm = ({
-    onSubmit,
-    initial,
-    isError,
-    error,
-    buttonCaption,
-    ...queryState
-}: RecordFormProps) => {
+                               onSubmit,
+                               initial,
+                               buttonCaption,
+                               isError,
+                               error,
+                               isSuccess,
+                               isLoading,
+                           }: RecordFormProps) => {
     const [amount, setAmount] = useState<number | ''>('')
     const [subject, setSubject] = useState('')
     const [date, setDate] = useState(dayjs())
@@ -56,7 +57,7 @@ export const RecordForm = ({
     /*
      * Set category after selecting a contract
      */
-    const { data: contracts } = useGetContractsQuery()
+    const {data: contracts} = useGetContractsQuery()
     useEffect(() => {
         const contractObj = contracts?.find(
             (obj: Contract) => obj.id === parseInt(contract),
@@ -92,12 +93,14 @@ export const RecordForm = ({
      * Clear form after submission
      */
     useEffect(() => {
-        if (queryState.isSuccess) {
+        if (isSuccess) {
             setAmount('')
             setSubject('')
+            setCategory('')
+            setContract('')
             setCounterBooking('')
         }
-    }, [queryState.isSuccess])
+    }, [isSuccess])
 
     const onSubmitClick = () => {
         const payload = {
@@ -115,9 +118,11 @@ export const RecordForm = ({
 
     return (
         <ThemeProvider theme={theme}>
-            {isError && <ApiError error={error} />}
+            {isError && <ApiError error={error}/>}
 
-            <AccountSelect value={account} onChange={setAccount} />
+            {isSuccess && <Alert severity={"success"}>Buchung erfolgreich gespeichert.</Alert>}
+
+            <AccountSelect value={account} onChange={setAccount}/>
 
             <AmountInput
                 value={amount}
@@ -129,9 +134,9 @@ export const RecordForm = ({
                 required
             />
 
-            <SubjectInput value={subject} onChange={onSubjectChange} />
+            <SubjectInput value={subject} onChange={onSubjectChange}/>
 
-            <DatePicker label="Datum" onChange={setDate} value={date} />
+            <DatePicker label="Datum" onChange={setDate} value={date}/>
 
             <CategorySelect
                 value={category}
@@ -159,8 +164,9 @@ export const RecordForm = ({
             />
 
             <ProgressButton
-                isError={isError}
-                {...queryState}
+                error={isError}
+                success={isSuccess}
+                loading={isLoading}
                 onClick={onSubmitClick}
             >
                 {buttonCaption ? buttonCaption : 'Speichern'}
