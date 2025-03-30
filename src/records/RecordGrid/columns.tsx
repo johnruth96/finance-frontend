@@ -23,6 +23,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
             minWidth: 100,
+            editable: true,
         },
         {
             field: 'subject',
@@ -31,6 +32,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             minWidth: 100,
             type: 'string',
             aggregable: false,
+            editable: true,
             renderCell: ({value, id, row}) => (
                 <span>
                     <Link to={`/records/${id}/update/`}>{value}</Link>
@@ -49,6 +51,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             flex: 1,
             minWidth: 100,
             type: 'date',
+            editable: true,
             valueFormatter: (value) => {
                 if (value) {
                     return dayjs(value).format('DD.MM.YYYY')
@@ -80,6 +83,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             minWidth: 100,
             type: 'singleSelect',
             display: 'flex',
+            editable: true,
             valueOptions: (categories ?? []).map(
                 ({id, name, ...rest}: Category) => ({
                     value: id,
@@ -120,6 +124,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 label: name,
             })),
             aggregable: false,
+            editable: true,
         },
         {
             field: 'account',
@@ -132,6 +137,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 label: name,
             })),
             aggregable: false,
+            editable: true,
         },
         {
             field: 'transaction_count',

@@ -59,7 +59,7 @@ export const MemoServerRecordGrid = ({sortModel, ...props}: MemoServerRecordGrid
         } else {
             const model = sessionStorage.getItem("sortModel")
             if (model === null) {
-                return undefined
+                return props.initialState?.sorting?.sortModel
             } else {
                 return JSON.parse(model)
             }
