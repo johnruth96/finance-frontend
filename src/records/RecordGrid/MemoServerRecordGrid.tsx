@@ -52,6 +52,7 @@ type MemoServerRecordGridProps = Omit<ServerRecordGridProps,
     | 'onDensityChange'>
 
 // TODO: Add other models
+// TODO: Make memo a property for opt-out
 export const MemoServerRecordGrid = ({sortModel, ...props}: MemoServerRecordGridProps) => {
     const getInitialSortModel = () => {
         if (sortModel) {

@@ -1,10 +1,12 @@
 import React, {useEffect, useMemo} from 'react'
-import {useGetRecordsQuery} from "../../app/api";
-import {RecordGrid, RecordGridProps} from "./RecordGrid";
+import {useGetRecordsQuery, useUpdateRecordMutation} from "../../app/api";
+import {RecordGrid, RecordGridProps, RowModel} from "./RecordGrid";
 import {GridFilterModel, GridPaginationModel, GridSortModel} from "@mui/x-data-grid-premium";
 import {GridCallbackDetails} from "@mui/x-data-grid/models/api";
 import {enqueueSnackbar} from "notistack";
 import {formatError} from "../../core/ApiError";
+import dayjs from "dayjs";
+import {APIError} from "../../app/types";
 
 export type ServerRecordGridProps = Omit<RecordGridProps, "records" | 'rowCount' | 'paginationMode' | 'sortingMode' | 'filterMode' | 'slotProps'>
 
@@ -80,12 +82,30 @@ export const ServerRecordGrid = ({
     )
 
     const {data, isLoading, isError, error} = useGetRecordsQuery(queryOptions)
+    const [updateRecord, {isLoading: isUpdating}] = useUpdateRecordMutation()
+
+    const handleRowUpdate = React.useCallback((updatedRow: RowModel, originalRow: RowModel) => {
+        const payload = {
+            ...updatedRow,
+            date: dayjs(updatedRow.date).format("YYYY-MM-DD"),
+        }
+
+        return new Promise<RowModel>((resolve, reject) => {
+            updateRecord(payload).unwrap().then(response => {
+                resolve(updatedRow)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }, [])
+
+    const handleProcessRowUpdateError = (error: APIError) => {
+        enqueueSnackbar(formatError(error), {variant: "error"})
+    }
 
     useEffect(() => {
         if (isError) {
-            enqueueSnackbar(formatError(error), {
-                variant: "error"
-            })
+            enqueueSnackbar(formatError(error as APIError), {variant: "error"})
         }
     }, [error, isError])
 
@@ -95,7 +115,7 @@ export const ServerRecordGrid = ({
     return (
         <RecordGrid
             records={data?.results ?? []}
-            loading={isLoading || loading}
+            loading={isLoading || isUpdating || loading}
             rowCount={data?.count ?? 0}
             pageSizeOptions={[10, 25, 50, 100]}
             paginationModel={paginationModel}
@@ -115,6 +135,8 @@ export const ServerRecordGrid = ({
                     }
                 }
             }}
+            processRowUpdate={handleRowUpdate}
+            onProcessRowUpdateError={handleProcessRowUpdateError}
             {...props}
         />
     )

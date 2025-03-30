@@ -1,4 +1,3 @@
-
 import {Category, Contract, RecordType} from "../../app/types";
 import dayjs from "dayjs";
 import {Transaction} from "../types";
@@ -14,13 +13,19 @@ export interface EqualsCondition {
     value: string | number | boolean
 }
 
+export interface ContainsCondition {
+    field: keyof Transaction
+    operator: "icontains"
+    value: string
+}
+
 export interface StartsWithCondition {
     field: keyof Transaction
     operator: "startsWith"
     value: string
 }
 
-export type Condition = EqualsCondition | StartsWithCondition
+export type Condition = EqualsCondition | StartsWithCondition | ContainsCondition
 
 export interface TransformRule {
     conditions: Condition[]
@@ -34,6 +39,9 @@ const matchTransaction = (transaction: Transaction, rule: TransformRule) => {
         } else if (cond.operator === "startsWith") {
             const value = transaction[cond.field]
             return typeof value === "string" ? value.startsWith(cond.value) : false
+        } else {
+            const value = transaction[cond.field]
+            return typeof value === "string" ? value.toLowerCase().includes(cond.value.toLowerCase()) : false
         }
     })
 }
@@ -70,10 +78,13 @@ export class RecordFactory {
 
     createRecord(transaction: Transaction): Omit<RecordType, "id"> {
         const record = this.prepareRecord(transaction)
+        console.debug("Prepare record:", record)
 
         for (const rule of this.rules) {
             if (matchTransaction(transaction, rule)) {
                 const draft = applyRule(rule, transaction)
+                console.debug("Rule match:", rule)
+                console.debug("Draft:", draft)
 
                 for (const [attribute, value] of Object.entries(draft)) {
                     if (attribute === "category") {
@@ -113,11 +124,25 @@ export class RecordFactory {
     }
 
     private getCategoryId(name: string): number | null {
-        return this.categories.find((cat) => cat.name === name)?.id ?? null
+        const id = this.categories.find((cat) => cat.name === name)?.id
+        if (id === undefined) {
+            console.error(`No category with name '${name}' found.`)
+            console.debug("Available categories:", this.categories)
+            return null
+        } else {
+            return id
+        }
     }
 
     private getContractId(name: string): number | null {
-        return this.contracts.find((con) => con.name === name)?.id ?? null
+        const id = this.contracts.find((cat) => cat.name === name)?.id
+        if (id === undefined) {
+            console.error(`No contract with name '${name}' found.`)
+            console.debug("Available contracts:", this.contracts)
+            return null
+        } else {
+            return id
+        }
     }
 }
 

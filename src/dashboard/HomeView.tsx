@@ -1,6 +1,5 @@
 import React from 'react'
 import {Page} from '../core/Page'
-import ContractPaymentView from '../contracts/views/ContractNextPaymentView'
 import dayjs from 'dayjs'
 import {Box, Grid, Typography} from '@mui/material'
 import {IncomeCategoryPieChart} from '../statistics/StatisticsView/IncomeCategoryPieChart'
@@ -19,8 +18,6 @@ const HomeView = ({records}: HomeViewProps) => {
     return (
         <Page title={dayjs().format('MMMM YYYY')} addUrl={'/records/add/'}>
             <AccountsView records={records}/>
-
-            <ContractPaymentView records={records}/>
 
             <Box>
                 <Grid container spacing={2}>
