@@ -1,5 +1,6 @@
 ### Credentials
 src/app/config.ts
+src/app/rules.tsx
 
 ### Node template
 # Logs
