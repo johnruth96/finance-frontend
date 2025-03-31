@@ -1,12 +1,13 @@
 import React, {useMemo} from 'react'
 
 import {useGetAccountsQuery, useGetCategoriesQuery, useGetContractsQuery,} from '../../app/api'
-import {Box} from '@mui/material'
+import {Box, Typography} from '@mui/material'
 import {DataGridPremium, GridToolbar,} from '@mui/x-data-grid-premium'
 import dayjs from 'dayjs'
 import {RecordType} from "../../app/types";
 import {createGridColDef} from "./columns";
 import {DataGridPremiumProps} from "@mui/x-data-grid-premium/models/dataGridPremiumProps";
+import {RecordDetailView} from "../views/RecordDetailView";
 
 export type RowModel = Omit<RecordType, 'date'> & { date: Date }
 
@@ -68,6 +69,13 @@ export const RecordGrid = ({records = [], loading, slots = {}, initialState = {}
                     density: "compact",
                     ...initialState,
                 }}
+                getDetailPanelHeight={() => 'auto'}
+                getDetailPanelContent={({row}) => (
+                    <Box sx={{p: 2}}>
+                        <Typography variant={"h6"} sx={{mb: 3}}>{row?.subject}</Typography>
+                        <RecordDetailView object={row}/>
+                    </Box>
+                )}
                 {...props}
             />
         </Box>

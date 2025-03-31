@@ -4,7 +4,6 @@ import React from 'react'
 import {HomeViewContainer} from '../dashboard/HomeView'
 import RecordListView from '../records/views/RecordListView'
 import {RecordCreateView} from '../records/views/RecordCreateView'
-import RecordUpdateView from '../records/views/RecordUpdateView'
 import ContractListView from '../contracts/views/ContractListView'
 import ContractCreateView from '../contracts/views/ContractCreateView'
 import ContractDetailView from '../contracts/views/ContractDetailView'
@@ -13,6 +12,7 @@ import {InsightsView} from '../statistics/InsightsView'
 import {TransactionListView} from "../transactions/TransactionListView";
 import {ImportView} from "../transactions/ImportView";
 import {LatestRecordListView} from "../transactions/LatestRecordListView";
+import {RecordDetailPage} from "../records/views/RecordDetailPage";
 
 export const routes = [
     {
@@ -35,8 +35,8 @@ export const routes = [
                 element: <RecordCreateView/>,
             },
             {
-                path: 'records/:id/update/',
-                element: <RecordUpdateView/>,
+                path: 'records/:id/',
+                element: <RecordDetailPage/>,
             },
             /*
              Contracts

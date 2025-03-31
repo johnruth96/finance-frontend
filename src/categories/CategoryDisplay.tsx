@@ -2,17 +2,14 @@ import {useGetCategoriesQuery} from '../app/api'
 import React from 'react'
 import {CategoryCircle} from './CategoryCircle'
 import {Skeleton, Typography} from '@mui/material'
+import {TypographyOwnProps} from "@mui/material/Typography/Typography";
 
-interface CategoryDisplayProps {
+interface CategoryDisplayProps extends TypographyOwnProps {
     name: string
     color: string
 }
 
-export const CategoryDisplay = ({
-                                    name,
-                                    color,
-                                    ...props
-                                }: CategoryDisplayProps) => {
+export const CategoryDisplay = ({name, color, ...props}: CategoryDisplayProps) => {
     return (
         <Typography {...props}>
             <CategoryCircle color={color}/> {name}
@@ -20,14 +17,11 @@ export const CategoryDisplay = ({
     )
 }
 
-type CategoryDisplayContainerProps = {
+interface CategoryDisplayContainerProps extends TypographyOwnProps {
     id: number
 }
 
-export const CategoryDisplayContainer = ({
-                                             id,
-                                             ...props
-                                         }: CategoryDisplayContainerProps) => {
+export const CategoryDisplayContainer = ({id, ...props}: CategoryDisplayContainerProps) => {
     const {category} = useGetCategoriesQuery(undefined, {
         selectFromResult: ({data}) => ({
             category: data?.find((obj) => obj.id === id),

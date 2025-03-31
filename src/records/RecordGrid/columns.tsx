@@ -2,7 +2,6 @@ import {GridCellParams, GridColDef} from "@mui/x-data-grid-premium";
 import {Account, Category, Contract} from "../../app/types";
 import {AmountDisplay} from "../../core/AmountDisplay";
 import {Link} from "react-router-dom";
-import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import dayjs from "dayjs";
 import {CategoryDisplay} from "../../categories/CategoryDisplay";
 import React from "react";
@@ -34,15 +33,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             aggregable: false,
             editable: true,
             renderCell: ({value, id, row}) => (
-                <span>
-                    <Link to={`/records/${id}/update/`}>{value}</Link>
-                    {row.counter_booking && (
-                        <span>
-                            {' '}
-                            (<InsertLinkIcon/> {row.counter_booking})
-                        </span>
-                    )}
-                </span>
+                <Link to={`/records/${id}/`}>{value}</Link>
             ),
         },
         {

@@ -3,14 +3,17 @@ import {Page} from '../../core/Page'
 import {getPaymentCycleDisplay} from '../PaymentCycleInput'
 import {AmountDisplay} from '../../core/AmountDisplay'
 import {CategoryDisplayContainer} from '../../categories/CategoryDisplay'
-import {ValueDisplay} from '../ValueDisplay'
-import {Box, Typography} from '@mui/material'
+import {Box, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {ServerRecordGrid} from "../../records/RecordGrid/ServerRecordGrid";
 import {QueryProvider} from "../../core/QueryProvider";
 import {useParams} from "react-router-dom";
 import {useGetContractQuery} from "../../app/api";
+import dayjs from "dayjs";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {green, red} from "@mui/material/colors";
+import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
 
 interface ContractDetailViewProps {
     object: Contract
@@ -30,86 +33,113 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
     return (
         <Page
             title={object.name}
-            back
             updateUrl={`update/`}
             deleteModel={{model: 'Contract', id: object.id}}
         >
-            <Box sx={{mb: 3}}>
-                <ValueDisplay label={'Name'} value={object.name}/>
+            <Box sx={{mb: 3, width: "50%"}}>
+                <Typography variant={"caption"}>Details</Typography>
 
-                <ValueDisplay
-                    label={'Status'}
-                    value={object.is_active}
-                    type={'boolean'}
-                    yesLabel={'Aktiv'}
-                    noLabel={'Inaktiv'}
-                />
+                <Table size="small" sx={{tableLayout: "fixed"}}>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Name</TableCell>
+                            <TableCell>{object.name}</TableCell>
+                        </TableRow>
 
-                <ValueDisplay label={'Kategorie'}>
-                    <CategoryDisplayContainer id={object.category}/>
-                </ValueDisplay>
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Status</TableCell>
+                            <TableCell>
+                                {object.is_active ?
+                                    <span><CheckCircleIcon sx={{color: green[500]}}/> Aktiv</span> :
+                                    <span><DoNotDisturbAltIcon sx={{color: red[500]}}/> Inaktiv</span>
+                                }
+                            </TableCell>
+                        </TableRow>
 
-                <ValueDisplay
-                    label={'Vertragsbeginn'}
-                    value={object.date_start}
-                    type={'date'}
-                />
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Kategorie</TableCell>
+                            <TableCell>
+                                <CategoryDisplayContainer id={object.category} variant={"body2"}/>
+                            </TableCell>
+                        </TableRow>
 
-                {object.minimum_duration !== null && (
-                    <ValueDisplay
-                        label={'Mindestlaufzeit'}
-                        value={`${object.minimum_duration} Monate`}
-                    />
-                )}
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Vertragsbeginn</TableCell>
+                            <TableCell>{dayjs(object.date_start).format("DD.MM.YYYY")}</TableCell>
+                        </TableRow>
 
-                <ValueDisplay
-                    label={'Kündigungsfrist'}
-                    value={
-                        object.cancelation_period !== null
-                            ? `${object.cancelation_period} Monate`
-                            : 'keine'
-                    }
-                />
+                        {object.minimum_duration !== null && (
+                            <TableRow>
+                                <TableCell sx={{pl: 0}}>Mindestlaufzeit</TableCell>
+                                <TableCell>
+                                    {object.minimum_duration} Monate
+                                </TableCell>
+                            </TableRow>
+                        )}
 
-                {object.next_extension_date !== null && (
-                    <ValueDisplay
-                        label={'Automatische Verlängerung'}
-                        value={object.next_extension_date}
-                        type={'date'}
-                    />
-                )}
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Kündigungsfrist</TableCell>
+                            <TableCell>
+                                {
+                                    object.cancelation_period !== null
+                                        ? `${object.cancelation_period} Monate`
+                                        : 'keine'
+                                }
+                            </TableCell>
+                        </TableRow>
 
-                {object.next_cancelation_date !== null && (
-                    <ValueDisplay
-                        label={'Kündigung bis'}
-                        value={object.next_cancelation_date}
-                        type={'date'}
-                    />
-                )}
+                        {object.next_extension_date !== null && (
+                            <TableRow>
+                                <TableCell sx={{pl: 0}}>Automatische Verlängerung</TableCell>
+                                <TableCell>
+                                    {dayjs(object.next_extension_date).format("DD.MM.YYYY")}
+                                </TableCell>
+                            </TableRow>
+                        )}
+
+                        {object.next_cancelation_date !== null && (
+                            <TableRow>
+                                <TableCell sx={{pl: 0}}>Kündigung bis</TableCell>
+                                <TableCell>
+                                    {dayjs(object.next_cancelation_date).format("DD.MM.YYYY")}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </Box>
 
-            <Box sx={{mb: 3}}>
-                <Typography variant={'h6'}>Zahlung</Typography>
+            <Box sx={{mb: 3, width: "50%"}}>
+                <Typography variant={'caption'}>Zahlung</Typography>
 
-                <ValueDisplay
-                    label={'Betrag'}
-                    value={<AmountDisplay value={object.amount}/>}
-                />
+                <Table size="small" sx={{tableLayout: "fixed"}}>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Betrag</TableCell>
+                            <TableCell>
+                                <AmountDisplay value={object.amount}/>
+                            </TableCell>
+                        </TableRow>
 
-                <ValueDisplay
-                    label={'Turnus'}
-                    value={getPaymentCycleDisplay(object.payment_cycle)}
-                />
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Turnus</TableCell>
+                            <TableCell>
+                                {getPaymentCycleDisplay(object.payment_cycle)}
+                            </TableCell>
+                        </TableRow>
 
-                <ValueDisplay
-                    label={'Datum'}
-                    value={object.payment_date}
-                    type={'date'}
-                />
+                        <TableRow>
+                            <TableCell sx={{pl: 0}}>Datum</TableCell>
+                            <TableCell>
+                                {dayjs(object.payment_date).format("DD.MM.YYYY")}
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </Box>
 
             <Box>
-                <Typography variant={'h6'}>Buchungen</Typography>
+                <Typography variant={'caption'}>Buchungen</Typography>
                 <ServerRecordGrid filterModel={filterModel}/>
             </Box>
         </Page>
