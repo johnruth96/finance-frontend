@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import dayjs from "dayjs";
 import {CategoryDisplay} from "../../categories/CategoryDisplay";
 import React from "react";
-import {RowModel} from "./RecordGrid";
+import {RowModel} from "./BaseRecordGrid";
 
 
 export const createGridColDef = (categories: Category[] | undefined, contracts: Contract[] | undefined, accounts: Account[] | undefined): GridColDef<RowModel>[] => {

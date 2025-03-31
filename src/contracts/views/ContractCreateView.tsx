@@ -16,7 +16,7 @@ export default () => {
     }, [queryState.isSuccess, queryState.data])
 
     return (
-        <Page title={'Vertrag anlegen'} back>
+        <Page title={'Vertrag anlegen'}>
             <ContractForm
                 onSubmit={createContract}
                 buttonCaption={'Erstellen'}

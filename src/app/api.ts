@@ -84,13 +84,13 @@ export const baseApi = createApi({
             }),
             invalidatesTags: ["Contract"],
         }),
-        deleteContract: builder.mutation<void, number>({
+        /*deleteContract: builder.mutation<void, number>({
             query: (id) => ({
                 url: `contracts/${id}/`,
                 method: 'DELETE',
             }),
             invalidatesTags: ["Contract"],
-        }),
+        }),*/
         /*
          Record
          */
@@ -273,7 +273,6 @@ export const {
     useGetContractQuery,
     useCreateContractMutation,
     useUpdateContractMutation,
-    useDeleteContractMutation,
     /*
      * Record
      */

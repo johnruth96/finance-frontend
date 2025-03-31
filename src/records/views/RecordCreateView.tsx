@@ -8,7 +8,7 @@ export const RecordCreateView = () => {
     const [createRecord, queryState] = useCreateRecordMutation()
 
     return (
-        <Page title={"Buchung anlegen"} back>
+        <Page title={"Buchung anlegen"}>
             <RecordForm onSubmit={createRecord} {...queryState} buttonCaption={"Anlegen"}/>
         </Page>
     )

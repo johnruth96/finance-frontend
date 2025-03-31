@@ -5,7 +5,7 @@ import {CategoryDisplayContainer} from "../../categories/CategoryDisplay";
 import dayjs from "dayjs";
 import {AmountDisplay} from "../../core/AmountDisplay";
 import {AccountDisplay} from "../../core/AccountDisplay";
-import {RowModel} from "../RecordGrid/RecordGrid";
+import {RowModel} from "../RecordGrid/BaseRecordGrid";
 import {useNavigate} from "react-router-dom";
 import {useGetContractsQuery} from "../../app/api";
 

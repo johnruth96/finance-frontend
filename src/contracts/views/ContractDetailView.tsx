@@ -6,7 +6,6 @@ import {CategoryDisplayContainer} from '../../categories/CategoryDisplay'
 import {Box, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
-import {ServerRecordGrid} from "../../records/RecordGrid/ServerRecordGrid";
 import {QueryProvider} from "../../core/QueryProvider";
 import {useParams} from "react-router-dom";
 import {useGetContractQuery} from "../../app/api";
@@ -14,6 +13,7 @@ import dayjs from "dayjs";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {green, red} from "@mui/material/colors";
 import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
+import {RecordGrid} from "../../records/RecordGrid/RecordGrid";
 
 interface ContractDetailViewProps {
     object: Contract
@@ -34,7 +34,6 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
         <Page
             title={object.name}
             updateUrl={`update/`}
-            deleteModel={{model: 'Contract', id: object.id}}
         >
             <Box sx={{mb: 3, width: "50%"}}>
                 <Typography variant={"caption"}>Details</Typography>
@@ -140,7 +139,13 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
 
             <Box>
                 <Typography variant={'caption'}>Buchungen</Typography>
-                <ServerRecordGrid filterModel={filterModel}/>
+                <RecordGrid
+                    initialState={{
+                        filter: {
+                            filterModel: filterModel
+                        }
+                    }}
+                />
             </Box>
         </Page>
     )

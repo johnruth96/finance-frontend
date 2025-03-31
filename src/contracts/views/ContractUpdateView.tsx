@@ -26,7 +26,7 @@ const ContractUpdateView = ({object}: ContractUpdateViewProps) => {
     }
 
     return (
-        <Page title={`${object.name} bearbeiten`} back>
+        <Page title={`${object.name} bearbeiten`}>
             <ContractForm
                 initial={object}
                 onSubmit={onSubmit}

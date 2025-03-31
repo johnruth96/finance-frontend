@@ -2,13 +2,13 @@ import {GridRowParams} from '@mui/x-data-grid'
 import {Box} from '@mui/material'
 import {Transaction} from './types'
 import React from 'react'
-import {RecordGrid} from "../records/RecordGrid/RecordGrid";
+import {BaseRecordGrid} from "../records/RecordGrid/BaseRecordGrid";
 
 
 const TransactionGridDetailPanel = ({row}: GridRowParams<Transaction>) => {
     return (
         <Box sx={{p: 1}}>
-            <RecordGrid
+            <BaseRecordGrid
                 records={row.records}
                 density={'compact'}
                 hideFooter
@@ -17,6 +17,21 @@ const TransactionGridDetailPanel = ({row}: GridRowParams<Transaction>) => {
                 }}
                 disableAggregation
                 disableColumnFilter
+                initialState={{
+                    columns: {
+                        columnVisibilityModel: {
+                            id: false,
+                            account: false,
+                            date_created: false,
+                            transaction_count: false,
+                        },
+                    },
+                    aggregation: {
+                        model: {
+                            amount: 'sum',
+                        },
+                    },
+                }}
             />
         </Box>
     )

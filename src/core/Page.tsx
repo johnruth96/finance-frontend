@@ -1,11 +1,9 @@
-import {Box, Button, Container, IconButton, Menu, MenuItem, SxProps, Typography,} from '@mui/material'
+import {Box, Button, IconButton, Menu, MenuItem, SxProps, Typography,} from '@mui/material'
 import React, {PropsWithChildren, ReactNode, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import {isString} from 'lodash'
-import {baseApi} from '../app/api'
-import {formatError} from './ApiError'
 
 interface MenuItemType {
     icon?: React.ReactNode
@@ -19,12 +17,7 @@ interface PageProps extends PropsWithChildren {
     pageTitle?: string
     addUrl?: string
     updateUrl?: string
-    back?: boolean
     menu?: MenuItemType[]
-    deleteModel?: {
-        model: string
-        id: number
-    }
     sx?: SxProps
 }
 
@@ -80,8 +73,6 @@ export const Page = ({
                          children,
                          addUrl,
                          updateUrl,
-                         deleteModel,
-                         back,
                          menu = [],
                          ...props
                      }: PageProps) => {
@@ -114,34 +105,6 @@ export const Page = ({
         })
     }
 
-    /*
-     Delete Menu Item
-     */
-    if (deleteModel) {
-        const deleteHookName = `useDelete${deleteModel.model}Mutation`
-        const deleteHook = baseApi[deleteHookName]
-
-        const [deleteModelTrigger] = deleteHook()
-
-        items.push({
-            label: 'Löschen',
-            onClick: () => {
-                if (
-                    confirm(`${deleteModel.model} ${deleteModel.id} löschen?`)
-                ) {
-                    deleteModelTrigger(deleteModel.id)
-                        .unwrap()
-                        .then(() => {
-                            navigate(-1)
-                        })
-                        .catch((error) => {
-                            alert(formatError(error))
-                        })
-                }
-            },
-        })
-    }
-
     let inlineNavigation
     if (items.length === 1) {
         const item = items[0]
@@ -171,7 +134,7 @@ export const Page = ({
 
     return (
         <Box>
-            <Box sx={{display: "flex", justifyContent: "space-between", mb:3}}>
+            <Box sx={{display: "flex", justifyContent: "space-between", mb: 3}}>
                 <Box>
                     {isString(title) ? (
                         <Typography variant="h2">{title}</Typography>

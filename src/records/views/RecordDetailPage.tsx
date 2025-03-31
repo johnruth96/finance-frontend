@@ -12,7 +12,7 @@ export const RecordDetailPage = ({}) => {
 
     return (
         <QueryProvider {...hookResult}>
-            <Page title={data?.subject} back>
+            <Page title={data?.subject}>
                 <RecordDetailView object={data}/>
             </Page>
         </QueryProvider>

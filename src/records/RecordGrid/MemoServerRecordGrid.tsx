@@ -4,100 +4,138 @@ import {GridCallbackDetails} from "@mui/x-data-grid/models/api";
 import {ServerRecordGrid, ServerRecordGridProps} from "./ServerRecordGrid";
 import {GridColumnVisibilityModel} from "@mui/x-data-grid/hooks/features/columns/gridColumnsInterfaces";
 
-const getFilterModel = (): GridFilterModel | undefined => {
-    const model = sessionStorage.getItem("filterModel")
-    if (model === null) {
-        return undefined
-    } else {
-        return JSON.parse(model)
-    }
-}
-
-const getPaginationModel = (): GridPaginationModel | undefined => {
-    const model = sessionStorage.getItem("paginationModel")
-    if (model === null) {
-        return undefined
-    } else {
-        return JSON.parse(model)
-    }
-}
-
-const getColumnVisibilityModel = (): GridColumnVisibilityModel | undefined => {
-    const model = sessionStorage.getItem("columnVisibilityModel")
-    if (model === null) {
-        return undefined
-    } else {
-        return JSON.parse(model)
-    }
-}
-
-const getDensity = (): GridDensity | undefined => {
-    const model = sessionStorage.getItem("density")
-    if (model === null) {
-        return undefined
-    } else {
-        return model as GridDensity
-    }
-}
 
 type MemoServerRecordGridProps = Omit<ServerRecordGridProps,
-    'paginationModel'
-    | 'filterModel'
-    | 'columnVisibilityModel'
-    | 'density'
-    | 'onFilterModelChange'
+    'onFilterModelChange'
     | 'onPaginationModelChange'
     | 'onSortModelChange'
     | 'onColumnVisibilityModelChange'
     | 'onDensityChange'>
 
-// TODO: Add other models
-// TODO: Add row selection model
-// TODO: Add Master-Detail model
-// TODO: Make memo a property for opt-out
-export const MemoServerRecordGrid = ({sortModel, ...props}: MemoServerRecordGridProps) => {
+// TODO: Add rowSelectionModel
+// TODO: Add detailPanelExpandedRowIds (https://mui.com/x/react-data-grid/master-detail/)
+
+/**
+ * MemoServerRecordGrid adds as storage layer to ServerRecordGrid.
+ * DataGrid state is stored in the session storage.
+ *
+ * The component prioritizes each model value in the following way:
+ * 1. The model provided in the props
+ * 2. The model stored in the sessionStorage
+ * 3. The value in initialState
+ * 4. undefined
+ */
+export const MemoServerRecordGrid = ({
+                                         sortModel,
+                                         filterModel,
+                                         paginationModel,
+                                         density,
+                                         columnVisibilityModel,
+                                         ...props
+                                     }: MemoServerRecordGridProps) => {
+    /**
+     * Get prefix for the sessionStorage to support this component on multiple pages.
+     *
+     * Caution: This allows only one MemoServerRecordGrid per page
+     */
+    const getPrefix = () => {
+        return window.location.pathname
+    }
+
+    /**
+     * Deserialize model from sessionStoge
+     * @param key
+     * @param defaultValue
+     */
+    const getModel = (key: string, defaultValue: any = null) => {
+        const sessionKey = `${getPrefix()}_${key}`
+        const model = sessionStorage.getItem(sessionKey)
+        if (model === null) {
+            return defaultValue
+        } else {
+            return JSON.parse(model)
+        }
+    }
+
+    /**
+     * Serialize model to sessionStore
+     * @param key
+     * @param value
+     */
+    const setModel = (key: string, value: any) => {
+        const sessionKey = `${getPrefix()}_${key}`
+        sessionStorage.setItem(sessionKey, JSON.stringify(value))
+    }
+
     const getInitialSortModel = () => {
         if (sortModel) {
             return sortModel
         } else {
-            const model = sessionStorage.getItem("sortModel")
-            if (model === null) {
-                return props.initialState?.sorting?.sortModel
-            } else {
-                return JSON.parse(model)
-            }
+            return getModel("sortModel", props.initialState?.sorting?.sortModel)
         }
     }
 
-    const [filterModel, setFilterModel] = React.useState<GridFilterModel | undefined>(getFilterModel)
-    const [paginationModel, setPaginationModel] = React.useState<GridPaginationModel | undefined>(getPaginationModel)
+    const getInitialFilterModel = () => {
+        if (filterModel) {
+            return filterModel
+        } else {
+            return getModel("filterModel", props.initialState?.filter?.filterModel)
+        }
+    }
+
+    const getInitialPaginationModel = () => {
+        if (paginationModel) {
+            return paginationModel
+        } else {
+            return getModel("paginationModel", props.initialState?.pagination?.paginationModel)
+        }
+    }
+
+    const getInitialColumnVisibilityModel = () => {
+        if (columnVisibilityModel) {
+            return columnVisibilityModel
+        } else {
+            return getModel("columnVisibilityModel", props.initialState?.columns?.columnVisibilityModel ?? {})
+        }
+    }
+
+    const getInitialDensity = () => {
+        if (density) {
+            return density
+        } else {
+            return getModel("density", props.initialState?.density)
+        }
+    }
+
+    const [finalFilterModel, setFilterModel] = React.useState<GridFilterModel | undefined>(getInitialFilterModel)
+    const [finalPaginationModel, setFinalPaginationModel] = React.useState<GridPaginationModel | undefined>(getInitialPaginationModel)
     const [finalSortModel, setSortModel] = React.useState<GridSortModel | undefined>(getInitialSortModel)
-    const [columnVisibilityModel, setColumnVisibilityModel] = React.useState<GridColumnVisibilityModel | undefined>(getColumnVisibilityModel)
-    const [density, setDensity] = React.useState<GridDensity | undefined>(getDensity)
+    const [finalColumnVisibilityModel, setFinalColumnVisibilityModel] = React.useState<GridColumnVisibilityModel | undefined>(getInitialColumnVisibilityModel)
+    const [finalDensity, setFinalDensity] = React.useState<GridDensity | undefined>(getInitialDensity)
 
     const onFilterModelChange = (model: GridFilterModel, _: GridCallbackDetails<'filter'>) => {
-        sessionStorage.setItem("filterModel", JSON.stringify(model))
+        setModel("filterModel", model)
         setFilterModel(model)
     }
 
     const onPaginationModelChange = (model: GridPaginationModel, _: GridCallbackDetails) => {
-        sessionStorage.setItem("paginationModel", JSON.stringify(model))
-        setPaginationModel(model)
+        setModel("paginationModel", model)
+        setFinalPaginationModel(model)
     }
 
     const onSortModelChange = (model: GridSortModel, _: GridCallbackDetails) => {
-        sessionStorage.setItem("sortModel", JSON.stringify(model))
+        setModel("sortModel", model)
         setSortModel(model)
     }
 
     const onColumnVisibilityModelChange = (model: GridColumnVisibilityModel, _: GridCallbackDetails) => {
-        sessionStorage.setItem("columnVisibilityModel", JSON.stringify(model))
-        setColumnVisibilityModel(model)
+        setModel("columnVisibilityModel", model)
+        setFinalColumnVisibilityModel(model)
     }
 
     const onDensityChange = (model: GridDensity) => {
-        sessionStorage.setItem("density", model)
-        setDensity(model)
+        setModel("density", model)
+        setFinalDensity(model)
     }
 
     /*
@@ -105,11 +143,11 @@ export const MemoServerRecordGrid = ({sortModel, ...props}: MemoServerRecordGrid
      */
     return (
         <ServerRecordGrid
-            filterModel={filterModel}
-            paginationModel={paginationModel}
+            filterModel={finalFilterModel}
             sortModel={finalSortModel}
-            columnVisibilityModel={columnVisibilityModel}
-            density={density}
+            paginationModel={finalPaginationModel}
+            columnVisibilityModel={finalColumnVisibilityModel}
+            density={finalDensity}
             onFilterModelChange={onFilterModelChange}
             onPaginationModelChange={onPaginationModelChange}
             onSortModelChange={onSortModelChange}

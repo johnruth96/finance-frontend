@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo} from 'react'
 import {useGetRecordsQuery, useUpdateRecordMutation} from "../../app/api";
-import {RecordGrid, RecordGridProps, RowModel} from "./RecordGrid";
+import {BaseRecordGrid, BaseRecordGridProps, RowModel} from "./BaseRecordGrid";
 import {GridFilterModel, GridPaginationModel, GridSortModel} from "@mui/x-data-grid-premium";
 import {GridCallbackDetails} from "@mui/x-data-grid/models/api";
 import {enqueueSnackbar} from "notistack";
@@ -8,8 +8,15 @@ import {formatError} from "../../core/ApiError";
 import dayjs from "dayjs";
 import {APIError} from "../../app/types";
 
-export type ServerRecordGridProps = Omit<RecordGridProps, "records" | 'rowCount' | 'paginationMode' | 'sortingMode' | 'filterMode' | 'slotProps'>
+export type ServerRecordGridProps = Omit<BaseRecordGridProps, "records" | 'rowCount' | 'paginationMode' | 'sortingMode' | 'filterMode' | 'slotProps'>
 
+/**
+ * ServerRecordGrid enhances the BaseRecordGrid by binding the API to the DataGrid.
+ * The component is **controlled**.
+ *
+ * The records are retrieved from the API.
+ * Records can be updated inline.
+ */
 export const ServerRecordGrid = ({
                                      loading,
                                      filterModel: filterModelProps,
@@ -113,19 +120,23 @@ export const ServerRecordGrid = ({
      * Render
      */
     return (
-        <RecordGrid
+        <BaseRecordGrid
             records={data?.results ?? []}
             loading={isLoading || isUpdating || loading}
-            rowCount={data?.count ?? 0}
+            // Pagination
+            pagination={true}
+            paginationMode="server"
             pageSizeOptions={[10, 25, 50, 100]}
             paginationModel={paginationModel}
+            rowCount={data?.count ?? 0}
+            // Sorting
             sortModel={sortModel}
-            filterModel={filterModel}
-            paginationMode="server"
             sortingMode="server"
+            onSortModelChange={onSortModelChange}
+            // Filtering
+            filterModel={filterModel}
             filterMode="server"
             onPaginationModelChange={onPaginationModelChange}
-            onSortModelChange={onSortModelChange}
             onFilterModelChange={onFilterModelChange}
             slotProps={{
                 toolbar: {
