@@ -32,7 +32,7 @@ export const getTransactionState = (transaction: Transaction) => {
         return TransactionState.IGNORED
     }
 
-    if (transaction.records.length === 0) {
+    if (transaction.records?.length === 0) {
         return TransactionState.NEW
     }
 

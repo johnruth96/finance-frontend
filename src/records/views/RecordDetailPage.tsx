@@ -1,6 +1,6 @@
 import React from 'react'
 import {Page} from "../../core/Page";
-import {RecordDetailView} from "./RecordDetailView";
+import {RecordDetailView} from "../RecordDetailView";
 import {useParams} from "react-router-dom";
 import {useGetRecordQuery} from "../../app/api";
 import {QueryProvider} from "../../core/QueryProvider";

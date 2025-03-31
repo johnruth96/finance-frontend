@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import {RecordType} from "../../app/types";
 import {createGridColDef} from "./columns";
 import {DataGridPremiumProps} from "@mui/x-data-grid-premium/models/dataGridPremiumProps";
-import {RecordDetailView} from "../views/RecordDetailView";
+import {RecordDetailView} from "../RecordDetailView";
 
 export type RowModel = Omit<RecordType, 'date'> & { date: Date }
 

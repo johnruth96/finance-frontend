@@ -1,11 +1,11 @@
 import {DataGridPremium, DataGridPremiumProps, GridColDef, GridRowClassNameParams,} from '@mui/x-data-grid-premium'
 import React from 'react'
 import dayjs from 'dayjs'
-import {AmountCell} from './AmountCell'
 import {getTransactionState, Transaction, TransactionState} from "./types";
 import {HighlightAction} from './TransactionGridAction/HighlightAction';
 import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
 import {CreateRecordAction} from "./TransactionGridAction/CreateRecordAction";
+import {AmountDisplay} from "../core/AmountDisplay";
 
 
 const columns: GridColDef<Transaction>[] = [
@@ -13,44 +13,52 @@ const columns: GridColDef<Transaction>[] = [
         field: 'account',
         headerName: 'Konto',
         type: 'string',
-        valueFormatter: (value: string) => value.substring(2, 4),
+        valueFormatter: (value: string | undefined) => value?.substring(2, 4),
+        aggregable: false,
     },
     {
         field: 'booking_date',
         headerName: 'Datum',
         type: 'date',
         valueGetter: (value: string) => value && dayjs(value).toDate(),
+        aggregable: false,
     },
     {
         field: 'creditor',
         headerName: 'Auftraggeber/Empfänger',
         flex: 1,
+        aggregable: false,
     },
     {
         field: 'transaction_type',
         headerName: 'Buchungstext',
+        aggregable: false,
     },
     {
         field: 'purpose',
         headerName: 'Verwendungszweck',
         flex: 1,
+        aggregable: false,
     },
     {
         field: 'amount',
         headerName: 'Betrag',
         type: 'number',
-        renderCell: AmountCell,
+        renderCell: ({id, value}) => <AmountDisplay value={value}/>,
+        aggregable: true,
     },
     {
         field: 'is_highlighted',
         headerName: 'Markiert',
         type: 'boolean',
+        aggregable: false,
     },
     {
         field: 'is_duplicate',
         headerName: 'Duplikat',
         type: 'boolean',
         valueGetter: (_, row) => row.is_counter_to !== null,
+        aggregable: false,
     },
     {
         field: 'state',
@@ -71,6 +79,7 @@ const columns: GridColDef<Transaction>[] = [
                 label: 'importiert',
             },
         ],
+        aggregable: false,
     },
     {
         field: 'actions',
@@ -80,10 +89,9 @@ const columns: GridColDef<Transaction>[] = [
         getActions: ({row}) => [
             <IgnoreAction row={row}/>,
             <HighlightAction row={row}/>,
-            // TODO: Implement
-            //<ConnectAction row={row}/>,
             <CreateRecordAction row={row}/>,
         ],
+        aggregable: false,
     },
 ]
 

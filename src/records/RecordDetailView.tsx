@@ -1,42 +1,28 @@
 import React from 'react'
-import {RecordType} from "../../app/types";
+import {RecordType} from "../app/types";
 import {Box, List, ListItemButton, ListItemText, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
-import {CategoryDisplayContainer} from "../../categories/CategoryDisplay";
+import {CategoryDisplayContainer} from "../categories/CategoryDisplay";
 import dayjs from "dayjs";
-import {AmountDisplay} from "../../core/AmountDisplay";
-import {AccountDisplay} from "../../core/AccountDisplay";
-import {RowModel} from "../RecordGrid/BaseRecordGrid";
-import {useNavigate} from "react-router-dom";
-import {useGetContractsQuery} from "../../app/api";
-
-interface ContractListItemButtonProps {
-    id: number
-}
-
-const ContractListItemButton = ({id}: ContractListItemButtonProps) => {
-    const navigate = useNavigate()
-    const {contract} = useGetContractsQuery(undefined, {
-        selectFromResult: ({data}) => ({
-            contract: data?.find((obj) => obj.id === id),
-        }),
-    })
-
-    const handleClick = () => {
-        navigate(`/contracts/${id}/`)
-    }
-
-    return (
-        <ListItemButton onClick={handleClick}>
-            <ListItemText primary={contract?.name}/>
-        </ListItemButton>
-    )
-}
+import {AmountDisplay} from "../core/AmountDisplay";
+import {AccountDisplay} from "../core/AccountDisplay";
+import {RowModel} from "./RecordGrid/BaseRecordGrid";
+import {useGetTransactionsQuery} from "../app/api";
+import {Transaction} from "../transactions/types";
+import {TransactionGrid} from "../transactions/TransactionGrid";
+import {ContractListItemButton} from "./ContractListItemButton";
+import {AddTransactionButton} from "./AddTransactionButton";
 
 interface RecordDetailViewProps {
     object: RecordType | RowModel
 }
 
 export const RecordDetailView = ({object}: RecordDetailViewProps) => {
+    const {transactions}: { transactions: Transaction[] } = useGetTransactionsQuery(undefined, {
+        selectFromResult: ({data}) => ({
+            transactions: data?.filter((obj) => object.transactions.includes(obj.id)) ?? [],
+        }),
+    })
+
     return (
         <Box>
             <Box sx={{mb: 3}}>
@@ -87,14 +73,31 @@ export const RecordDetailView = ({object}: RecordDetailViewProps) => {
             </Box>
 
             <Box>
-                <Typography variant={"caption"} component={"div"}>Transaktionen</Typography>
-                {object.transactions.length > 0 ? <List>
-                        {object.transactions.map(id => (
-                            <ListItemButton key={id}>
-                                <ListItemText primary={`Transaction ${id}`}/>
-                            </ListItemButton>
-                        ))}
-                    </List> :
+                <Box sx={{display: "flex", alignItems: "center"}}>
+                    <Typography variant={"caption"} component={"div"}>Transaktionen</Typography>
+                    <AddTransactionButton record={object}/>
+                </Box>
+
+                {transactions.length > 0 ?
+                    <TransactionGrid
+                        transactions={transactions}
+                        density={"compact"}
+                        hideFooter
+                        initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                    is_highlighted: false,
+                                    is_duplicate: false,
+                                    actions: false,
+                                }
+                            },
+                            aggregation: {
+                                model: {
+                                    amount: 'sum',
+                                },
+                            },
+                        }}
+                    /> :
                     <Typography>keine</Typography>
                 }
             </Box>
