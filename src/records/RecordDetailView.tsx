@@ -1,6 +1,6 @@
 import React from 'react'
 import {RecordType} from "../app/types";
-import {Box, List, ListItemButton, ListItemText, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
+import {Box, BoxProps, List, ListItemText, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
 import {CategoryDisplayContainer} from "../categories/CategoryDisplay";
 import dayjs from "dayjs";
 import {AmountDisplay} from "../core/AmountDisplay";
@@ -12,11 +12,11 @@ import {TransactionGrid} from "../transactions/TransactionGrid";
 import {ContractListItemButton} from "./ContractListItemButton";
 import {AddTransactionButton} from "./AddTransactionButton";
 
-interface RecordDetailViewProps {
+interface RecordDetailViewProps extends BoxProps {
     object: RecordType | RowModel
 }
 
-export const RecordDetailView = ({object}: RecordDetailViewProps) => {
+export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
     const {transactions}: { transactions: Transaction[] } = useGetTransactionsQuery(undefined, {
         selectFromResult: ({data}) => ({
             transactions: data?.filter((obj) => object.transactions.includes(obj.id)) ?? [],
@@ -24,7 +24,7 @@ export const RecordDetailView = ({object}: RecordDetailViewProps) => {
     })
 
     return (
-        <Box>
+        <Box {...props}>
             <Box sx={{mb: 3}}>
                 <Typography variant={"caption"}>Details</Typography>
                 <Table size="small">
@@ -56,9 +56,7 @@ export const RecordDetailView = ({object}: RecordDetailViewProps) => {
             <Box sx={{mb: 3}}>
                 <Typography variant={"caption"}>Kategorien</Typography>
                 <List>
-                    <ListItemButton>
-                        <ListItemText primary={<CategoryDisplayContainer id={object.category}/>}/>
-                    </ListItemButton>
+                    <ListItemText primary={<CategoryDisplayContainer id={object.category}/>}/>
                 </List>
             </Box>
 

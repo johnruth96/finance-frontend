@@ -4,9 +4,9 @@ import {BaseRecordGrid, BaseRecordGridProps, RowModel} from "./BaseRecordGrid";
 import {GridFilterModel, GridPaginationModel, GridSortModel} from "@mui/x-data-grid-premium";
 import {GridCallbackDetails} from "@mui/x-data-grid/models/api";
 import {enqueueSnackbar} from "notistack";
-import {formatError} from "../../core/ApiError";
+import {formatError} from "../../core/Error";
 import dayjs from "dayjs";
-import {APIError} from "../../app/types";
+import {GenericError} from "../../app/types";
 
 export type ServerRecordGridProps = Omit<BaseRecordGridProps, "records" | 'rowCount' | 'paginationMode' | 'sortingMode' | 'filterMode' | 'slotProps'>
 
@@ -106,13 +106,13 @@ export const ServerRecordGrid = ({
         })
     }, [])
 
-    const handleProcessRowUpdateError = (error: APIError) => {
+    const handleProcessRowUpdateError = (error: GenericError) => {
         enqueueSnackbar(formatError(error), {variant: "error"})
     }
 
     useEffect(() => {
         if (isError) {
-            enqueueSnackbar(formatError(error as APIError), {variant: "error"})
+            enqueueSnackbar(formatError(error as GenericError), {variant: "error"})
         }
     }, [error, isError])
 

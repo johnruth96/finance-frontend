@@ -8,7 +8,7 @@ import {theme} from '../index'
 import {AccountSelect} from '../core/forms/AccountSelect'
 import {DatePicker} from '@mui/x-date-pickers'
 import {ProgressButton} from '../core/ProgressButton'
-import {ApiError} from '../core/ApiError'
+import {Error} from '../core/Error'
 import {Contract} from "../app/types";
 
 export interface ContractFormProps {
@@ -83,7 +83,7 @@ export const ContractForm = ({
 
     return (
         <ThemeProvider theme={theme}>
-            {isError && <ApiError error={error}/>}
+            {isError && <Error error={error}/>}
 
             <AccountSelect
                 value={account}

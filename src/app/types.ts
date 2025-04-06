@@ -18,7 +18,7 @@ export interface DjangoRestFrameworkError {
     __all__?: string
 }
 
-export type APIError = FetchBaseQueryError | (SerializedError & { data: DjangoRestFrameworkError }) | DjangoFormError
+export type GenericError = FetchBaseQueryError | (SerializedError & { data: DjangoRestFrameworkError }) | DjangoFormError
 
 export interface Account {
     id: number

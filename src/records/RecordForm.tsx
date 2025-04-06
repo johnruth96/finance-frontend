@@ -10,7 +10,7 @@ import {ProgressButton} from '../core/ProgressButton'
 import {Alert, TextField, ThemeProvider} from '@mui/material'
 import {AccountSelect} from '../core/forms/AccountSelect'
 import {theme} from '../index'
-import {ApiError} from '../core/ApiError'
+import {Error} from '../core/Error'
 import {Contract, RecordType} from "../app/types";
 
 export interface RecordFormProps {
@@ -118,7 +118,7 @@ export const RecordForm = ({
 
     return (
         <ThemeProvider theme={theme}>
-            {isError && error.status !== 400 && <ApiError error={error}/>}
+            {isError && error.status !== 400 && <Error error={error}/>}
 
             {isSuccess && <Alert severity={"success"}>Buchung erfolgreich gespeichert.</Alert>}
 

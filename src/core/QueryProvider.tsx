@@ -1,7 +1,7 @@
 import React, {PropsWithChildren} from 'react'
 import {Spinner} from 'reactstrap'
-import {ApiError} from './ApiError'
-import {APIError} from "../app/types";
+import {Error} from './Error'
+import {GenericError} from "../app/types";
 
 interface QueryProviderProps extends PropsWithChildren {
     isLoading: boolean
@@ -10,10 +10,11 @@ interface QueryProviderProps extends PropsWithChildren {
 }
 
 export const QueryProvider = ({isLoading, error, isSuccess, ...props}: QueryProviderProps) => {
-    if (isLoading) return <Spinner color={'warning'} size={'sm'}/>
-    else if (isSuccess) {
+    if (isLoading) {
+        return <Spinner size={'sm'}/>
+    } else if (isSuccess) {
         return <>{props.children}</>
     } else {
-        return <ApiError error={error as APIError}/>
+        return <Error error={error as GenericError}/>
     }
 }

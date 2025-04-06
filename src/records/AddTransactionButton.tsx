@@ -34,7 +34,7 @@ const footerStyle: SxProps = {
 }
 
 interface AddTransactionButtonProps {
-    record: RecordType
+    record: Pick<RecordType, 'id' | 'transactions'>
 }
 
 export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {

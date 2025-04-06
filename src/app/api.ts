@@ -173,6 +173,15 @@ export const baseApi = createApi({
             },
             providesTags: ['Record'],
         }),
+        createRecord: builder.mutation<RecordType,
+            Omit<RecordType, 'id'> & Partial<RecordType>>({
+            query: (payload) => ({
+                url: "records/",
+                method: 'POST',
+                body: payload,
+            }),
+            invalidatesTags: ["Record", "Transaction"],
+        }),
         updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({
             query: ({id, ...payload}) => ({
                 url: `records/${id}/`,
@@ -181,12 +190,10 @@ export const baseApi = createApi({
             }),
             invalidatesTags: ["Record"],
         }),
-        createRecord: builder.mutation<RecordType,
-            Omit<RecordType, 'id'> & Partial<RecordType>>({
-            query: (payload) => ({
-                url: "records/",
-                method: 'POST',
-                body: payload,
+        deleteRecord: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `records/${id}/`,
+                method: 'DELETE',
             }),
             invalidatesTags: ["Record", "Transaction"],
         }),
@@ -278,8 +285,9 @@ export const {
      */
     useGetRecordQuery,
     useGetRecordsQuery,
-    useUpdateRecordMutation,
     useCreateRecordMutation,
+    useUpdateRecordMutation,
+    useDeleteRecordMutation,
     useGetSubjectCategoryPairsQuery,
     /*
      * Transaction
