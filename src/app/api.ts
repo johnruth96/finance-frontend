@@ -28,241 +28,256 @@ const updateTransaction = async (dispatch, queryFulfilled) => {
 }
 
 export const baseApi = createApi({
-    reducerPath: 'api',
-    baseQuery: fetchBaseQuery({
-        baseUrl: API_BASE,
-        prepareHeaders: (headers, {}) => {
-            const accessToken = getAccessToken()
+        reducerPath: 'api',
+        baseQuery: fetchBaseQuery({
+            baseUrl: API_BASE,
+            prepareHeaders: (headers, {}) => {
+                const accessToken = getAccessToken()
 
-            if (accessToken !== null) {
-                headers.set('Authorization', `Bearer ${accessToken}`)
-            }
-
-        },
-    }),
-    tagTypes: ["Record", "Transaction", "Account", "Contract", "Category"],
-    endpoints: (builder) => ({
-        /*
-         Account
-         */
-        getAccounts: builder.query<Account[], void>({
-            query: () => `accounts/`,
-            providesTags: ['Account'],
-        }),
-        /*
-         Category
-         */
-        getCategories: builder.query<Category[], void>({
-            query: () => `categories/`,
-            providesTags: ['Category'],
-        }),
-        /*
-         * Contract
-         */
-        getContract: builder.query<Contract, number>({
-            query: (id) => `contracts/${id}/`,
-            providesTags: ['Contract'],
-        }),
-        getContracts: builder.query<Contract[], void>({
-            query: () => `contracts/`,
-            providesTags: ['Contract'],
-        }),
-        createContract: builder.mutation<Contract,
-            Omit<Contract, 'id'> & Partial<Contract>>({
-            query: (payload) => ({
-                url: "contracts/",
-                method: 'POST',
-                body: payload,
-            }),
-            invalidatesTags: ["Contract"],
-        }),
-        updateContract: builder.mutation<Contract, Pick<Contract, "id"> & Partial<Contract>>({
-            query: ({id, ...payload}) => ({
-                url: `contracts/${id}/`,
-                method: 'PATCH',
-                body: payload,
-            }),
-            invalidatesTags: ["Contract"],
-        }),
-        /*deleteContract: builder.mutation<void, number>({
-            query: (id) => ({
-                url: `contracts/${id}/`,
-                method: 'DELETE',
-            }),
-            invalidatesTags: ["Contract"],
-        }),*/
-        /*
-         Record
-         */
-        getRecord: builder.query<RecordType, number>({
-            query: (id) => `records/${id}/`,
-            providesTags: ['Record'],
-        }),
-        getRecords: builder.query<Pagination<RecordType>, {
-            paginationModel: GridPaginationModel,
-            filterModel?: string,
-            sortModel?: GridSortModel,
-        }>({
-            query: (params) => {
-                const filterModel: GridFilterModel = params.filterModel ? JSON.parse(params.filterModel) : {
-                    items: []
+                if (accessToken !== null) {
+                    headers.set('Authorization', `Bearer ${accessToken}`)
                 }
-                const sortModel: GridSortModel = params.sortModel ?? []
-                const searchParams = new URLSearchParams()
 
-                // Pagination
-                searchParams.set("page", (params.paginationModel.page + 1).toString())
-                searchParams.set("pageSize", params.paginationModel.pageSize.toString())
+            },
+        }),
+        tagTypes: ["Record", "Transaction", "Account", "Contract", "Category"],
+        endpoints: (builder) => ({
+            /*
+             Account
+             */
+            getAccounts: builder.query<Account[], void>({
+                query: () => `accounts/`,
+                providesTags: ['Account'],
+            }),
+            /*
+             Category
+             */
+            getCategories: builder.query<Category[], void>({
+                query: () => `categories/`,
+                providesTags: ['Category'],
+            }),
+            /*
+             * Contract
+             */
+            getContract: builder.query<Contract, number>({
+                query: (id) => `contracts/${id}/`,
+                providesTags: ['Contract'],
+            }),
+            getContracts: builder.query<Contract[], void>({
+                query: () => `contracts/`,
+                providesTags: ['Contract'],
+            }),
+            createContract: builder.mutation<Contract,
+                Omit<Contract, 'id'> & Partial<Contract>>({
+                query: (payload) => ({
+                    url: "contracts/",
+                    method: 'POST',
+                    body: payload,
+                }),
+                invalidatesTags: ["Contract"],
+            }),
+            updateContract: builder.mutation<Contract, Pick<Contract, "id"> & Partial<Contract>>({
+                query: ({id, ...payload}) => ({
+                    url: `contracts/${id}/`,
+                    method: 'PATCH',
+                    body: payload,
+                }),
+                invalidatesTags: ["Contract"],
+            }),
+            /*deleteContract: builder.mutation<void, number>({
+                query: (id) => ({
+                    url: `contracts/${id}/`,
+                    method: 'DELETE',
+                }),
+                invalidatesTags: ["Contract"],
+            }),*/
+            /*
+             Record
+             */
+            getRecord: builder.query<RecordType, number>({
+                query: (id) => `records/${id}/`,
+                providesTags: ['Record'],
+            }),
+            getRecords: builder.query<Pagination<RecordType>, {
+                paginationModel: GridPaginationModel,
+                filterModel?: string,
+                sortModel?: GridSortModel,
+            }>({
+                query: (params) => {
+                    const filterModel: GridFilterModel = params.filterModel ? JSON.parse(params.filterModel) : {
+                        items: []
+                    }
+                    const sortModel: GridSortModel = params.sortModel ?? []
+                    const searchParams = new URLSearchParams()
 
-                // Sorting
-                sortModel.forEach(item => {
-                    const key = item.sort === "desc" ? "-" : ""
-                    searchParams.append("sortBy", `${key}${item.field}`)
-                })
+                    // Pagination
+                    searchParams.set("page", (params.paginationModel.page + 1).toString())
+                    searchParams.set("pageSize", params.paginationModel.pageSize.toString())
 
-                // Filtering
-                filterModel.items
-                    .filter(item => item.value !== undefined)
-                    .forEach(item => {
-                        let value = item.value
-                        const dateMatch = item.value.toString().match(/\d{4}-\d{2}-\d{2}/)
-                        if (dateMatch !== null) {
-                            value = dateMatch[0]
-                        }
-
-                        switch (item.operator) {
-                            case "equals":
-                            case "is":
-                            case "=":
-                                searchParams.append(item.field, value)
-                                break
-                            case "contains":
-                                searchParams.append(`${item.field}__icontains`, value)
-                                break
-                            case "startsWith":
-                                searchParams.append(`${item.field}__istartswith`, value)
-                                break
-                            case "endsWith":
-                                searchParams.append(`${item.field}__iendswith`, value)
-                                break
-                            case "after":
-                            case ">":
-                                searchParams.append(`${item.field}__gt`, value)
-                                break
-                            case "before":
-                            case "<":
-                                searchParams.append(`${item.field}__lt`, value)
-                                break
-                            case "onOrAfter":
-                            case ">=":
-                                searchParams.append(`${item.field}__gte`, value)
-                                break
-                            case "onOrBefore":
-                            case "<=":
-                                searchParams.append(`${item.field}__lte`, value)
-                                break
-                        }
+                    // Sorting
+                    sortModel.forEach(item => {
+                        const key = item.sort === "desc" ? "-" : ""
+                        searchParams.append("sortBy", `${key}${item.field}`)
                     })
 
-                // Quick filter
-                if (Array.isArray(filterModel.quickFilterValues)) {
-                    searchParams.append("q", filterModel.quickFilterValues.join(" "))
-                }
+                    // Filtering
+                    filterModel.items
+                        .filter(item => item.value !== undefined)
+                        .forEach(item => {
+                            let value = item.value
+                            const dateMatch = item.value.toString().match(/\d{4}-\d{2}-\d{2}/)
+                            if (dateMatch !== null) {
+                                value = dateMatch[0]
+                            }
 
-                return `records?${searchParams}`
-            },
-            providesTags: ['Record'],
-        }),
-        createRecord: builder.mutation<RecordType,
-            Omit<RecordType, 'id'> & Partial<RecordType>>({
-            query: (payload) => ({
-                url: "records/",
-                method: 'POST',
-                body: payload,
+                            switch (item.operator) {
+                                case "equals":
+                                case "is":
+                                case "=":
+                                    searchParams.append(item.field, value)
+                                    break
+                                case "contains":
+                                    searchParams.append(`${item.field}__icontains`, value)
+                                    break
+                                case "startsWith":
+                                    searchParams.append(`${item.field}__istartswith`, value)
+                                    break
+                                case "endsWith":
+                                    searchParams.append(`${item.field}__iendswith`, value)
+                                    break
+                                case "after":
+                                case ">":
+                                    searchParams.append(`${item.field}__gt`, value)
+                                    break
+                                case "before":
+                                case "<":
+                                    searchParams.append(`${item.field}__lt`, value)
+                                    break
+                                case "onOrAfter":
+                                case ">=":
+                                    searchParams.append(`${item.field}__gte`, value)
+                                    break
+                                case "onOrBefore":
+                                case "<=":
+                                    searchParams.append(`${item.field}__lte`, value)
+                                    break
+                            }
+                        })
+
+                    // Quick filter
+                    if (Array.isArray(filterModel.quickFilterValues)) {
+                        searchParams.append("q", filterModel.quickFilterValues.join(" "))
+                    }
+
+                    return `records?${searchParams}`
+                },
+                providesTags: ['Record'],
             }),
-            invalidatesTags: ["Record", "Transaction"],
-        }),
-        updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({
-            query: ({id, ...payload}) => ({
-                url: `records/${id}/`,
-                method: 'PATCH',
-                body: payload,
+            createRecord: builder.mutation<RecordType,
+                Omit<RecordType, 'id'> & Partial<RecordType>>({
+                query: (payload) => ({
+                    url: "records/",
+                    method: 'POST',
+                    body: payload,
+                }),
+                invalidatesTags: ["Record", "Transaction"],
             }),
-            invalidatesTags: ["Record"],
-        }),
-        deleteRecord: builder.mutation<void, number>({
-            query: (id) => ({
-                url: `records/${id}/`,
-                method: 'DELETE',
+            updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({
+                query: ({id, ...payload}) => ({
+                    url: `records/${id}/`,
+                    method: 'PATCH',
+                    body: payload,
+                }),
+                invalidatesTags: ["Record"],
             }),
-            invalidatesTags: ["Record", "Transaction"],
-        }),
-        getSubjectCategoryPairs: builder.query<Array<[string, number, number | null]>,
-            void>({
-            query: () => '/records/subjects/',
-            providesTags: [{type: 'Record', id: 'LIST'}],
-        }),
-        /*
-         Transaction
-         */
-        getTransactions: builder.query<Transaction[], void>({
-            query: () => `transactions/transactions/`,
-            providesTags: ['Transaction'],
-        }),
-        hideTransaction: builder.mutation<Transaction, number>({
-            query: (id) => ({
-                url: `transactions/transactions/${id}/hide/`,
-                method: 'POST',
+            deleteRecord: builder.mutation<void, number>({
+                query: (id) => ({
+                    url: `records/${id}/`,
+                    method: 'DELETE',
+                }),
+                invalidatesTags: ["Record", "Transaction"],
             }),
-            async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                await updateTransaction(dispatch, queryFulfilled)
-            },
-        }),
-        showTransaction: builder.mutation<Transaction, number>({
-            query: (id) => ({
-                url: `transactions/transactions/${id}/show/`,
-                method: 'POST',
+            getSubjectCategoryPairs: builder.query<Array<[string, number, number | null]>,
+                void>({
+                query: () => '/records/subjects/',
+                providesTags: [{type: 'Record', id: 'LIST'}],
             }),
-            async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                await updateTransaction(dispatch, queryFulfilled)
-            },
-        }),
-        bookmarkTransaction: builder.mutation<Transaction, number>({
-            query: (id) => ({
-                url: `transactions/transactions/${id}/bookmark/`,
-                method: 'POST',
+            getRecordTransactions: builder.query<Transaction[], number>({
+                query: (recordId) => `/records/${recordId}/transactions/`,
+                providesTags: (result, error, recordId) => [{type: 'Record', id: recordId}, 'Transaction']
             }),
-            async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                await updateTransaction(dispatch, queryFulfilled)
-            },
-        }),
-        removeBookmarkTransaction: builder.mutation<Transaction, number>({
-            query: (id) => ({
-                url: `transactions/transactions/${id}/unbookmark/`,
-                method: 'POST',
+            unlinkRecordFromTransaction: builder.mutation<void, { record: number, transaction: number }>({
+                query: ({record, transaction}) => ({
+                    url: `records/${record}/transactions/${transaction}/`,
+                    method: 'DELETE',
+                }),
+                invalidatesTags: (result, error, {record, transaction}) => [
+                    {type: 'Record', id: record},
+                    {type: 'Transaction', id: transaction},
+                ],
             }),
-            async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                await updateTransaction(dispatch, queryFulfilled)
-            },
-        }),
-        counterBookingTransaction: builder.mutation<void, number[]>({
-            query: (payload) => ({
-                url: `transactions/transactions/counter_booking/`,
-                method: 'POST',
-                body: payload,
+            /*
+             Transaction
+             */
+            getTransactions: builder.query<Transaction[], void>({
+                query: () => `transactions/transactions/`,
+                providesTags: ['Transaction'],
             }),
-            invalidatesTags: ['Transaction'],
-        }),
-        importCsv: builder.mutation<void, string[]>({
-            query: (contents) => ({
-                url: `transactions/transactions/import/`,
-                method: 'POST',
-                body: contents,
+            hideTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/hide/`,
+                    method: 'POST',
+                }),
+                async onQueryStarted(_, {dispatch, queryFulfilled}) {
+                    await updateTransaction(dispatch, queryFulfilled)
+                },
             }),
-            invalidatesTags: ['Transaction'],
+            showTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/show/`,
+                    method: 'POST',
+                }),
+                async onQueryStarted(_, {dispatch, queryFulfilled}) {
+                    await updateTransaction(dispatch, queryFulfilled)
+                },
+            }),
+            bookmarkTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/bookmark/`,
+                    method: 'POST',
+                }),
+                async onQueryStarted(_, {dispatch, queryFulfilled}) {
+                    await updateTransaction(dispatch, queryFulfilled)
+                },
+            }),
+            removeBookmarkTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/unbookmark/`,
+                    method: 'POST',
+                }),
+                async onQueryStarted(_, {dispatch, queryFulfilled}) {
+                    await updateTransaction(dispatch, queryFulfilled)
+                },
+            }),
+            counterBookingTransaction: builder.mutation<void, number[]>({
+                query: (payload) => ({
+                    url: `transactions/transactions/counter_booking/`,
+                    method: 'POST',
+                    body: payload,
+                }),
+                invalidatesTags: ['Transaction'],
+            }),
+            importCsv: builder.mutation<void, string[]>({
+                query: (contents) => ({
+                    url: `transactions/transactions/import/`,
+                    method: 'POST',
+                    body: contents,
+                }),
+                invalidatesTags: ['Transaction'],
+            }),
         }),
-    }),
-})
+    }
+)
 
 export const {
     /*
@@ -289,6 +304,8 @@ export const {
     useUpdateRecordMutation,
     useDeleteRecordMutation,
     useGetSubjectCategoryPairsQuery,
+    useGetRecordTransactionsQuery,
+    useUnlinkRecordFromTransactionMutation,
     /*
      * Transaction
      */

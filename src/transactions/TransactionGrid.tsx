@@ -1,4 +1,10 @@
-import {DataGridPremium, DataGridPremiumProps, GridColDef, GridRowClassNameParams,} from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium,
+    DataGridPremiumProps,
+    GridActionsCellItem,
+    GridColDef,
+    GridRowClassNameParams,
+} from '@mui/x-data-grid-premium'
 import React from 'react'
 import dayjs from 'dayjs'
 import {getTransactionState, Transaction, TransactionState} from "./types";
@@ -6,9 +12,11 @@ import {HighlightAction} from './TransactionGridAction/HighlightAction';
 import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
 import {CreateRecordAction} from "./TransactionGridAction/CreateRecordAction";
 import {AmountDisplay} from "../core/AmountDisplay";
+import {RemoveCircle} from "@mui/icons-material";
+import {useUnlinkRecordFromTransactionMutation} from "../app/api";
 
 
-const columns: GridColDef<Transaction>[] = [
+const baseColumns: GridColDef<Transaction>[] = [
     {
         field: 'account',
         headerName: 'Konto',
@@ -81,18 +89,6 @@ const columns: GridColDef<Transaction>[] = [
         ],
         aggregable: false,
     },
-    {
-        field: 'actions',
-        headerName: 'Aktionen',
-        flex: 1,
-        type: 'actions',
-        getActions: ({row}) => [
-            <IgnoreAction row={row}/>,
-            <HighlightAction row={row}/>,
-            <CreateRecordAction row={row}/>,
-        ],
-        aggregable: false,
-    },
 ]
 
 const getRowClassName = ({row}: GridRowClassNameParams<Transaction>) => {
@@ -117,15 +113,66 @@ const getRowClassName = ({row}: GridRowClassNameParams<Transaction>) => {
     return className
 }
 
+interface UnlinkActionProps {
+    record: number,
+    transaction: number
+}
+
+const UnlinkAction = ({record, transaction}: UnlinkActionProps) => {
+    const [unlinkRecordFromTransaction, {}] = useUnlinkRecordFromTransactionMutation()
+
+    const handleClick = () => {
+        unlinkRecordFromTransaction({record, transaction})
+    }
+
+    return (
+        <GridActionsCellItem
+            label="Entfernen"
+            icon={<RemoveCircle/>}
+            onClick={handleClick}
+        />
+    )
+}
+
 interface TransactionGridProps
     extends Omit<DataGridPremiumProps, 'rows' | 'columns'> {
     transactions: Transaction[]
+    record?: number
 }
 
 export const TransactionGrid = ({
                                     transactions,
+                                    record,
                                     ...props
                                 }: TransactionGridProps) => {
+    const actionColumn: GridColDef<Transaction>[] = record ? [
+        {
+            field: 'actions',
+            headerName: 'Aktionen',
+            flex: 1,
+            type: 'actions',
+            getActions: ({row}) => [
+                <UnlinkAction record={record} transaction={row.id}/>
+            ],
+            aggregable: false,
+        },
+    ] : [
+        {
+            field: 'actions',
+            headerName: 'Aktionen',
+            flex: 1,
+            type: 'actions',
+            getActions: ({row}) => [
+                <IgnoreAction row={row}/>,
+                <HighlightAction row={row}/>,
+                <CreateRecordAction row={row}/>,
+            ],
+            aggregable: false,
+        },
+    ]
+
+    const columns = [...baseColumns, ...actionColumn]
+
     return (
         <DataGridPremium
             columns={columns}

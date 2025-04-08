@@ -6,8 +6,7 @@ import dayjs from "dayjs";
 import {AmountDisplay} from "../core/AmountDisplay";
 import {AccountDisplay} from "../core/AccountDisplay";
 import {RowModel} from "./RecordGrid/BaseRecordGrid";
-import {useGetTransactionsQuery} from "../app/api";
-import {Transaction} from "../transactions/types";
+import {useGetRecordTransactionsQuery} from "../app/api";
 import {TransactionGrid} from "../transactions/TransactionGrid";
 import {ContractListItemButton} from "./ContractListItemButton";
 import {AddTransactionButton} from "./AddTransactionButton";
@@ -17,11 +16,7 @@ interface RecordDetailViewProps extends BoxProps {
 }
 
 export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
-    const {transactions}: { transactions: Transaction[] } = useGetTransactionsQuery(undefined, {
-        selectFromResult: ({data}) => ({
-            transactions: data?.filter((obj) => object.transactions.includes(obj.id)) ?? [],
-        }),
-    })
+    const {data: transactions} = useGetRecordTransactionsQuery(object.id)
 
     return (
         <Box {...props}>
@@ -76,9 +71,10 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
                     <AddTransactionButton record={object}/>
                 </Box>
 
-                {transactions.length > 0 ?
+                {transactions && transactions.length > 0 ?
                     <TransactionGrid
                         transactions={transactions}
+                        record={object.id}
                         density={"compact"}
                         hideFooter
                         initialState={{
@@ -86,7 +82,6 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
                                 columnVisibilityModel: {
                                     is_highlighted: false,
                                     is_duplicate: false,
-                                    actions: false,
                                 }
                             },
                             aggregation: {

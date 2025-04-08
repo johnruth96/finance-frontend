@@ -14,7 +14,7 @@ export const RecordDetailPage = ({}) => {
 
     return (
         <QueryProvider {...queryParams}>
-            <Page title={(data as RecordType).subject}>
+            <Page title={data?.subject}>
                 <RecordDetailView object={data as RecordType} sx={{mb: 3}}/>
 
                 <DeleteRecordButton record={data as RecordType}/>
