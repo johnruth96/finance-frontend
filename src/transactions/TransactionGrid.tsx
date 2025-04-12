@@ -1,10 +1,4 @@
-import {
-    DataGridPremium,
-    DataGridPremiumProps,
-    GridActionsCellItem,
-    GridColDef,
-    GridRowClassNameParams,
-} from '@mui/x-data-grid-premium'
+import {DataGridPremium, DataGridPremiumProps, GridColDef, GridRowClassNameParams,} from '@mui/x-data-grid-premium'
 import React from 'react'
 import dayjs from 'dayjs'
 import {getTransactionState, Transaction, TransactionState} from "./types";
@@ -12,8 +6,7 @@ import {HighlightAction} from './TransactionGridAction/HighlightAction';
 import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
 import {CreateRecordAction} from "./TransactionGridAction/CreateRecordAction";
 import {AmountDisplay} from "../core/AmountDisplay";
-import {RemoveCircle} from "@mui/icons-material";
-import {useUnlinkRecordFromTransactionMutation} from "../app/api";
+import {UnlinkAction} from "./TransactionGridAction/UnlinkAction";
 
 
 const baseColumns: GridColDef<Transaction>[] = [
@@ -111,27 +104,6 @@ const getRowClassName = ({row}: GridRowClassNameParams<Transaction>) => {
     }
 
     return className
-}
-
-interface UnlinkActionProps {
-    record: number,
-    transaction: number
-}
-
-const UnlinkAction = ({record, transaction}: UnlinkActionProps) => {
-    const [unlinkRecordFromTransaction, {}] = useUnlinkRecordFromTransactionMutation()
-
-    const handleClick = () => {
-        unlinkRecordFromTransaction({record, transaction})
-    }
-
-    return (
-        <GridActionsCellItem
-            label="Entfernen"
-            icon={<RemoveCircle/>}
-            onClick={handleClick}
-        />
-    )
 }
 
 interface TransactionGridProps

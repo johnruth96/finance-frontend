@@ -96,7 +96,9 @@ export const baseApi = createApi({
              */
             getRecord: builder.query<RecordType, number>({
                 query: (id) => `records/${id}/`,
-                providesTags: ['Record'],
+                providesTags: (result, meta, id) => [
+                    {type: 'Record', id},
+                ],
             }),
             getRecords: builder.query<Pagination<RecordType>, {
                 paginationModel: GridPaginationModel,
@@ -171,7 +173,18 @@ export const baseApi = createApi({
 
                     return `records?${searchParams}`
                 },
-                providesTags: ['Record'],
+                providesTags: (result) => {
+                    if (result) {
+                        return [
+                            {type: 'Record', id: "LIST"},
+                            ...result.results.map(record => (
+                                {type: "Record" as const, id: record.id}
+                            )),
+                        ]
+                    } else {
+                        return ["Record"]
+                    }
+                },
             }),
             createRecord: builder.mutation<RecordType,
                 Omit<RecordType, 'id'> & Partial<RecordType>>({
@@ -180,7 +193,18 @@ export const baseApi = createApi({
                     method: 'POST',
                     body: payload,
                 }),
-                invalidatesTags: ["Record", "Transaction"],
+                invalidatesTags: (result) => {
+                    if (result) {
+                        return [
+                            {type: 'Record', id: "LIST"},
+                            ...result.transactions.map(id => (
+                                {type: "Transaction" as const, id: id}
+                            ))
+                        ]
+                    } else {
+                        return []
+                    }
+                },
             }),
             updateRecord: builder.mutation<RecordType, Pick<RecordType, "id"> & Partial<RecordType>>({
                 query: ({id, ...payload}) => ({
@@ -188,23 +212,66 @@ export const baseApi = createApi({
                     method: 'PATCH',
                     body: payload,
                 }),
-                invalidatesTags: ["Record"],
+                invalidatesTags: (result, _, arg) => {
+                    if (result) {
+                        const transactions = [
+                            ...(arg.transactions ?? []), // include deleted transactions
+                            ...result.transactions,
+                        ]
+
+                        return [
+                            {type: 'Record', id: arg.id},
+                            ...transactions.map(t => (
+                                {type: "Transaction" as const, id: t}
+                            )),
+                        ]
+                    } else {
+                        return []
+                    }
+                },
             }),
             deleteRecord: builder.mutation<void, number>({
                 query: (id) => ({
                     url: `records/${id}/`,
                     method: 'DELETE',
                 }),
-                invalidatesTags: ["Record", "Transaction"],
+                invalidatesTags: (result, error, id, meta) => [
+                    {type: 'Record', id: id},
+                    {type: 'Transaction'}, // affected Transactions unknown, invalidate all
+                ],
             }),
             getSubjectCategoryPairs: builder.query<Array<[string, number, number | null]>,
                 void>({
                 query: () => '/records/subjects/',
-                providesTags: [{type: 'Record', id: 'LIST'}],
+                providesTags: [
+                    // TODO: Add Record instance tags
+                    {type: 'Record', id: 'LIST'},
+                ],
             }),
             getRecordTransactions: builder.query<Transaction[], number>({
                 query: (recordId) => `/records/${recordId}/transactions/`,
-                providesTags: (result, error, recordId) => [{type: 'Record', id: recordId}, 'Transaction']
+                providesTags: (result, error, recordId) => {
+                    if (result) {
+                        return [
+                            {type: 'Record', id: recordId},
+                            ...result.map(transaction => (
+                                {type: 'Transaction' as const, id: transaction.id}
+                            )),
+                        ]
+                    } else {
+                        return []
+                    }
+                }
+            }),
+            linkTransactionToRecord: builder.mutation<void, { record: number, transaction: number }>({
+                query: ({record, transaction}) => ({
+                    url: `records/${record}/transactions/${transaction}/`,
+                    method: 'POST',
+                }),
+                invalidatesTags: (result, error, {record, transaction}) => [
+                    {type: 'Record', id: record},
+                    {type: 'Transaction', id: transaction},
+                ],
             }),
             unlinkRecordFromTransaction: builder.mutation<void, { record: number, transaction: number }>({
                 query: ({record, transaction}) => ({
@@ -221,7 +288,18 @@ export const baseApi = createApi({
              */
             getTransactions: builder.query<Transaction[], void>({
                 query: () => `transactions/transactions/`,
-                providesTags: ['Transaction'],
+                providesTags: (result) => {
+                    if (result) {
+                        return [
+                            {type: 'Transaction', id: "LIST"},
+                            ...result.map(t => (
+                                {type: "Transaction" as const, id: t.id}
+                            )),
+                        ]
+                    } else {
+                        return ["Transaction"]
+                    }
+                },
             }),
             hideTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
@@ -273,7 +351,9 @@ export const baseApi = createApi({
                     method: 'POST',
                     body: contents,
                 }),
-                invalidatesTags: ['Transaction'],
+                invalidatesTags: [
+                    {type: 'Transaction', id: "LIST"},
+                ],
             }),
         }),
     }
@@ -305,6 +385,7 @@ export const {
     useDeleteRecordMutation,
     useGetSubjectCategoryPairsQuery,
     useGetRecordTransactionsQuery,
+    useLinkTransactionToRecordMutation,
     useUnlinkRecordFromTransactionMutation,
     /*
      * Transaction

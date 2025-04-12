@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Box, Button, IconButton, Modal, SxProps} from '@mui/material'
 import {GridRowSelectionModel} from "@mui/x-data-grid/models/gridRowSelectionModel";
 import {TransactionGrid} from "../transactions/TransactionGrid";
-import {useGetTransactionsQuery, useUpdateRecordMutation} from "../app/api";
+import {useGetTransactionsQuery, useLinkTransactionToRecordMutation} from "../app/api";
 import {TransactionState} from "../transactions/types";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {RecordType} from "../app/types";
@@ -39,7 +39,7 @@ interface AddTransactionButtonProps {
 
 export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
     const {data} = useGetTransactionsQuery()
-    const [updateRecord, {}] = useUpdateRecordMutation()
+    const [linkTransaction, {}] = useLinkTransactionToRecordMutation()
 
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>([])
 
@@ -48,9 +48,9 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
     const handleClose = () => setOpen(false)
 
     const handleSubmit = () => {
-        updateRecord({
-            id: record.id,
-            transactions: [...record.transactions, ...selectionModel] as number[],
+        linkTransaction({
+            record: record.id,
+            transaction: selectionModel[0] as number,
         }).unwrap().then(() => {
             handleClose()
         })
@@ -70,6 +70,7 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                     <Box sx={bodyStyle}>
                         <TransactionGrid
                             transactions={data ?? []}
+                            disableMultipleRowSelection
                             rowSelectionModel={selectionModel}
                             onRowSelectionModelChange={handleRowSelectionModelChange}
                             density={'compact'}
@@ -112,7 +113,7 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                             variant={'contained'}
                             disabled={selectionModel.length === 0}
                         >
-                            {selectionModel.length} Hinzufügen
+                            Hinzufügen
                         </Button>
                     </Box>
                 </Box>
