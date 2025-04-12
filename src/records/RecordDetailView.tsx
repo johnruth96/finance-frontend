@@ -50,9 +50,12 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
 
             <Box sx={{mb: 3}}>
                 <Typography variant={"caption"}>Kategorien</Typography>
-                <List>
-                    <ListItemText primary={<CategoryDisplayContainer id={object.category}/>}/>
-                </List>
+                {object.category !== null ?
+                    <List>
+                        <ListItemText primary={<CategoryDisplayContainer id={object.category}/>}/>
+                    </List> :
+                    <Typography>keine</Typography>
+                }
             </Box>
 
             <Box sx={{mb: 3}}>

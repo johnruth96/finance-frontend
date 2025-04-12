@@ -244,7 +244,7 @@ export const baseApi = createApi({
                 void>({
                 query: () => '/records/subjects/',
                 providesTags: [
-                    // TODO: Add Record instance tags
+                    // TODO: Add Record instance tags (?)
                     {type: 'Record', id: 'LIST'},
                 ],
             }),

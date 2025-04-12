@@ -63,7 +63,7 @@ export const RecordForm = ({
             (obj: Contract) => obj.id === parseInt(contract),
         )
         if (contractObj) {
-            setCategory(contractObj.category)
+            setCategory(contractObj?.category.toString() ?? '')
             if (subject === '') setSubject(contractObj.name)
             if (amount === '') {
                 setAmount(contractObj.amount)
@@ -83,7 +83,7 @@ export const RecordForm = ({
         setAmount(initial.amount)
         setSubject(initial.subject)
         setDate(dayjs(initial.date))
-        setCategory(initial.category.toString())
+        setCategory(initial.category?.toString() ?? '')
 
         setContract(initial.contract?.toString() ?? '')
         setCounterBooking(initial.counter_booking?.toString() ?? '')
@@ -112,7 +112,7 @@ export const RecordForm = ({
             account: account === '' ? null : parseInt(account),
             counter_booking:
                 counterBooking === '' ? null : parseInt(counterBooking),
-        }
+        } as Partial<RecordType>
         onSubmit(payload)
     }
 
