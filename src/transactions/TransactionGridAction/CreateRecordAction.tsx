@@ -6,7 +6,6 @@ import React from 'react'
 import {red} from "@mui/material/colors";
 import {enqueueSnackbar} from "notistack";
 import {RecordFactory} from '../factory/factory';
-import {TRANSFORM_RULES} from "../../app/rules";
 
 export const CreateRecordAction = ({row}: ButtonProps) => {
     const [createRecord, createStatus] = useCreateRecordMutation()
@@ -16,7 +15,7 @@ export const CreateRecordAction = ({row}: ButtonProps) => {
     const handleClick = () => {
         if (categories && contracts) {
             const factory = new RecordFactory()
-            factory.setRules(TRANSFORM_RULES)
+            // factory.setRules(TRANSFORM_RULES) FIXME #2
             factory.setCategories(categories)
             factory.setContracts(contracts)
 

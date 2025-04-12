@@ -60,8 +60,8 @@ export class RecordFactory {
     private rules: TransformRule[] = [];
 
     prepareRecord(transaction: Transaction): RecordDraft {
-        const subjectCandidates = [transaction.creditor, transaction.purpose, transaction.transaction_type, "<empty>"]
-        const subject = subjectCandidates.find(s => s !== "") as string
+        const subjectCandidates = [transaction.creditor, transaction.purpose, transaction.transaction_type]
+        const subject = subjectCandidates.join(" ")
         const date = dayjs(transaction.value_date).format("YYYY-MM-DD")
 
         return {
