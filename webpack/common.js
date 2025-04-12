@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
@@ -6,6 +7,13 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Finanzen App',
             template: './src/assets/template.html',
+        }),
+        new webpack.DefinePlugin({
+            'process.env.DATA_GRID_LICENSE': JSON.stringify(process.env.DATA_GRID_LICENSE),
+            'process.env.OIDC_AUTHORITY': JSON.stringify(process.env.OIDC_AUTHORITY),
+            'process.env.OIDC_CLIENT_ID': JSON.stringify(process.env.OIDC_CLIENT_ID),
+            'process.env.OIDC_REDIRECT_URI': JSON.stringify(process.env.OIDC_REDIRECT_URI),
+            'process.env.API_BASE': JSON.stringify(process.env.API_BASE),
         }),
     ],
     resolve: {
