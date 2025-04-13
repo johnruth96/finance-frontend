@@ -83,6 +83,7 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
                         initialState={{
                             columns: {
                                 columnVisibilityModel: {
+                                    id: false,
                                     is_highlighted: false,
                                     is_duplicate: false,
                                 }

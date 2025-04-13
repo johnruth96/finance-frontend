@@ -55,6 +55,7 @@ export const TransactionListView = ({}) => {
                     },
                     columns: {
                         columnVisibilityModel: {
+                            id: false,
                             is_highlighted: false,
                             is_duplicate: false,
                         },

@@ -11,6 +11,12 @@ import {UnlinkAction} from "./TransactionGridAction/UnlinkAction";
 
 const baseColumns: GridColDef<Transaction>[] = [
     {
+        field: 'id',
+        headerName: 'ID',
+        type: 'number',
+        aggregable: false,
+    },
+    {
         field: 'account',
         headerName: 'Konto',
         type: 'string',
