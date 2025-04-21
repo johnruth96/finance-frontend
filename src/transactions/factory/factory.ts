@@ -68,7 +68,7 @@ export class RecordFactory {
             subject: subject,
             date: date,
             amount: transaction.amount,
-            account: 1, // FIXME
+            account: 1, // FIXME: Add account selection
             transactions: [transaction.id],
             category: null,
             contract: null,

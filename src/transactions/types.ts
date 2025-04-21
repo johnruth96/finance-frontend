@@ -20,21 +20,3 @@ export interface Transaction {
 
     records: RecordType[]
 }
-
-export enum TransactionState {
-    NEW,
-    IMPORTED,
-    IGNORED,
-}
-
-export const getTransactionState = (transaction: Transaction) => {
-    if (transaction.is_ignored) {
-        return TransactionState.IGNORED
-    }
-
-    if (transaction.records?.length === 0) {
-        return TransactionState.NEW
-    }
-
-    return TransactionState.IMPORTED
-}

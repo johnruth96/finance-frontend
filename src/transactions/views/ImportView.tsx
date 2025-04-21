@@ -3,7 +3,7 @@ import React, {useRef, useState} from "react";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import green from "@mui/material/colors/green";
 import {red} from '@mui/material/colors';
-import {useImportCsvMutation} from "../app/api";
+import {useImportCsvMutation} from "../../app/api";
 
 export const ImportView = ({}) => {
     const [importFiles, {isSuccess, isError}] = useImportCsvMutation()
