@@ -14,8 +14,6 @@ export interface Transaction {
 
     is_counter_to: null
     is_highlighted: boolean
-
-    // State flags
     is_ignored: boolean
 
     records: RecordType[]

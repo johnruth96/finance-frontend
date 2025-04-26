@@ -166,7 +166,7 @@ export const baseApi = createApi({
                     url: `records/${id}/`,
                     method: 'DELETE',
                 }),
-                invalidatesTags: (result, error, id, meta) => [
+                invalidatesTags: (_, __, id, ___) => [
                     {type: 'Record', id: id},
                     {type: 'Transaction'}, // affected Transactions unknown, invalidate all
                 ],
@@ -233,6 +233,22 @@ export const baseApi = createApi({
                         return ["Transaction"]
                     }
                 },
+            }),
+            importTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/import/`,
+                    method: 'POST',
+                }),
+                invalidatesTags: (result) => {
+                    if (result) {
+                        return [
+                            {type: "Transaction", id: result.id},
+                            {type: "Record", id: "LIST"},
+                        ]
+                    } else {
+                        return []
+                    }
+                }
             }),
             hideTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
@@ -324,6 +340,7 @@ export const {
      * Transaction
      */
     useGetTransactionsQuery,
+    useImportTransactionMutation,
     useShowTransactionMutation,
     useHideTransactionMutation,
     useBookmarkTransactionMutation,

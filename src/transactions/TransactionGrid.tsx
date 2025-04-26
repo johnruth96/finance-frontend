@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import {Transaction} from "./types";
 import {HighlightAction} from './TransactionGridAction/HighlightAction';
 import {IgnoreAction} from './TransactionGridAction/IgnoreAction';
-import {CreateRecordAction} from "./TransactionGridAction/CreateRecordAction";
+import {ImportTransactionAction} from "./TransactionGridAction/ImportTransactionAction";
 import {AmountDisplay} from "../core/AmountDisplay";
 import {UnlinkAction} from "./TransactionGridAction/UnlinkAction";
 import {
@@ -137,7 +137,7 @@ export const TransactionGrid = ({
             getActions: ({row}) => [
                 <IgnoreAction row={row}/>,
                 <HighlightAction row={row}/>,
-                <CreateRecordAction row={row}/>,
+                <ImportTransactionAction row={row}/>,
             ],
             aggregable: false,
         },
