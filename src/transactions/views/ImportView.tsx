@@ -96,7 +96,7 @@ export const ImportView = ({}) => {
                 <p>Upload CSV file</p>
             </Box>
 
-            <input type={"file"} ref={inputRef} style={{display: "none"}} onChange={handleFileChange}/>
+            <input type={"file"} ref={inputRef} style={{display: "none"}} onChange={handleFileChange} multiple/>
         </Box>
     )
 }

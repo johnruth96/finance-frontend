@@ -97,6 +97,14 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                                             }
                                         ]
                                     }
+                                },
+                                sorting: {
+                                    sortModel: [
+                                        {
+                                            field: "booking_date",
+                                            sort: "desc",
+                                        }
+                                    ]
                                 }
                             }}
                         />

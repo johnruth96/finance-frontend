@@ -20,18 +20,20 @@ export const ServerTransactionGrid = (props: ServerTransactionGridProps) => {
     /*
      * Filter
      */
-    const [filterModelInternal, setFilterModelInternal] = React.useState<GridFilterModel>({
-        items: [],
-    })
+    const [filterModelInternal, setFilterModelInternal] = React.useState<GridFilterModel>(
+        props.initialState?.filter?.filterModel ?? {
+            items: [],
+        }
+    )
 
     const onFilterModelChange = (model: GridFilterModel, details: GridCallbackDetails<'filter'>) => {
-        if ( props.onFilterModelChange)
-             props.onFilterModelChange(model, details)
+        if (props.onFilterModelChange)
+            props.onFilterModelChange(model, details)
         else
             setFilterModelInternal(model)
     }
 
-    const filterModel = useMemo(() =>  props.filterModel ?? filterModelInternal, [ props.filterModel, filterModelInternal])
+    const filterModel = useMemo(() => props.filterModel ?? filterModelInternal, [props.filterModel, filterModelInternal])
 
     /*
      * Pagination
@@ -39,11 +41,12 @@ export const ServerTransactionGrid = (props: ServerTransactionGridProps) => {
     const [paginationModelInternal, setPaginationModelInternal] = React.useState<GridPaginationModel>({
         page: 0,
         pageSize: 50,
+        ...(props.initialState?.pagination?.paginationModel ?? {}),
     })
 
     const onPaginationModelChange = (model: GridPaginationModel, details: GridCallbackDetails) => {
-        if ( props.onPaginationModelChange)
-             props.onPaginationModelChange(model, details)
+        if (props.onPaginationModelChange)
+            props.onPaginationModelChange(model, details)
         else
             setPaginationModelInternal(model)
     }
@@ -53,7 +56,9 @@ export const ServerTransactionGrid = (props: ServerTransactionGridProps) => {
     /*
      * Sorting
      */
-    const [sortModelInternal, setSortModelInternal] = React.useState<GridSortModel>([])
+    const [sortModelInternal, setSortModelInternal] = React.useState<GridSortModel>(
+        props.initialState?.sorting?.sortModel ?? []
+    )
 
     const onSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
         if (props.onSortModelChange)
