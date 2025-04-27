@@ -5,27 +5,6 @@ import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
 import {DataGridFilter, prepareSearchParams} from "./url";
 
-// @ts-ignore
-const updateTransaction = async (dispatch, queryFulfilled) => {
-    try {
-        const {data} = await queryFulfilled
-
-        dispatch(
-            baseApi.util.updateQueryData(
-                'getTransactions',
-                undefined,
-                (draft) => {
-                    const idx = draft.findIndex(t => t.id === data.id)
-                    if (idx > -1) {
-                        draft.splice(idx, 1, data)
-                    }
-                }
-            )
-        )
-    } catch {
-    }
-}
-
 export const baseApi = createApi({
         reducerPath: 'api',
         baseQuery: fetchBaseQuery({
@@ -95,7 +74,7 @@ export const baseApi = createApi({
              */
             getRecord: builder.query<RecordType, number>({
                 query: (id) => `records/${id}/`,
-                providesTags: (result, meta, id) => [
+                providesTags: (_, __, id) => [
                     {type: 'Record', id},
                 ],
             }),
@@ -180,7 +159,7 @@ export const baseApi = createApi({
             }),
             getRecordTransactions: builder.query<Transaction[], number>({
                 query: (recordId) => `/records/${recordId}/transactions/`,
-                providesTags: (result, error, recordId) => {
+                providesTags: (result, _, recordId) => {
                     if (result) {
                         return [
                             {type: 'Record', id: recordId},
@@ -198,7 +177,7 @@ export const baseApi = createApi({
                     url: `records/${record}/transactions/${transaction}/`,
                     method: 'POST',
                 }),
-                invalidatesTags: (result, error, {record, transaction}) => [
+                invalidatesTags: (_, __, {record, transaction}) => [
                     {type: 'Record', id: record},
                     {type: 'Transaction', id: transaction},
                 ],
@@ -208,7 +187,7 @@ export const baseApi = createApi({
                     url: `records/${record}/transactions/${transaction}/`,
                     method: 'DELETE',
                 }),
-                invalidatesTags: (result, error, {record, transaction}) => [
+                invalidatesTags: (_, __, {record, transaction}) => [
                     {type: 'Record', id: record},
                     {type: 'Transaction', id: transaction},
                 ],
@@ -255,36 +234,36 @@ export const baseApi = createApi({
                     url: `transactions/transactions/${id}/hide/`,
                     method: 'POST',
                 }),
-                async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                    await updateTransaction(dispatch, queryFulfilled)
-                },
+                invalidatesTags: (_, __, arg) => [
+                    {type: "Transaction", id: arg}
+                ],
             }),
             showTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
                     url: `transactions/transactions/${id}/show/`,
                     method: 'POST',
                 }),
-                async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                    await updateTransaction(dispatch, queryFulfilled)
-                },
+                invalidatesTags: (_, __, arg) => [
+                    {type: "Transaction", id: arg}
+                ],
             }),
             bookmarkTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
                     url: `transactions/transactions/${id}/bookmark/`,
                     method: 'POST',
                 }),
-                async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                    await updateTransaction(dispatch, queryFulfilled)
-                },
+                invalidatesTags: (_, __, arg) => [
+                    {type: "Transaction", id: arg}
+                ],
             }),
             removeBookmarkTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
                     url: `transactions/transactions/${id}/unbookmark/`,
                     method: 'POST',
                 }),
-                async onQueryStarted(_, {dispatch, queryFulfilled}) {
-                    await updateTransaction(dispatch, queryFulfilled)
-                },
+                invalidatesTags: (_, __, arg) => [
+                    {type: "Transaction", id: arg}
+                ],
             }),
             counterBookingTransaction: builder.mutation<void, number[]>({
                 query: (payload) => ({
@@ -292,7 +271,15 @@ export const baseApi = createApi({
                     method: 'POST',
                     body: payload,
                 }),
-                invalidatesTags: ['Transaction'],
+                invalidatesTags: (_, error, arg) => {
+                    if (!error) {
+                        return arg.map(id => (
+                            {type: "Transaction" as const, id: id}
+                        ))
+                    } else {
+                        return []
+                    }
+                }
             }),
             importCsv: builder.mutation<void, string[]>({
                 query: (contents) => ({

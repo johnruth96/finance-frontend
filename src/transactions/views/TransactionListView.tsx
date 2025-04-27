@@ -7,6 +7,7 @@ import {getDetailPanelContent} from '../TransactionGridDetailPanel'
 import {Page} from "../../core/Page";
 import {useCounterBookingTransactionMutation} from "../../app/api";
 import {TransactionMemoGrid} from "../TransactionMemoGrid";
+import {enqueueSnackbar} from "notistack";
 
 export const TransactionListView = ({}) => {
     const [counterBooking, {}] = useCounterBookingTransactionMutation()
@@ -20,7 +21,10 @@ export const TransactionListView = ({}) => {
     }
 
     const handleCounterBooking = () => {
-        counterBooking(rowSelectionModel as number[])
+        counterBooking(rowSelectionModel as number[]).unwrap().catch((err: any) => {
+            enqueueSnackbar(JSON.stringify(err), {variant: "error"})
+            console.error(err)
+        })
     }
 
     return (
