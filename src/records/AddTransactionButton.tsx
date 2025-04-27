@@ -1,11 +1,10 @@
 import React, {useState} from 'react'
 import {Box, Button, IconButton, Modal, SxProps} from '@mui/material'
 import {GridRowSelectionModel} from "@mui/x-data-grid/models/gridRowSelectionModel";
-import {TransactionGrid} from "../transactions/TransactionGrid";
-import {useGetTransactionsQuery, useLinkTransactionToRecordMutation} from "../app/api";
-import {TransactionState} from "../transactions/types";
+import {useLinkTransactionToRecordMutation} from "../app/api";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {RecordType} from "../app/types";
+import {ServerTransactionGrid} from "../transactions/ServerTransactionGrid";
 
 const style: SxProps = {
     position: 'absolute',
@@ -38,7 +37,6 @@ interface AddTransactionButtonProps {
 }
 
 export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
-    const {data} = useGetTransactionsQuery()
     const [linkTransaction, {}] = useLinkTransactionToRecordMutation()
 
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>([])
@@ -68,13 +66,11 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
             <Modal open={open} onClose={handleClose}>
                 <Box sx={style}>
                     <Box sx={bodyStyle}>
-                        <TransactionGrid
-                            transactions={data ?? []}
+                        <ServerTransactionGrid
                             disableMultipleRowSelection
                             rowSelectionModel={selectionModel}
                             onRowSelectionModelChange={handleRowSelectionModelChange}
                             density={'compact'}
-                            pagination
                             headerFilters
                             headerFilterHeight={75}
                             initialState={{
@@ -83,6 +79,7 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                                         id: false,
                                         is_highlighted: false,
                                         is_duplicate: false,
+                                        is_ignored: false,
                                         actions: false,
                                     }
                                 },
@@ -95,12 +92,20 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                                     filterModel: {
                                         items: [
                                             {
-                                                field: "state",
-                                                operator: "is",
-                                                value: TransactionState.NEW,
+                                                field: "record_count",
+                                                operator: "=",
+                                                value: 0,
                                             }
                                         ]
                                     }
+                                },
+                                sorting: {
+                                    sortModel: [
+                                        {
+                                            field: "booking_date",
+                                            sort: "desc",
+                                        }
+                                    ]
                                 }
                             }}
                         />

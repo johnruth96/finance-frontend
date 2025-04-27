@@ -6,7 +6,12 @@ import dayjs from "dayjs";
 import {CategoryDisplay} from "../../categories/CategoryDisplay";
 import React from "react";
 import {RowModel} from "./BaseRecordGrid";
-
+import {
+    getGridDateFilterOperators,
+    getGridNumericFilterOperators,
+    getGridSingleSelectFilterOperators,
+    getGridStringFilterOperators
+} from "../../app/url";
 
 export const createGridColDef = (categories: Category[] | undefined, contracts: Contract[] | undefined, accounts: Account[] | undefined): GridColDef<RowModel>[] => {
     return [
@@ -15,6 +20,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             headerName: 'ID',
             type: 'string',
             aggregable: false,
+            filterOperators: getGridStringFilterOperators().filter(op => op.value === "equals"),
         },
         {
             field: 'amount',
@@ -23,6 +29,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'number',
             minWidth: 100,
             editable: true,
+            filterOperators: getGridNumericFilterOperators(),
         },
         {
             field: 'subject',
@@ -35,6 +42,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             renderCell: ({value, id, row}) => (
                 <Link to={`/records/${id}/`}>{value}</Link>
             ),
+            filterOperators: getGridStringFilterOperators(),
         },
         {
             field: 'date',
@@ -51,6 +59,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 }
             },
             aggregable: false,
+            filterOperators: getGridDateFilterOperators(),
         },
         {
             field: 'date_created',
@@ -66,6 +75,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                 }
             },
             aggregable: false,
+            filterOperators: getGridDateFilterOperators(true),
         },
         {
             field: 'category',
@@ -103,6 +113,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                     return null
                 }
             },
+            filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
             field: 'contract',
@@ -116,6 +127,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             })),
             aggregable: false,
             editable: true,
+            filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
             field: 'account',
@@ -129,6 +141,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             })),
             aggregable: false,
             editable: true,
+            filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
             field: 'transaction_count',
@@ -138,6 +151,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'number',
             valueGetter: (_, row) => row.transactions?.length ?? 0,
             aggregable: true,
+            filterOperators: getGridNumericFilterOperators(),
         },
     ]
 }

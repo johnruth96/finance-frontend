@@ -3,7 +3,6 @@ import {GridActionsCellItem} from '@mui/x-data-grid-premium'
 import {Visibility, VisibilityOff} from '@mui/icons-material'
 import React from 'react'
 import {useHideTransactionMutation, useShowTransactionMutation} from '../../app/api';
-import {getTransactionState, TransactionState} from "../types";
 
 const IgnoreButton = ({row}: ButtonProps) => {
     const [hide, {}] = useHideTransactionMutation()
@@ -17,7 +16,7 @@ const IgnoreButton = ({row}: ButtonProps) => {
             label="Ignore"
             icon={<VisibilityOff/>}
             onClick={handleClick}
-            disabled={getTransactionState(row) !== TransactionState.NEW}
+            disabled={row.is_ignored}
         />
     )
 }
@@ -34,13 +33,13 @@ const UnIgnoreButton = ({row}: ButtonProps) => {
             label="Un-ignore"
             icon={<Visibility/>}
             onClick={handleClick}
-            disabled={getTransactionState(row) !== TransactionState.IGNORED}
+            disabled={!row.is_ignored}
         />
     )
 }
 
 export const IgnoreAction = ({row}: ButtonProps) => {
-    if (getTransactionState(row) === TransactionState.IGNORED) {
+    if (row.is_ignored) {
         return <UnIgnoreButton row={row}/>
     } else {
         return <IgnoreButton row={row}/>

@@ -1,21 +1,17 @@
 import {GridRowId, GridToolbar} from '@mui/x-data-grid-premium'
 import React, {useState} from 'react'
 import {GridRowSelectionModel} from '@mui/x-data-grid/models/gridRowSelectionModel'
-import {Alert, Button} from '@mui/material'
+import {Button} from '@mui/material'
 import {SyncAlt} from '@mui/icons-material'
-import {TransactionGrid} from './TransactionGrid'
-import {getDetailPanelContent} from './TransactionGridDetailPanel'
-import {TransactionState} from './types'
-import {Page} from "../core/Page";
-import {useCounterBookingTransactionMutation, useGetTransactionsQuery} from "../app/api";
+import {getDetailPanelContent} from '../TransactionGridDetailPanel'
+import {Page} from "../../core/Page";
+import {useCounterBookingTransactionMutation} from "../../app/api";
+import {TransactionMemoGrid} from "../TransactionMemoGrid";
 
 export const TransactionListView = ({}) => {
-    const {data, isError, error, isLoading} = useGetTransactionsQuery()
     const [counterBooking, {}] = useCounterBookingTransactionMutation()
 
-    const [rowSelectionModel, setRowSelectionModel] = useState<
-        readonly GridRowId[]
-    >([])
+    const [rowSelectionModel, setRowSelectionModel] = useState<readonly GridRowId[]>([])
 
     const onRowSelectionModelChange = (
         rowSelectionModel: GridRowSelectionModel
@@ -37,20 +33,15 @@ export const TransactionListView = ({}) => {
                 <SyncAlt/> Gegenbuchung
             </Button>
 
-            {isError && <Alert severity={"error"} sx={{mb: 3}}>{JSON.stringify(error)}</Alert>}
-
-            {isLoading && <Alert severity={"info"} sx={{mb: 3}}>Laden ...</Alert>}
-
-            <TransactionGrid
-                transactions={data ?? []}
+            <TransactionMemoGrid
                 checkboxSelection
                 rowSelection
-                pagination
                 initialState={{
                     density: 'compact',
                     pagination: {
                         paginationModel: {
-                            pageSize: 50,
+                            pageSize: 25,
+                            page: 0,
                         },
                     },
                     columns: {
@@ -58,15 +49,17 @@ export const TransactionListView = ({}) => {
                             id: false,
                             is_highlighted: false,
                             is_duplicate: false,
+                            is_ignored: false,
+                            record_count: false,
                         },
                     },
                     filter: {
                         filterModel: {
                             items: [
                                 {
-                                    field: 'state',
-                                    operator: 'is',
-                                    value: TransactionState.NEW,
+                                    field: "record_count",
+                                    operator: "=",
+                                    value: 0,
                                 },
                                 {
                                     field: 'is_duplicate',

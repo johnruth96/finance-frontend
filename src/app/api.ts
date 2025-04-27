@@ -3,8 +3,7 @@ import {API_BASE} from "./config";
 import {Account, Category, Contract, Pagination, RecordType} from "./types";
 import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
-import {GridPaginationModel, GridSortModel} from "@mui/x-data-grid-premium";
-import {GridFilterModel} from "@mui/x-data-grid";
+import {DataGridFilter, prepareSearchParams} from "./url";
 
 // @ts-ignore
 const updateTransaction = async (dispatch, queryFulfilled) => {
@@ -100,77 +99,9 @@ export const baseApi = createApi({
                     {type: 'Record', id},
                 ],
             }),
-            getRecords: builder.query<Pagination<RecordType>, {
-                paginationModel: GridPaginationModel,
-                filterModel?: string,
-                sortModel?: GridSortModel,
-            }>({
+            getRecords: builder.query<Pagination<RecordType>, DataGridFilter>({
                 query: (params) => {
-                    const filterModel: GridFilterModel = params.filterModel ? JSON.parse(params.filterModel) : {
-                        items: []
-                    }
-                    const sortModel: GridSortModel = params.sortModel ?? []
-                    const searchParams = new URLSearchParams()
-
-                    // Pagination
-                    searchParams.set("page", (params.paginationModel.page + 1).toString())
-                    searchParams.set("pageSize", params.paginationModel.pageSize.toString())
-
-                    // Sorting
-                    sortModel.forEach(item => {
-                        const key = item.sort === "desc" ? "-" : ""
-                        searchParams.append("sortBy", `${key}${item.field}`)
-                    })
-
-                    // Filtering
-                    filterModel.items
-                        .filter(item => item.value !== undefined)
-                        .forEach(item => {
-                            let value = item.value
-                            const dateMatch = item.value.toString().match(/\d{4}-\d{2}-\d{2}/)
-                            if (dateMatch !== null) {
-                                value = dateMatch[0]
-                            }
-
-                            switch (item.operator) {
-                                case "equals":
-                                case "is":
-                                case "=":
-                                    searchParams.append(item.field, value)
-                                    break
-                                case "contains":
-                                    searchParams.append(`${item.field}__icontains`, value)
-                                    break
-                                case "startsWith":
-                                    searchParams.append(`${item.field}__istartswith`, value)
-                                    break
-                                case "endsWith":
-                                    searchParams.append(`${item.field}__iendswith`, value)
-                                    break
-                                case "after":
-                                case ">":
-                                    searchParams.append(`${item.field}__gt`, value)
-                                    break
-                                case "before":
-                                case "<":
-                                    searchParams.append(`${item.field}__lt`, value)
-                                    break
-                                case "onOrAfter":
-                                case ">=":
-                                    searchParams.append(`${item.field}__gte`, value)
-                                    break
-                                case "onOrBefore":
-                                case "<=":
-                                    searchParams.append(`${item.field}__lte`, value)
-                                    break
-                            }
-                        })
-
-                    // Quick filter
-                    if (Array.isArray(filterModel.quickFilterValues)) {
-                        searchParams.append("q", filterModel.quickFilterValues.join(" "))
-                    }
-
+                    const searchParams = prepareSearchParams(params)
                     return `records?${searchParams}`
                 },
                 providesTags: (result) => {
@@ -235,7 +166,7 @@ export const baseApi = createApi({
                     url: `records/${id}/`,
                     method: 'DELETE',
                 }),
-                invalidatesTags: (result, error, id, meta) => [
+                invalidatesTags: (_, __, id, ___) => [
                     {type: 'Record', id: id},
                     {type: 'Transaction'}, // affected Transactions unknown, invalidate all
                 ],
@@ -244,7 +175,6 @@ export const baseApi = createApi({
                 void>({
                 query: () => '/records/subjects/',
                 providesTags: [
-                    // TODO: Add Record instance tags (?)
                     {type: 'Record', id: 'LIST'},
                 ],
             }),
@@ -286,13 +216,16 @@ export const baseApi = createApi({
             /*
              Transaction
              */
-            getTransactions: builder.query<Transaction[], void>({
-                query: () => `transactions/transactions/`,
+            getTransactions: builder.query<Pagination<Transaction>, DataGridFilter>({
+                query: (params) => {
+                    const searchParams = prepareSearchParams(params)
+                    return `transactions/transactions/?${searchParams}`
+                },
                 providesTags: (result) => {
                     if (result) {
                         return [
                             {type: 'Transaction', id: "LIST"},
-                            ...result.map(t => (
+                            ...result.results.map(t => (
                                 {type: "Transaction" as const, id: t.id}
                             )),
                         ]
@@ -300,6 +233,22 @@ export const baseApi = createApi({
                         return ["Transaction"]
                     }
                 },
+            }),
+            importTransaction: builder.mutation<Transaction, number>({
+                query: (id) => ({
+                    url: `transactions/transactions/${id}/import/`,
+                    method: 'POST',
+                }),
+                invalidatesTags: (result) => {
+                    if (result) {
+                        return [
+                            {type: "Transaction", id: result.id},
+                            {type: "Record", id: "LIST"},
+                        ]
+                    } else {
+                        return []
+                    }
+                }
             }),
             hideTransaction: builder.mutation<Transaction, number>({
                 query: (id) => ({
@@ -391,6 +340,7 @@ export const {
      * Transaction
      */
     useGetTransactionsQuery,
+    useImportTransactionMutation,
     useShowTransactionMutation,
     useHideTransactionMutation,
     useBookmarkTransactionMutation,

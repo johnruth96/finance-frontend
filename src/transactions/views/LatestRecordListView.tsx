@@ -1,8 +1,8 @@
 import React from 'react'
-import {Page} from "../core/Page";
+import {Page} from "../../core/Page";
 import {GridFilterModel} from "@mui/x-data-grid";
 import dayjs from "dayjs";
-import {RecordGrid} from "../records/RecordGrid/RecordGrid";
+import {RecordGrid} from "../../records/RecordGrid/RecordGrid";
 
 export const LatestRecordListView = ({}) => {
     const filterModel: GridFilterModel = {

@@ -9,9 +9,9 @@ import ContractCreateView from '../contracts/views/ContractCreateView'
 import ContractDetailView from '../contracts/views/ContractDetailView'
 import ContractUpdateView from '../contracts/views/ContractUpdateView'
 import {InsightsView} from '../statistics/InsightsView'
-import {TransactionListView} from "../transactions/TransactionListView";
-import {ImportView} from "../transactions/ImportView";
-import {LatestRecordListView} from "../transactions/LatestRecordListView";
+import {TransactionListView} from "../transactions/views/TransactionListView";
+import {ImportView} from "../transactions/views/ImportView";
+import {LatestRecordListView} from "../transactions/views/LatestRecordListView";
 import {RecordDetailPage} from "../records/views/RecordDetailPage";
 
 export const routes = [
