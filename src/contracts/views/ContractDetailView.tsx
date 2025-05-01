@@ -143,6 +143,16 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
                     initialState={{
                         filter: {
                             filterModel: filterModel
+                        },
+                        columns: {
+                            columnVisibilityModel: {
+                                id: false,
+                                contract: false,
+                                category: false,
+                                account: false,
+                                date_created: false,
+                                transaction_count: false,
+                            }
                         }
                     }}
                 />

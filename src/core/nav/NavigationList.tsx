@@ -53,11 +53,6 @@ export const NavigationList = () => {
                     label={'Import'}
                     to={"transactions/import/"}
                 />
-                <NavigationListItem
-                    label={'Regeln'}
-                    to={"transactions/rules/"}
-                    disabled
-                />
             </NavigationListContainer>
 
             <Divider sx={{my: 2}}/>

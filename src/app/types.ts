@@ -18,7 +18,10 @@ export interface DjangoRestFrameworkError {
     __all__?: string
 }
 
-export type GenericError = FetchBaseQueryError | (SerializedError & { data: DjangoRestFrameworkError }) | DjangoFormError
+export type GenericError =
+    FetchBaseQueryError
+    | (SerializedError & { data: DjangoRestFrameworkError })
+    | DjangoFormError
 
 export interface Account {
     id: number
@@ -33,7 +36,7 @@ export interface RecordType {
     counter_booking: RecordType['id'] | null
 
     subject: string
-    category: Category['id']| null
+    category: Category['id'] | null
     contract: Contract['id'] | null
     date: string
     amount: number
@@ -54,7 +57,6 @@ export interface Contract {
     renewal_duration: number | null
 
     // Derived
-    is_cancelation_shortly: false
     next_cancelation_date: string | null
     next_extension_date: string | null
 
@@ -65,7 +67,6 @@ export interface Contract {
     amount: number
 
     // Derived
-    next_payment_date: string | null
     amount_per_year: number
 }
 

@@ -1,41 +1,12 @@
 import React from 'react'
 import {Page} from '../../core/Page'
 import {filter, round, sortBy, sumBy} from 'lodash'
-import {CategoryCircle} from '../../categories/CategoryCircle'
-import {useNavigate} from 'react-router-dom'
-import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography,} from '@mui/material'
-import red from '@mui/material/colors/red'
-import WarningIcon from '@mui/icons-material/Warning'
-import dayjs from 'dayjs'
+import {Box,} from '@mui/material'
 import {ContractGrid} from './ContractGrid'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {useGetContractsQuery} from "../../app/api";
 import {QueryProvider} from "../../core/QueryProvider";
-
-const ContractAutoRenewalListItem = ({object}: { object: Contract }) => {
-    const navigate = useNavigate()
-
-    const onClick = () => navigate(`/contracts/${object.id}/`)
-
-    const cancelation_date = dayjs(object.next_cancelation_date).format(
-        'DD.MM.YY',
-    )
-
-    return (
-        <ListItem disablePadding>
-            <ListItemButton onClick={onClick}>
-                <ListItemIcon>
-                    <CategoryCircle id={object.category}/>
-                </ListItemIcon>
-                <ListItemText
-                    primary={object.name}
-                    secondary={`Kündigung bis ${cancelation_date}`}
-                />
-            </ListItemButton>
-        </ListItem>
-    )
-}
 
 interface ContractListViewProps {
     objects: Contract[]
@@ -47,10 +18,6 @@ const ContractListView = ({objects}: ContractListViewProps) => {
     const contractsExpense = sortBy(
         filter(activeContracts, (c) => c.amount < 0),
         'name',
-    )
-    const contractsExpendingShortly = filter(
-        contractsExpense,
-        'is_cancelation_shortly',
     )
 
     const expensePerMonth = Math.abs(
@@ -73,22 +40,6 @@ const ContractListView = ({objects}: ContractListViewProps) => {
                 <p className={'display-3 mb-0'}>{expensePerMonth} €</p>
                 <p className={'text-small'}>&empty; monatliche Ausgaben</p>
             </Box>
-
-            {contractsExpendingShortly.length > 0 && (
-                <Box sx={{mb: 2}}>
-                    <Typography variant={'h6'}>
-                        <WarningIcon sx={{color: red[500]}}/> Verlängerungen
-                    </Typography>
-                    <List>
-                        {contractsExpendingShortly.map((contract) => (
-                            <ContractAutoRenewalListItem
-                                key={contract.id}
-                                object={contract}
-                            />
-                        ))}
-                    </List>
-                </Box>
-            )}
 
             <ContractGrid filterModel={initialFilterModel}/>
         </Page>
