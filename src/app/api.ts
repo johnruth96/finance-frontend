@@ -5,6 +5,16 @@ import {getAccessToken} from '../auth/token';
 import {Transaction} from '../transactions/types';
 import {DataGridFilter, prepareSearchParams} from "./url";
 
+export interface RecordAggregationQueryArg {
+    filter: Record<string, string | number | string[] | number[]>
+    group: string
+    aggregate: string
+}
+
+interface RecordAggregationResult {
+    results: Array<{ value: number, label: string, color: string }>
+}
+
 export const baseApi = createApi({
         reducerPath: 'api',
         baseQuery: fetchBaseQuery({
@@ -192,6 +202,24 @@ export const baseApi = createApi({
                     {type: 'Transaction', id: transaction},
                 ],
             }),
+            getRecordAggregation: builder.query<RecordAggregationResult, RecordAggregationQueryArg>({
+                query: (args) => {
+                    const params = new URLSearchParams()
+                    params.set("group", args.group)
+                    params.set("aggregate", args.aggregate)
+
+                    for (const [key, value] of Object.entries(args.filter)) {
+                        const values = Array.isArray(value) ? value : [value]
+
+                        values.forEach(value => {
+                            params.append(key, value.toString())
+                        })
+                    }
+
+                    return `/records/aggregate/?${params}`
+                },
+                providesTags: ["Record"], // Invalidate as soon as one Record changes
+            }),
             /*
              Transaction
              */
@@ -323,6 +351,7 @@ export const {
     useGetRecordTransactionsQuery,
     useLinkTransactionToRecordMutation,
     useUnlinkRecordFromTransactionMutation,
+    useGetRecordAggregationQuery,
     /*
      * Transaction
      */
