@@ -24,9 +24,9 @@ const parseFilterModel = (filterModel: GridFilterModel) => {
             let value = item.value
 
             // Parse date to YYYY-MM-DD
-            const dateMatch = item.value.toString().match(/\d{4}-\d{2}-\d{2}/)
+            const dateMatch = item.value.toString().match(/(\d{4}-\d{2}-\d{2})T00:00:00.000Z/)
             if (dateMatch !== null) {
-                value = dateMatch[0]
+                value = dateMatch[1]
             }
 
             switch (item.operator) {
@@ -67,8 +67,6 @@ const parseFilterModel = (filterModel: GridFilterModel) => {
     if (Array.isArray(filterModel.quickFilterValues)) {
         searchParams.append("q", filterModel.quickFilterValues.join(" "))
     }
-
-    console.log(filterModel, searchParams)
 
     return searchParams
 }
