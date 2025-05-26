@@ -1,7 +1,7 @@
 import {createBrowserRouter, createHashRouter} from 'react-router-dom'
 import App from '../App'
 import React from 'react'
-import {HomeViewContainer} from '../dashboard/HomeView'
+import {HomeView} from '../dashboard/HomeView'
 import RecordListView from '../records/views/RecordListView'
 import {RecordCreateView} from '../records/views/RecordCreateView'
 import ContractListView from '../contracts/views/ContractListView'
@@ -20,7 +20,7 @@ export const routes = [
         element: <App/>,
         children: [
             {
-                element: <HomeViewContainer/>,
+                element: <HomeView/>,
                 index: true,
             },
             /*
