@@ -42,6 +42,7 @@ export interface RecordType {
     amount: number
 
     transactions: number[]
+    tags: number[]
 }
 
 export interface Contract {

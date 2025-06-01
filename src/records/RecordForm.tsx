@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useGetContractsQuery} from '../app/api'
 import {ContractSelect} from '../contracts/ContractSelect'
-import {CategorySelect} from '../categories/CategorySelect'
 import {AmountInput} from '../core/forms/AmountInput'
 import {SubjectInput} from '../core/forms/SubjectInput'
 import {DatePicker} from '@mui/x-date-pickers'
@@ -12,6 +11,7 @@ import {AccountSelect} from '../core/forms/AccountSelect'
 import {theme} from '../index'
 import {Error} from '../core/Error'
 import {Contract, RecordType} from "../app/types";
+import {CategorySelectMultiple} from "../categories/CategorySelectMultiple";
 
 export interface RecordFormProps {
     onSubmit: (value: Partial<RecordType>) => void
@@ -35,10 +35,10 @@ export const RecordForm = ({
     const [amount, setAmount] = useState<number | ''>('')
     const [subject, setSubject] = useState('')
     const [date, setDate] = useState(dayjs())
-    const [category, setCategory] = useState('')
     const [contract, setContract] = useState('')
     const [account, setAccount] = useState('')
     const [counterBooking, setCounterBooking] = useState('')
+    const [tags, setTags] = useState<string[]>([])
 
     const onSubjectChange = (
         value:
@@ -49,7 +49,6 @@ export const RecordForm = ({
             setSubject(value)
         } else {
             setSubject(value.subject)
-            setCategory(value.category.toString())
             setContract(value.contract ? value.contract.toString() : '')
         }
     }
@@ -63,7 +62,6 @@ export const RecordForm = ({
             (obj: Contract) => obj.id === parseInt(contract),
         )
         if (contractObj) {
-            setCategory(contractObj?.category.toString() ?? '')
             if (subject === '') setSubject(contractObj.name)
             if (amount === '') {
                 setAmount(contractObj.amount)
@@ -83,10 +81,10 @@ export const RecordForm = ({
         setAmount(initial.amount)
         setSubject(initial.subject)
         setDate(dayjs(initial.date))
-        setCategory(initial.category?.toString() ?? '')
 
         setContract(initial.contract?.toString() ?? '')
         setCounterBooking(initial.counter_booking?.toString() ?? '')
+        setTags(initial.tags?.map(id => id.toString()) ?? [])
     }
 
     /*
@@ -96,9 +94,9 @@ export const RecordForm = ({
         if (isSuccess) {
             setAmount('')
             setSubject('')
-            setCategory('')
             setContract('')
             setCounterBooking('')
+            setTags([])
         }
     }, [isSuccess])
 
@@ -107,11 +105,10 @@ export const RecordForm = ({
             amount: amount === '' ? null : amount,
             subject: subject.trim(),
             date: date.format('DD.MM.YYYY'),
-            category: category === '' ? null : parseInt(category),
             contract: contract === '' ? null : parseInt(contract),
             account: account === '' ? null : parseInt(account),
-            counter_booking:
-                counterBooking === '' ? null : parseInt(counterBooking),
+            counter_booking: counterBooking === '' ? null : parseInt(counterBooking),
+            tags: tags.map(id => parseInt(id)),
         } as Partial<RecordType>
         onSubmit(payload)
     }
@@ -151,12 +148,10 @@ export const RecordForm = ({
                 value={date}
             />
 
-            <CategorySelect
-                value={category}
-                onChange={setCategory}
-                error={error?.data?.category}
-                label={'Kategorie'}
-                required
+            <CategorySelectMultiple
+                value={tags}
+                onChange={setTags}
+                label={"Kategorien"}
             />
 
             <ContractSelect
