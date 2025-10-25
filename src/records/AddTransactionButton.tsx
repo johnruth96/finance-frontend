@@ -76,6 +76,7 @@ export const AddTransactionButton = ({record}: AddTransactionButtonProps) => {
                             initialState={{
                                 columns: {
                                     columnVisibilityModel: {
+                                        id: false,
                                         is_highlighted: false,
                                         is_duplicate: false,
                                         is_ignored: false,

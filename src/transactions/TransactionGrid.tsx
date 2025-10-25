@@ -17,6 +17,12 @@ import {
 
 const baseColumns: GridColDef<Transaction>[] = [
     {
+        field: 'id',
+        headerName: 'ID',
+        type: 'number',
+        aggregable: false,
+    },
+    {
         field: 'account',
         headerName: 'Konto',
         type: 'string',
@@ -100,6 +106,8 @@ const getRowClassName = ({row}: GridRowClassNameParams<Transaction>) => {
     if (row.is_highlighted) {
         className = 'bg-primary-subtle'
     } else if (row.is_counter_to !== null) {
+        className = 'bg-warning-subtle'
+    } else if (row.is_ignored) {
         className = 'bg-secondary-subtle'
     }
 

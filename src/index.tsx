@@ -49,6 +49,13 @@ export const theme = createTheme({
                 margin: 'normal',
             },
         },
+        MuiFormControl: {
+            defaultProps: {
+                variant: 'standard',
+                fullWidth: true,
+                margin: 'normal',
+            },
+        }
     },
 })
 

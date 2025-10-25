@@ -2,7 +2,7 @@ import {Skeleton} from "@mui/material";
 import {PieChart, useDrawingArea} from "@mui/x-charts";
 import {sum} from "lodash";
 import React, {PropsWithChildren, useState} from "react";
-import {adaRound} from "../aggregate";
+import {adaRound} from "../round";
 
 const PieCenterLabel = ({children}: PropsWithChildren) => {
     const {width, height, left, top} = useDrawingArea();
@@ -26,8 +26,6 @@ export const CategoryPieChart = ({dataset, isLoading}: {
     }>
     isLoading?: boolean
 }) => {
-    const [label, setLabel] = useState('')
-
     if (isLoading) {
         return <Skeleton
             variant={"circular"}
@@ -36,12 +34,14 @@ export const CategoryPieChart = ({dataset, isLoading}: {
             sx={{mx: "auto"}}
         />
     } else {
+        // Convert to non-negative value for PieChart API
+        const data = dataset.map(({value, ...rest}) => ({value: Math.abs(value), ...rest}))
         const total = adaRound(sum(dataset.map(item => item.value)))
 
         return <PieChart
             series={[
                 {
-                    data: dataset,
+                    data: data,
                     paddingAngle: 2,
                     innerRadius: 60,
                     cornerRadius: 2,
