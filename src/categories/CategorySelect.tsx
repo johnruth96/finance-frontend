@@ -1,32 +1,34 @@
-import {ModelSelect, ModelSelectProps,} from '../core/forms/ModelSelect'
+import {Select, SelectProps,} from '../core/forms/Select'
 import React, {useMemo} from 'react'
 import {getCategorySubTree} from './category'
 import {Category} from "../app/types";
 import {useGetCategoriesQuery} from "../app/api";
 
+export const getCategoryOptions = (categories: Category[]) => {
+    const groups: Array<{ items: Category[], label: string }> = []
+    const mainCategories = categories.filter((obj) => obj.parent === null)
 
-export const CategorySelect = ({...props}: Omit<ModelSelectProps<Category>, 'objects'>) => {
+    mainCategories.forEach((root) => {
+        const subTree = getCategorySubTree(root, categories)
+        groups.push({
+            label: root.name,
+            items: subTree.slice(1),
+        })
+    })
+
+    return groups
+}
+
+export const CategorySelect = ({...props}: Omit<SelectProps<Category>, 'objects'>) => {
     const {data} = useGetCategoriesQuery()
 
-    const categories = useMemo(() => {
-        const categories: Category[] = []
-
-        if (data) {
-            const mainCategories = data.filter((obj) => obj.parent === null)
-            mainCategories.forEach((root) => {
-                const subTree = getCategorySubTree(root, data)
-                categories.push(...subTree.map(category => ({
-                    ...category,
-                    name: category.parent !== null ? `--- ${category.name}` : category.name
-                })))
-            })
-        }
-
-        return categories
-    }, [data])
+    const categories = useMemo(
+        () => data ? getCategoryOptions(data) : [],
+        [data]
+    )
 
     return (
-        <ModelSelect
+        <Select
             objects={categories}
             {...props}
         />

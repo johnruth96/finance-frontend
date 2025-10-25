@@ -12,6 +12,8 @@ import {
     getGridSingleSelectFilterOperators,
     getGridStringFilterOperators
 } from "../../app/url";
+import {CategorySelect} from "../../categories/CategorySelect";
+import {ContractSelect} from "../../contracts/ContractSelect";
 
 export const createGridColDef = (categories: Category[] | undefined, contracts: Contract[] | undefined, accounts: Account[] | undefined): GridColDef<RowModel>[] => {
     return [
@@ -85,33 +87,33 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'singleSelect',
             display: 'flex',
             editable: true,
-            valueOptions: (categories ?? []).map(
-                ({id, name, ...rest}: Category) => ({
-                    value: id,
-                    label: name,
-                    ...rest,
-                }),
-            ),
-            renderCell: ({
-                             value,
-                             colDef,
-                             formattedValue,
-                         }: GridCellParams<RowModel>) => {
-                const valueOption = colDef.valueOptions.find(
-                    (option) => option.value === value,
+            renderCell: ({value}: GridCellParams<RowModel>) => {
+                const category = (categories ?? []).find(
+                    (category) => category.id === value,
                 )
 
-                if (value) {
+                if (category) {
                     return (
                         <CategoryDisplay
-                            color={valueOption?.color ?? 'red'}
-                            name={formattedValue}
+                            color={category.color}
+                            name={category.name}
                             variant={'body2'}
                         />
                     )
                 } else {
                     return null
                 }
+            },
+            renderEditCell: ({id, field, value, api}) => {
+                const handleValueChange = (value: string) => {
+                    api.setEditCellValue({id, field, value});
+                }
+
+                return <CategorySelect
+                    value={value}
+                    onChange={handleValueChange}
+                    sx={{width: "100%"}}
+                />
             },
             filterOperators: getGridSingleSelectFilterOperators(),
         },
@@ -121,12 +123,26 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             flex: 1,
             minWidth: 100,
             type: 'singleSelect',
-            valueOptions: (contracts ?? []).map(({id, name}: Contract) => ({
-                value: id,
-                label: name,
-            })),
             aggregable: false,
             editable: true,
+            renderCell: ({value}: GridCellParams<RowModel>) => {
+                const contract = (contracts ?? []).find(
+                    (contract) => contract.id === value,
+                )
+
+                return contract?.name ?? ""
+            },
+            renderEditCell: ({id, field, value, api}) => {
+                const handleValueChange = (value: string) => {
+                    api.setEditCellValue({id, field, value});
+                }
+
+                return <ContractSelect
+                    value={value}
+                    onChange={handleValueChange} sx={{width: "100%"}}
+                    variant={"standard"}
+                />
+            },
             filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
