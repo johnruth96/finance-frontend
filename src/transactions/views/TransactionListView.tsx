@@ -65,6 +65,11 @@ export const TransactionListView = ({}) => {
                                     operator: 'is',
                                     value: "false",
                                 },
+                                {
+                                    field: 'is_ignored',
+                                    operator: 'is',
+                                    value: "false",
+                                },
                             ],
                         },
                     },
