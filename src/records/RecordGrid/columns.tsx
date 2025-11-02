@@ -87,6 +87,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'singleSelect',
             display: 'flex',
             editable: true,
+            valueOptions: (categories ?? []).map(cat => ({label: cat.name, value: cat.id})),
             renderCell: ({value}: GridCellParams<RowModel>) => {
                 const category = (categories ?? []).find(
                     (category) => category.id === value,
@@ -125,6 +126,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'singleSelect',
             aggregable: false,
             editable: true,
+            valueOptions: (contracts ?? []).map(con => ({label: con.name, value: con.id})),
             renderCell: ({value}: GridCellParams<RowModel>) => {
                 const contract = (contracts ?? []).find(
                     (contract) => contract.id === value,
