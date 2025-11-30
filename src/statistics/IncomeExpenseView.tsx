@@ -21,7 +21,22 @@ export const IncomeExpenseView = ({dateStart, dateEnd}: IncomeExpenseViewProps) 
                         date__gte: dateStart.format("YYYY-MM-DD"),
                         date__lte: dateEnd.format("YYYY-MM-DD"),
                         amount__lte: 0,
-                        major_category_id__in: [94, 50, 40, 45, 57, 56, 52, 88, 51, 55, 105, 62, 77, 10, 54],
+                        major_category_name__in: [
+                            "Versicherungen",
+                            "Finanzen & Steuern",
+                            "Restaurants & Bars",
+                            "Lebensmittel",
+                            "Wohnen & Haushalt",
+                            "Shopping",
+                            "Gesundheit",
+                            "Freizeit & Unterhaltung",
+                            "Sparen & Vorsorge",
+                            "Verkehr & Mobilität",
+                            "Reisen & Urlaub",
+                            "Bildung & Beruf",
+                            "Drogerie (neu)",
+                            "Sonstige Ausgaben (neu)",
+                        ],
                     }}
                     group="major_category_name"
                     aggregate="sum"
@@ -37,7 +52,7 @@ export const IncomeExpenseView = ({dateStart, dateEnd}: IncomeExpenseViewProps) 
                         date__gte: dateStart.format("YYYY-MM-DD"),
                         date__lte: dateEnd.format("YYYY-MM-DD"),
                         amount__gte: 0,
-                        category__parent__id: 40,
+                        category__parent__name: "Einnahmen",
                     }}
                     group="category__name"
                     aggregate="sum"

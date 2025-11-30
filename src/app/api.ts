@@ -216,6 +216,8 @@ export const baseApi = createApi({
                         })
                     }
 
+                    console.debug("Aggregation query:", params)
+
                     return `/records/aggregate/?${params}`
                 },
                 providesTags: ["Record"], // Invalidate as soon as one Record changes

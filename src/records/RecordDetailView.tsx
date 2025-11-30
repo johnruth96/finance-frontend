@@ -61,6 +61,14 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
             </Box>
 
             <Box sx={{mb: 3}}>
+                <Typography variant={"caption"}>DEBUG: Field 'category' (todo: deprecate)</Typography>
+                {object.category ?
+                    <CategoryDisplayContainer id={object.category}/> :
+                    <Typography>keine</Typography>
+                }
+            </Box>
+
+            <Box sx={{mb: 3}}>
                 <Typography variant={"caption"} component={"div"}>Verträge</Typography>
                 {object.contract !== null ?
                     <List>
