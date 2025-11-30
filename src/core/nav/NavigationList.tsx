@@ -33,6 +33,10 @@ export const NavigationList = () => {
                     to={"records/"}
                 />
                 <NavigationListItem
+                    label={'Neu'}
+                    to={"records/add/"}
+                />
+                <NavigationListItem
                     label={'Statistik'}
                     to={"insights/"}
                 />

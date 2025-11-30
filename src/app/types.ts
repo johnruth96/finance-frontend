@@ -1,5 +1,6 @@
 import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import {SerializedError} from "@reduxjs/toolkit";
+import {Transaction} from "../transactions/types";
 
 export interface Pagination<T> {
     count: number
@@ -36,13 +37,13 @@ export interface RecordType {
     counter_booking: RecordType['id'] | null
 
     subject: string
-    category: Category['id'] | null
+    category: Category['id'] | null // TODO: Deprecate in future
     contract: Contract['id'] | null
     date: string
     amount: number
 
-    transactions: number[]
-    tags: number[]
+    transactions: Transaction['id'][]
+    tags: Category['id'][]
 }
 
 export interface Contract {

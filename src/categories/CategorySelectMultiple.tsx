@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useMemo} from 'react'
 import {useGetCategoriesQuery} from "../app/api";
 import {Box, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Theme, useTheme} from "@mui/material";
 import {Category} from "../app/types";
+import {getCategoryOptions} from "./category";
 
 interface CategorySelectMultipleProps {
     value: string[]
@@ -25,6 +26,19 @@ export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectM
         onChange(typeof evt.target.value === 'string' ? evt.target.value.split(',') : evt.target.value)
     }
 
+    // Hack
+    const categories = useMemo(()=>{
+        const groups = getCategoryOptions(data ?? [])
+        const categories:Category[] = []
+        groups.forEach(group => {
+            categories.push(...group.items.map(cat => ({
+                ...cat,
+                name: `${group.label} > ${cat.name}`,
+            })))
+        })
+        return categories
+    }, [data])
+
     return (
         <FormControl>
             <InputLabel>{label}</InputLabel>
@@ -40,7 +54,7 @@ export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectM
                     </Box>
                 )}
             >
-                {data?.map((category) => (
+                {categories.map((category) => (
                     <MenuItem
                         key={category.id}
                         value={category.id}
