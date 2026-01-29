@@ -1,16 +1,28 @@
 import React, {useMemo} from 'react'
 import {useGetCategoriesQuery} from "../app/api";
-import {Box, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Theme, useTheme} from "@mui/material";
+import {
+    Box,
+    FormControl,
+    FormControlProps,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    Theme,
+    useTheme
+} from "@mui/material";
 import {Category} from "../app/types";
 import {getCategoryOptions} from "./category";
+import {CategoryCircle} from "./CategoryCircle";
+import {CategoryChipContainer} from "./CategoryChip";
 
-interface CategorySelectMultipleProps {
-    value: string[]
-    onChange: (value: string[]) => void
-    label: string
+interface CategorySelectMultipleProps extends Omit<FormControlProps, "onChange"> {
+    value: number[]
+    onChange: (value: number[]) => void
+    label?: string
 }
 
-function getStyles(category: Category, value: readonly string[], theme: Theme) {
+function getStyles(category: Category, value: readonly number[], theme: Theme) {
     return {
         fontWeight: value.includes(category.id)
             ? theme.typography.fontWeightMedium
@@ -18,18 +30,21 @@ function getStyles(category: Category, value: readonly string[], theme: Theme) {
     };
 }
 
-export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectMultipleProps) => {
+export const CategorySelectMultiple = ({value, onChange, label, ...props}: CategorySelectMultipleProps) => {
     const {data} = useGetCategoriesQuery()
     const theme = useTheme()
 
     const handleChange = (evt: SelectChangeEvent<typeof value>) => {
-        onChange(typeof evt.target.value === 'string' ? evt.target.value.split(',') : evt.target.value)
+        onChange(typeof evt.target.value === 'string' ?
+            evt.target.value.split(',').map(id => parseInt(id)) :
+            evt.target.value
+        )
     }
 
     // Hack
-    const categories = useMemo(()=>{
+    const categories = useMemo(() => {
         const groups = getCategoryOptions(data ?? [])
-        const categories:Category[] = []
+        const categories: Category[] = []
         groups.forEach(group => {
             categories.push(...group.items.map(cat => ({
                 ...cat,
@@ -40,7 +55,7 @@ export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectM
     }, [data])
 
     return (
-        <FormControl>
+        <FormControl {...props}>
             <InputLabel>{label}</InputLabel>
             <Select
                 multiple
@@ -49,7 +64,7 @@ export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectM
                 renderValue={(selected: number[]) => (
                     <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
                         {selected.map((tagId) => (
-                            <Chip key={tagId} label={(data ?? []).find(cat => cat.id === tagId)?.name}/>
+                            <CategoryChipContainer key={tagId} id={tagId}/>
                         ))}
                     </Box>
                 )}
@@ -60,7 +75,7 @@ export const CategorySelectMultiple = ({value, onChange, label}: CategorySelectM
                         value={category.id}
                         style={getStyles(category, value, theme)}
                     >
-                        {category.name}
+                        <CategoryCircle color={category.color}/> {category.name}
                     </MenuItem>
                 ))}
             </Select>

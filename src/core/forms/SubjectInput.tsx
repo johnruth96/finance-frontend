@@ -9,7 +9,7 @@ import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 type SubjectDataType = [string, number, number | null]
 type SubjectType = {
     subject: string
-    category: number
+    category: number // Deprecated API which still reports a "category" instead of tags
     contract: number | null
 }
 

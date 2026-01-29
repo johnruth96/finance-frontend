@@ -38,7 +38,7 @@ export const RecordForm = ({
     const [contract, setContract] = useState('')
     const [account, setAccount] = useState('')
     const [counterBooking, setCounterBooking] = useState('')
-    const [tags, setTags] = useState<string[]>([])
+    const [tags, setTags] = useState<number[]>([])
 
     const onSubjectChange = (
         value:
@@ -49,6 +49,11 @@ export const RecordForm = ({
             setSubject(value)
         } else {
             setSubject(value.subject)
+
+            if (tags.length === 0)
+                // Deprecated API which still reports a "category" instead of tags
+                setTags([value.category])
+
             setContract(value.contract ? value.contract.toString() : '')
         }
     }
@@ -84,7 +89,7 @@ export const RecordForm = ({
 
         setContract(initial.contract?.toString() ?? '')
         setCounterBooking(initial.counter_booking?.toString() ?? '')
-        setTags(initial.tags?.map(id => id.toString()) ?? [])
+        setTags(initial.tags ?? [])
     }
 
     /*
@@ -108,7 +113,7 @@ export const RecordForm = ({
             contract: contract === '' ? null : parseInt(contract),
             account: account === '' ? null : parseInt(account),
             counter_booking: counterBooking === '' ? null : parseInt(counterBooking),
-            tags: tags.map(id => parseInt(id)),
+            tags: tags,
         } as Partial<RecordType>
         onSubmit(payload)
     }
