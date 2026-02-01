@@ -6,12 +6,13 @@ import {SubjectInput, SubjectType} from '../core/forms/SubjectInput'
 import {DatePicker} from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import {ProgressButton} from '../core/ProgressButton'
-import {Alert, TextField, ThemeProvider} from '@mui/material'
+import {Alert, ThemeProvider} from '@mui/material'
 import {AccountSelect} from '../core/forms/AccountSelect'
 import {theme} from '../index'
 import {Error} from '../core/Error'
 import {Contract, RecordType} from "../app/types";
 import {CategorySelectMultiple} from "../categories/CategorySelectMultiple";
+import {CategorySelect} from "../categories/CategorySelect";
 
 export interface RecordFormProps {
     onSubmit: (value: Partial<RecordType>) => void
@@ -35,6 +36,7 @@ export const RecordForm = ({
     const [amount, setAmount] = useState<number | ''>('')
     const [subject, setSubject] = useState('')
     const [date, setDate] = useState(dayjs())
+    const [category, setCategory] = useState('')
     const [contract, setContract] = useState('')
     const [account, setAccount] = useState('')
     const [counterBooking, setCounterBooking] = useState('')
@@ -46,8 +48,8 @@ export const RecordForm = ({
         } else {
             setSubject(value.subject)
 
-            if (tags.length === 0)
-                setTags(value.tagIds)
+            if (category === "")
+                setCategory(value.categoryId.toString())
 
             setContract(value.contractId ? value.contractId.toString() : '')
         }
@@ -61,8 +63,12 @@ export const RecordForm = ({
         const contractObj = contracts?.find(
             (obj: Contract) => obj.id === parseInt(contract),
         )
+
         if (contractObj) {
-            if (subject === '') setSubject(contractObj.name)
+            if (subject === '') {
+                setSubject(contractObj.name)
+            }
+
             if (amount === '') {
                 setAmount(contractObj.amount)
             }
@@ -81,7 +87,7 @@ export const RecordForm = ({
         setAmount(initial.amount)
         setSubject(initial.subject)
         setDate(dayjs(initial.date))
-
+        setCategory(initial.category?.toString() ?? '')
         setContract(initial.contract?.toString() ?? '')
         setCounterBooking(initial.counter_booking?.toString() ?? '')
         setTags(initial.tags ?? [])
@@ -94,6 +100,7 @@ export const RecordForm = ({
         if (isSuccess) {
             setAmount('')
             setSubject('')
+            setCategory('')
             setContract('')
             setCounterBooking('')
             setTags([])
@@ -105,6 +112,7 @@ export const RecordForm = ({
             amount: amount === '' ? null : amount,
             subject: subject.trim(),
             date: date.format('DD.MM.YYYY'),
+            category: category === '' ? null : parseInt(category),
             contract: contract === '' ? null : parseInt(contract),
             account: account === '' ? null : parseInt(account),
             counter_booking: counterBooking === '' ? null : parseInt(counterBooking),
@@ -148,10 +156,11 @@ export const RecordForm = ({
                 value={date}
             />
 
-            <CategorySelectMultiple
-                value={tags}
-                onChange={setTags}
-                label={"Kategorien"}
+            <CategorySelect
+                value={category}
+                onChange={setCategory}
+                error={error?.data?.category}
+                label={"Kategorie"}
             />
 
             <ContractSelect
@@ -162,11 +171,18 @@ export const RecordForm = ({
                 label={'Vertrag (optional)'}
             />
 
-            <TextField
+            <CategorySelectMultiple
+                value={tags}
+                onChange={setTags}
+                error={error?.data?.tags}
+                label={"Tags (optional)"}
+            />
+
+            {/*<TextField
                 label={'Gegenbuchung (optional)'}
                 value={counterBooking}
                 onChange={(evt) => setCounterBooking(evt.target.value)}
-            />
+            />*/}
 
             <ProgressButton
                 error={isError}

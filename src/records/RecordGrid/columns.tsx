@@ -3,7 +3,7 @@ import {Account, Category, Contract} from "../../app/types";
 import {AmountDisplay} from "../../core/AmountDisplay";
 import {Link} from "react-router-dom";
 import dayjs from "dayjs";
-import {CategoryDisplayContainer} from "../../categories/CategoryDisplay";
+import {CategoryDisplay, CategoryDisplayContainer} from "../../categories/CategoryDisplay";
 import React from "react";
 import {RowModel} from "./BaseRecordGrid";
 import {
@@ -82,29 +82,26 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             filterOperators: getGridDateFilterOperators(true),
         },
         {
-            field: 'tags',
-            headerName: 'Tags',
+            field: 'category',
+            headerName: 'Kategorie',
             flex: 2,
             minWidth: 100,
             type: 'custom',
             display: 'flex',
             editable: true,
             renderCell: ({value}: GridCellParams<RowModel>) => {
-                if (Array.isArray(value)) {
-                    return <div style={{display: "flex", gap:"0.5rem",  width: "100%", overflowX: "scroll"}}>
-                        {value.map((tagId: number) => <CategoryChipContainer id={tagId}/>)}
-                    </div>
+                if (typeof value === "number") {
+                    return <CategoryDisplayContainer id={value}/>
                 } else {
                     return null
                 }
             },
             renderEditCell: ({id, field, value, api}) => {
-                const handleValueChange = (value: string[]) => {
-                    console.log(value)
+                const handleValueChange = (value: string) => {
                     api.setEditCellValue({id, field, value});
                 }
 
-                return <CategorySelectMultiple
+                return <CategorySelect
                     value={value}
                     onChange={handleValueChange}
                     sx={{width: "100%"}}

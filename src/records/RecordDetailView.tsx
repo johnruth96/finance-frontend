@@ -24,10 +24,6 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
                 <Typography variant={"caption"}>Details</Typography>
                 <Table size="small">
                     <TableBody>
-                        {/*<TableRow>
-                            <TableCell sx={{pl: 0}}>Betreff</TableCell>
-                            <TableCell>{object.subject}</TableCell>
-                        </TableRow>*/}
                         <TableRow>
                             <TableCell sx={{pl: 0}}>Betrag</TableCell>
                             <TableCell>
@@ -49,12 +45,10 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
             </Box>
 
             <Box sx={{mb: 3}}>
-                <Typography variant={"caption"}>Kategorien</Typography>
-                {object.tags.length > 0 ?
+                <Typography variant={"caption"}>Kategorie</Typography>
+                {object.category !== null ?
                     <List>
-                        {object.tags.map(tagId => (
-                            <ListItemText primary={<CategoryDisplayContainer id={tagId}/>}/>
-                        ))}
+                        <ListItemText primary={<CategoryDisplayContainer id={object.category}/>}/>
                     </List> :
                     <Typography>keine</Typography>
                 }
@@ -65,6 +59,18 @@ export const RecordDetailView = ({object, ...props}: RecordDetailViewProps) => {
                 {object.contract !== null ?
                     <List>
                         <ContractListItemButton id={object.contract}/>
+                    </List> :
+                    <Typography>keine</Typography>
+                }
+            </Box>
+
+            <Box sx={{mb: 3}}>
+                <Typography variant={"caption"}>Tags</Typography>
+                {object.tags.length > 0 ?
+                    <List>
+                        {object.tags.map(tagId => (
+                            <ListItemText primary={<CategoryDisplayContainer id={tagId}/>}/>
+                        ))}
                     </List> :
                     <Typography>keine</Typography>
                 }

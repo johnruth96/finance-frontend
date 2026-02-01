@@ -5,12 +5,13 @@ import TextField from '@mui/material/TextField'
 import {AutocompleteProps} from '@mui/material/Autocomplete/Autocomplete'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 
-type SubjectDataType = [string, number | null, number | null]
+type SubjectDataType = [string, number, number | null]
 
 export type SubjectType = {
     subject: string
-    tagIds: number[]
+    categoryId: number
     contractId: number | null
+    tagIds: number[]
 }
 
 interface SubjectInputProps
@@ -20,6 +21,7 @@ interface SubjectInputProps
     error?: string[]
 }
 
+// FIN-1: Add tag suggestion
 export const SubjectInput = ({value, onChange, error, ...props}: SubjectInputProps) => {
     const {data, isFetching} = useGetSubjectCategoryPairsQuery()
 
@@ -28,22 +30,15 @@ export const SubjectInput = ({value, onChange, error, ...props}: SubjectInputPro
 
         if (data) {
             data.forEach((item: SubjectDataType) => {
-                const [subject, tagId, contractId] = item
+                const [subject, categoryId, contractId] = item
 
                 if (optionsBySubject[subject] === undefined) {
                     optionsBySubject[subject] = {
                         subject: subject,
+                        categoryId: categoryId,
+                        contractId: contractId,
                         tagIds: [],
-                        contractId: null,
                     }
-                }
-
-                if (tagId !== null && !optionsBySubject[subject].tagIds.includes(tagId)) {
-                    optionsBySubject[subject].tagIds.push(tagId)
-                }
-
-                if (contractId !== null && optionsBySubject[subject].contractId === null) {
-                    optionsBySubject[subject].contractId = contractId
                 }
             })
         }

@@ -21,7 +21,7 @@ export const IncomeExpenseView = ({dateStart, dateEnd}: IncomeExpenseViewProps) 
                         date__gte: dateStart.format("YYYY-MM-DD"),
                         date__lte: dateEnd.format("YYYY-MM-DD"),
                         amount__lte: 0,
-                        major_category_name__in: [
+                        root_category__in: [
                             "Versicherungen",
                             "Finanzen & Steuern",
                             "Restaurants & Bars",
@@ -38,7 +38,7 @@ export const IncomeExpenseView = ({dateStart, dateEnd}: IncomeExpenseViewProps) 
                             "Sonstige Ausgaben (neu)",
                         ],
                     }}
-                    group="major_category_name"
+                    group="root_category"
                     aggregate="sum"
                 />
             </Grid>
@@ -52,7 +52,7 @@ export const IncomeExpenseView = ({dateStart, dateEnd}: IncomeExpenseViewProps) 
                         date__gte: dateStart.format("YYYY-MM-DD"),
                         date__lte: dateEnd.format("YYYY-MM-DD"),
                         amount__gte: 0,
-                        category__parent__name: "Einnahmen",
+                        root_category: "Einnahmen",
                     }}
                     group="category__name"
                     aggregate="sum"

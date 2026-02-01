@@ -37,6 +37,7 @@ export interface RecordType {
     counter_booking: RecordType['id'] | null
 
     subject: string
+    category: Category['id'] | null
     contract: Contract['id'] | null
     date: string
     amount: number

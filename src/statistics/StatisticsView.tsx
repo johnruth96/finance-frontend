@@ -52,7 +52,7 @@ export const StatisticsView = ({}) => {
 
                     <RecordPieChart
                         filter={{
-                            major_category_name: "Restaurants & Bars",
+                            category__parent__name: "Restaurants & Bars",
                             date__gte: dateStart.format("YYYY-MM-DD"),
                             date__lte: dateEnd.format("YYYY-MM-DD"),
                         }}
