@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {useGetContractsQuery} from '../app/api'
 import {ContractSelect} from '../contracts/ContractSelect'
 import {AmountInput} from '../core/forms/AmountInput'
-import {SubjectInput} from '../core/forms/SubjectInput'
+import {SubjectInput, SubjectType} from '../core/forms/SubjectInput'
 import {DatePicker} from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import {ProgressButton} from '../core/ProgressButton'
@@ -40,21 +40,16 @@ export const RecordForm = ({
     const [counterBooking, setCounterBooking] = useState('')
     const [tags, setTags] = useState<number[]>([])
 
-    const onSubjectChange = (
-        value:
-            | string
-            | { subject: string; category: number; contract: number | null },
-    ) => {
+    const onSubjectChange = (value: string | SubjectType) => {
         if (typeof value === 'string') {
             setSubject(value)
         } else {
             setSubject(value.subject)
 
             if (tags.length === 0)
-                // Deprecated API which still reports a "category" instead of tags
-                setTags([value.category])
+                setTags(value.tagIds)
 
-            setContract(value.contract ? value.contract.toString() : '')
+            setContract(value.contractId ? value.contractId.toString() : '')
         }
     }
 

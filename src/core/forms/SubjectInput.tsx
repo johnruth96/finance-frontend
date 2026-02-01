@@ -3,14 +3,14 @@ import React, {useMemo} from 'react'
 import {Autocomplete, IconButton} from '@mui/material'
 import TextField from '@mui/material/TextField'
 import {AutocompleteProps} from '@mui/material/Autocomplete/Autocomplete'
-import {uniqBy} from 'lodash'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 
-type SubjectDataType = [string, number, number | null]
-type SubjectType = {
+type SubjectDataType = [string, number | null, number | null]
+
+export type SubjectType = {
     subject: string
-    category: number // Deprecated API which still reports a "category" instead of tags
-    contract: number | null
+    tagIds: number[]
+    contractId: number | null
 }
 
 interface SubjectInputProps
@@ -24,19 +24,31 @@ export const SubjectInput = ({value, onChange, error, ...props}: SubjectInputPro
     const {data, isFetching} = useGetSubjectCategoryPairsQuery()
 
     const options = useMemo(() => {
+        const optionsBySubject: Record<string, SubjectType> = {}
+
         if (data) {
-            const dataUniq = uniqBy(data, (item: SubjectDataType) => item[0])
-            return dataUniq.map(
-                (item: SubjectDataType) =>
-                    ({
-                        subject: item[0],
-                        category: item[1],
-                        contract: item[2],
-                    } as SubjectType),
-            )
-        } else {
-            return []
+            data.forEach((item: SubjectDataType) => {
+                const [subject, tagId, contractId] = item
+
+                if (optionsBySubject[subject] === undefined) {
+                    optionsBySubject[subject] = {
+                        subject: subject,
+                        tagIds: [],
+                        contractId: null,
+                    }
+                }
+
+                if (tagId !== null && !optionsBySubject[subject].tagIds.includes(tagId)) {
+                    optionsBySubject[subject].tagIds.push(tagId)
+                }
+
+                if (contractId !== null && optionsBySubject[subject].contractId === null) {
+                    optionsBySubject[subject].contractId = contractId
+                }
+            })
         }
+
+        return Object.values(optionsBySubject)
     }, [data])
 
     const handleInputChange = (
