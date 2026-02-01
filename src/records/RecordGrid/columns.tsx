@@ -91,7 +91,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             editable: true,
             renderCell: ({value}: GridCellParams<RowModel>) => {
                 if (typeof value === "number") {
-                    return <CategoryDisplayContainer id={value}/>
+                    return <CategoryDisplayContainer id={value} variant={"body2"}/>
                 } else {
                     return null
                 }
