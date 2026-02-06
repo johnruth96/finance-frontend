@@ -10,7 +10,7 @@ import {LogoutListItem} from "./LogoutListItem";
 
 export const NavigationList = () => {
     return (
-        <List>
+        <List sx={{py: 0}}>
             <NavigationListItem
                 label={'Dashboard'}
                 icon={<HomeIcon/>}
