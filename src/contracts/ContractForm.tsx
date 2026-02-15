@@ -63,7 +63,7 @@ export const ContractForm = ({
     }
 
     const onSubmitClick = () => {
-        const payload = {
+        const payload: Partial<Contract> = {
             account: account === '' ? null : parseInt(account),
             name: name,
             category: category === '' ? null : parseInt(category),

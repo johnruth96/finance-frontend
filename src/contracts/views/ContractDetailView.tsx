@@ -14,7 +14,6 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {green, red} from "@mui/material/colors";
 import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
 import {RecordGrid} from "../../records/RecordGrid/RecordGrid";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from '@mui/icons-material/Edit'
 
 interface ContractDetailViewProps {

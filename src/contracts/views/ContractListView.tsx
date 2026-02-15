@@ -51,7 +51,7 @@ const ContractListView = ({objects}: ContractListViewProps) => {
                 onClick={() => navigate("add/")}
                 sx={{mb:3}}
             >
-                Vertrag hinzufügen
+                Vertrag erstellen
             </Button>
 
             <ContractGrid filterModel={initialFilterModel}/>

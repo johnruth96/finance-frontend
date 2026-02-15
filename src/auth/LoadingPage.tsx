@@ -1,5 +1,11 @@
 import React from "react";
+import {Box, CircularProgress} from "@mui/material";
 
 export const LoadingPage = ({}) => {
-    return <div>Loading ...</div>
+    return (
+        <Box sx={{display: 'flex', alignItems: "center", justifyContent: "center", p: 2, gap: 2}}>
+            <CircularProgress/>
+            Laden
+        </Box>
+    )
 }
