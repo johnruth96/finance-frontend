@@ -56,7 +56,7 @@ export const baseApi = createApi({
                 providesTags: ['Contract'],
             }),
             createContract: builder.mutation<Contract,
-                Omit<Contract, 'id'> & Partial<Contract>>({
+                Partial<Omit<Contract, 'id'>>>({
                 query: (payload) => ({
                     url: "contracts/",
                     method: 'POST',

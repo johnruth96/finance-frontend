@@ -1,26 +1,29 @@
-import React, { useEffect } from 'react'
-import { Page } from '../../core/Page'
-import { useCreateContractMutation } from '../../app/api'
-import { ContractForm } from '../ContractForm'
-import { useNavigate } from 'react-router-dom'
+import React, {useEffect} from 'react'
+import {Page} from '../../core/Page'
+import {useCreateContractMutation} from '../../app/api'
+import {ContractForm} from '../ContractForm'
+import {useNavigate} from 'react-router-dom'
 
 export default () => {
-    const [createContract, queryState] = useCreateContractMutation()
+    const [createContract, {isSuccess, isLoading, isError, error, data}] = useCreateContractMutation()
 
     // Navigation after success
     const navigate = useNavigate()
     useEffect(() => {
-        if (queryState.isSuccess) {
-            navigate(`/contracts/${queryState.data.id}/`)
+        if (isSuccess) {
+            navigate(`/contracts/${data.id}/`)
         }
-    }, [queryState.isSuccess, queryState.data])
+    }, [isSuccess, data])
 
     return (
-        <Page title={'Vertrag anlegen'}>
+        <Page title={'Vertrag erstellen'}>
             <ContractForm
                 onSubmit={createContract}
                 buttonCaption={'Erstellen'}
-                {...queryState}
+                isSuccess={isSuccess}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
             />
         </Page>
     )

@@ -6,7 +6,7 @@ import {IncomeExpenseView} from "../statistics/IncomeExpenseView";
 
 export const HomeView = ({}) => {
     return (
-        <Page title={dayjs().format('MMMM YYYY')}>
+        <Page title={dayjs().format('MMMM YYYY').toString()}>
             <Box>
                 <IncomeExpenseView
                     dateStart={dayjs.utc().startOf('month')}

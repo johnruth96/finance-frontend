@@ -3,6 +3,7 @@ import {useDeleteRecordMutation} from "../app/api";
 import {ProgressButton} from "../core/ProgressButton";
 import {RecordType} from "../app/types";
 import {useNavigate} from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface DeleteRecordButtonProps {
     record: Pick<RecordType, 'id' | 'subject'>
@@ -27,6 +28,7 @@ export const DeleteRecordButton = ({record}: DeleteRecordButtonProps) => {
             loading={isLoading}
             error={isError}
             color={"error"}
+            startIcon={<DeleteIcon/>}
         >
             Löschen
         </ProgressButton>

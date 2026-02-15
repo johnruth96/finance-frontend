@@ -10,11 +10,11 @@ import {LogoutListItem} from "./LogoutListItem";
 
 export const NavigationList = () => {
     return (
-        <List>
+        <List sx={{py: 0}}>
             <NavigationListItem
                 label={'Dashboard'}
                 icon={<HomeIcon/>}
-                to={""}
+                to={"/"}
             />
 
             <Divider sx={{my: 2}}/>
@@ -22,7 +22,7 @@ export const NavigationList = () => {
             <NavigationListItem
                 label={'Verträge'}
                 icon={<HistoryEdu/>}
-                to={"contracts/"}
+                to={"/contracts/"}
             />
 
             <Divider sx={{my: 2}}/>
@@ -30,15 +30,15 @@ export const NavigationList = () => {
             <NavigationListContainer icon={<LibraryBooksIcon/>} label={"Haushaltsbuch"}>
                 <NavigationListItem
                     label={'Ausgaben'}
-                    to={"records/"}
+                    to={"/records/"}
                 />
                 <NavigationListItem
                     label={'Neu'}
-                    to={"records/add/"}
+                    to={"/records/add/"}
                 />
                 <NavigationListItem
                     label={'Statistik'}
-                    to={"insights/"}
+                    to={"/insights/"}
                 />
             </NavigationListContainer>
 
@@ -47,15 +47,15 @@ export const NavigationList = () => {
             <NavigationListContainer icon={<AccountBalance/>} label={"Bank"}>
                 <NavigationListItem
                     label={'Transaktionen'}
-                    to={"transactions/"}
+                    to={"/transactions/"}
                 />
                 <NavigationListItem
                     label={'Zuletzt Erstellt'}
-                    to={"transactions/latest/"}
+                    to={"/transactions/latest/"}
                 />
                 <NavigationListItem
                     label={'Import'}
-                    to={"transactions/import/"}
+                    to={"/transactions/import/"}
                 />
             </NavigationListContainer>
 
