@@ -1,18 +1,22 @@
 import React from 'react'
 import {Page} from '../../core/Page'
 import {filter, round, sortBy, sumBy} from 'lodash'
-import {Box,} from '@mui/material'
+import {Box, Button,} from '@mui/material'
 import {ContractGrid} from './ContractGrid'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {useGetContractsQuery} from "../../app/api";
 import {QueryProvider} from "../../core/QueryProvider";
+import {useNavigate} from "react-router-dom";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 interface ContractListViewProps {
     objects: Contract[]
 }
 
 const ContractListView = ({objects}: ContractListViewProps) => {
+    const navigate = useNavigate()
+
     const activeContracts = filter(objects, 'is_active')
 
     const contractsExpense = sortBy(
@@ -35,11 +39,20 @@ const ContractListView = ({objects}: ContractListViewProps) => {
     }
 
     return (
-        <Page title={'Verträge'} addUrl={`add/`}>
-            <Box sx={{mb: 5}}>
+        <Page title={'Verträge'}>
+            <Box sx={{mb: 3}}>
                 <p className={'display-3 mb-0'}>{expensePerMonth} €</p>
                 <p className={'text-small'}>&empty; monatliche Ausgaben</p>
             </Box>
+
+            <Button
+                color="secondary"
+                startIcon={<AddCircleIcon/>}
+                onClick={() => navigate("add/")}
+                sx={{mb:3}}
+            >
+                Vertrag hinzufügen
+            </Button>
 
             <ContractGrid filterModel={initialFilterModel}/>
         </Page>

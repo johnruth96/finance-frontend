@@ -44,7 +44,7 @@ export const ContractGrid = ({
             field: 'name',
             headerName: 'Name',
             flex: 1,
-            minWidth: 100,
+            minWidth: 200,
             type: 'string',
             renderCell: ({value, id, row}) => (
                 <Link to={`/contracts/${id}/`}>{value}</Link>
@@ -54,7 +54,7 @@ export const ContractGrid = ({
             field: 'category',
             headerName: 'Kategorie',
             flex: 1,
-            minWidth: 100,
+            minWidth: 200,
             type: 'singleSelect',
             display: 'flex',
             valueOptions: (categories ?? []).map(
@@ -91,7 +91,7 @@ export const ContractGrid = ({
             headerName: 'Betrag pro Jahr',
             renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
-            minWidth: 100,
+            minWidth: 150,
             flex: 1,
         },
         {
@@ -100,7 +100,7 @@ export const ContractGrid = ({
             valueGetter: (_, row) => round(row.amount_per_year / 12.0, 2),
             renderCell: ({value}) => <AmountDisplay value={value}/>,
             type: 'number',
-            minWidth: 100,
+            minWidth: 150,
             flex: 1,
         },
         {
@@ -109,14 +109,14 @@ export const ContractGrid = ({
             renderCell: ({value}) =>
                 value ? <AmountDisplay value={value}/> : null,
             type: 'number',
-            minWidth: 100,
+            minWidth: 150,
             aggregable: false,
         },
         {
             field: 'payment_cycle',
             headerName: 'Turnus',
             flex: 1,
-            minWidth: 100,
+            minWidth: 150,
             type: 'singleSelect',
             valueOptions: PAYMENT_CYCLES,
         },
@@ -124,7 +124,7 @@ export const ContractGrid = ({
             field: 'account',
             headerName: 'Konto',
             flex: 1,
-            minWidth: 100,
+            minWidth: 150,
             type: 'singleSelect',
             valueOptions: (accounts ?? []).map(({id, name}: Account) => ({
                 value: id,
@@ -160,7 +160,7 @@ export const ContractGrid = ({
             field: 'date_start',
             headerName: 'Start',
             flex: 1,
-            minWidth: 100,
+            minWidth: 200,
             type: 'date',
             valueFormatter: (value) =>
                 value ? dayjs(value).format('DD.MM.YYYY') : '',
@@ -169,7 +169,7 @@ export const ContractGrid = ({
             field: 'payment_date',
             headerName: 'Abbuchungstag',
             flex: 1,
-            minWidth: 100,
+            minWidth: 200,
             type: 'date',
             valueFormatter: (value) =>
                 value ? dayjs(value).format('DD.MM.YYYY') : '',

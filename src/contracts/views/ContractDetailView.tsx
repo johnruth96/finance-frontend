@@ -3,23 +3,27 @@ import {Page} from '../../core/Page'
 import {getPaymentCycleDisplay} from '../PaymentCycleInput'
 import {AmountDisplay} from '../../core/AmountDisplay'
 import {CategoryDisplayContainer} from '../../categories/CategoryDisplay'
-import {Box, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
+import {Box, Button, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material'
 import {GridFilterModel} from '@mui/x-data-grid'
 import {Contract} from "../../app/types";
 import {QueryProvider} from "../../core/QueryProvider";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useGetContractQuery} from "../../app/api";
 import dayjs from "dayjs";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {green, red} from "@mui/material/colors";
 import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
 import {RecordGrid} from "../../records/RecordGrid/RecordGrid";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EditIcon from '@mui/icons-material/Edit'
 
 interface ContractDetailViewProps {
     object: Contract
 }
 
 const ContractDetailView = ({object}: ContractDetailViewProps) => {
+    const navigate = useNavigate()
+
     const filterModel: GridFilterModel = {
         items: [
             {
@@ -31,11 +35,17 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
     }
 
     return (
-        <Page
-            title={object.name}
-            updateUrl={`update/`}
-        >
-            <Box sx={{mb: 3, width: "50%"}}>
+        <Page title={object.name}>
+            <Button
+                color="secondary"
+                startIcon={<EditIcon/>}
+                onClick={() => navigate("update/")}
+                sx={{mb: 3}}
+            >
+                Bearbeiten
+            </Button>
+
+            <Box sx={{mb: 3}}>
                 <Typography variant={"caption"}>Details</Typography>
 
                 <Table size="small" sx={{tableLayout: "fixed"}}>
@@ -108,7 +118,7 @@ const ContractDetailView = ({object}: ContractDetailViewProps) => {
                 </Table>
             </Box>
 
-            <Box sx={{mb: 3, width: "50%"}}>
+            <Box sx={{mb: 3}}>
                 <Typography variant={'caption'}>Zahlung</Typography>
 
                 <Table size="small" sx={{tableLayout: "fixed"}}>
