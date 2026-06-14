@@ -4,6 +4,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import green from "@mui/material/colors/green";
 import {red} from '@mui/material/colors';
 import {useImportCsvMutation} from "../../app/api";
+import {Page} from "../../core/Page";
 
 export const ImportView = ({}) => {
     const [importFiles, {isSuccess, isError}] = useImportCsvMutation()
@@ -72,31 +73,34 @@ export const ImportView = ({}) => {
     }
 
     return (
-        <Box sx={{
-            width: "100%",
-            height: "100%",
-            bgcolor: bgcolor,
-            color: color,
-            border: `5px dashed ${borderColor}`,
-            borderRadius: "1rem",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            transition: "all 220ms ease-in-out",
-            textAlign: "center",
-            cursor: "pointer",
-        }}
-             onDragOver={handleDragOver}
-             onDragLeave={handleDragLeave}
-             onDrop={handleDrop}
-             onClick={handleBoxClick}
-        >
-            <Box>
-                <FileDownloadIcon sx={{fontSize: "3rem"}}/>
-                <p>Upload CSV file</p>
-            </Box>
+        <Page title={'Import'}>
+            <Box sx={{
+                width: "100%",
+                height: "100%",
+                bgcolor: bgcolor,
+                color: color,
+                border: `5px dashed ${borderColor}`,
+                borderRadius: "1rem",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                transition: "all 220ms ease-in-out",
+                textAlign: "center",
+                cursor: "pointer",
+                padding: "3rem",
+            }}
+                 onDragOver={handleDragOver}
+                 onDragLeave={handleDragLeave}
+                 onDrop={handleDrop}
+                 onClick={handleBoxClick}
+            >
+                <Box>
+                    <FileDownloadIcon sx={{fontSize: "3rem"}}/>
+                    <p style={{marginBottom: 0}}>Upload CSV file</p>
+                </Box>
 
-            <input type={"file"} ref={inputRef} style={{display: "none"}} onChange={handleFileChange} multiple/>
-        </Box>
+                <input type={"file"} ref={inputRef} style={{display: "none"}} onChange={handleFileChange} multiple/>
+            </Box>
+        </Page>
     )
 }
