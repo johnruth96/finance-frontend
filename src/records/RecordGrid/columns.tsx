@@ -1,9 +1,9 @@
-import {GridCellParams, GridColDef} from "@mui/x-data-grid-premium";
+import {GridCellParams, GridColDef, GridRenderEditCellParams} from "@mui/x-data-grid-premium";
 import {Account, Category, Contract} from "../../app/types";
 import {AmountDisplay} from "../../core/AmountDisplay";
 import {Link} from "react-router-dom";
 import dayjs from "dayjs";
-import {CategoryDisplay, CategoryDisplayContainer} from "../../categories/CategoryDisplay";
+import {CategoryDisplayContainer} from "../../categories/CategoryDisplay";
 import React from "react";
 import {RowModel} from "./BaseRecordGrid";
 import {
@@ -14,8 +14,23 @@ import {
 } from "../../app/url";
 import {CategorySelect} from "../../categories/CategorySelect";
 import {ContractSelect} from "../../contracts/ContractSelect";
-import {CategorySelectMultiple} from "../../categories/CategorySelectMultiple";
-import {CategoryChipContainer} from "../../categories/CategoryChip";
+
+const CategoryEditCell = ({id, field, value, api}: GridRenderEditCellParams<RowModel>) => (
+    <CategorySelect
+        value={value}
+        onChange={(val) => api.setEditCellValue({id, field, value: val})}
+        sx={{width: "100%"}}
+    />
+)
+
+const ContractEditCell = ({id, field, value, api}: GridRenderEditCellParams<RowModel>) => (
+    <ContractSelect
+        value={value}
+        onChange={(val) => api.setEditCellValue({id, field, val})}
+        sx={{width: "100%"}}
+        variant={"standard"}
+    />
+)
 
 export const createGridColDef = (categories: Category[] | undefined, contracts: Contract[] | undefined, accounts: Account[] | undefined): GridColDef<RowModel>[] => {
     return [
@@ -43,7 +58,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'string',
             aggregable: false,
             editable: true,
-            renderCell: ({value, id, row}) => (
+            renderCell: ({value, id}) => (
                 <Link to={`/records/${id}/`}>{value}</Link>
             ),
             filterOperators: getGridStringFilterOperators(),
@@ -86,9 +101,10 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             headerName: 'Kategorie',
             flex: 2,
             minWidth: 100,
-            type: 'custom',
+            type: 'singleSelect',
             display: 'flex',
             editable: true,
+            valueOptions: (categories ?? []).map(category => ({label: category.name, value: category.id})),
             renderCell: ({value}: GridCellParams<RowModel>) => {
                 if (typeof value === "number") {
                     return <CategoryDisplayContainer id={value} variant={"body2"}/>
@@ -96,17 +112,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
                     return null
                 }
             },
-            renderEditCell: ({id, field, value, api}) => {
-                const handleValueChange = (value: string) => {
-                    api.setEditCellValue({id, field, value});
-                }
-
-                return <CategorySelect
-                    value={value}
-                    onChange={handleValueChange}
-                    sx={{width: "100%"}}
-                />
-            },
+            renderEditCell: (params) => <CategoryEditCell {...params}/>,
             filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
@@ -117,25 +123,15 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             type: 'singleSelect',
             aggregable: false,
             editable: true,
-            valueOptions: (contracts ?? []).map(con => ({label: con.name, value: con.id})),
-            renderCell: ({value}: GridCellParams<RowModel>) => {
+            valueOptions: (contracts ?? []).map(contract => ({label: contract.name, value: contract.id})),
+            /*renderCell: ({value}: GridCellParams<RowModel>) => {
                 const contract = (contracts ?? []).find(
                     (contract) => contract.id === value,
                 )
 
                 return contract?.name ?? ""
-            },
-            renderEditCell: ({id, field, value, api}) => {
-                const handleValueChange = (value: string) => {
-                    api.setEditCellValue({id, field, value});
-                }
-
-                return <ContractSelect
-                    value={value}
-                    onChange={handleValueChange} sx={{width: "100%"}}
-                    variant={"standard"}
-                />
-            },
+            },*/
+            renderEditCell: (params) => <ContractEditCell {...params}/>,
             filterOperators: getGridSingleSelectFilterOperators(),
         },
         {
@@ -144,10 +140,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             flex: 1,
             minWidth: 100,
             type: 'singleSelect',
-            valueOptions: (accounts ?? []).map(({id, name}: Account) => ({
-                value: id,
-                label: name,
-            })),
+            valueOptions: (accounts ?? []).map(account => ({label: account.name, value: account.id})),
             aggregable: false,
             editable: true,
             filterOperators: getGridSingleSelectFilterOperators(),
@@ -158,7 +151,7 @@ export const createGridColDef = (categories: Category[] | undefined, contracts: 
             flex: 1,
             minWidth: 100,
             type: 'number',
-            valueGetter: (_, row) => row.transactions?.length ?? 0,
+            valueGetter: (_value, row) => row.transactions?.length ?? 0,
             aggregable: true,
             filterOperators: getGridNumericFilterOperators(),
         },
