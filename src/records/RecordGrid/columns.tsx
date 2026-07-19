@@ -26,7 +26,7 @@ const CategoryEditCell = ({id, field, value, api}: GridRenderEditCellParams<RowM
 const ContractEditCell = ({id, field, value, api}: GridRenderEditCellParams<RowModel>) => (
     <ContractSelect
         value={value}
-        onChange={(val) => api.setEditCellValue({id, field, val})}
+        onChange={(val) => api.setEditCellValue({id, field, value: val})}
         sx={{width: "100%"}}
         variant={"standard"}
     />
